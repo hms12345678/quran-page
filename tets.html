@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>القرآن الكريم — استماع</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --dark-green:#145a32;
+      --green:#2e7d32;
+      --light-green:#a8e063;
+      --gold:#d4af37;
+      --card:#ffffffee;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Cairo",sans-serif;
+      background: linear-gradient(160deg, #e9f7ef 0%, #c8f0d0 40%, #f6f3e6 100%);
+      min-height:100vh;
+      color:var(--dark-green);
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:30px;
+    }
+
+    .app{
+      width:100%;
+      max-width:980px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85));
+      border-radius:18px;
+      box-shadow:0 12px 30px rgba(16,24,16,0.12);
+      padding:22px;
+      border: 1px solid rgba(20,90,50,0.08);
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      margin-bottom:18px;
+    }
+    .logo{
+      width:74px;height:74px;border-radius:12px;
+      background: linear-gradient(135deg,var(--green),var(--light-green));
+      display:flex;align-items:center;justify-content:center;
+      color:white;font-weight:700;font-size:28px;
+      box-shadow:0 6px 16px rgba(46,125,50,0.18);
+    }
+    h1{margin:0;font-size:1.6rem;color:var(--dark-green)}
+    p.lead{margin:0;color:rgba(20,90,50,0.8);opacity:0.95}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 340px;
+      gap:18px;
+      margin-top:18px;
+    }
+
+    /* left: sura list */
+    .panel{
+      background:var(--card);
+      border-radius:12px;
+      padding:14px;
+      box-shadow:0 6px 14px rgba(10,20,10,0.04);
+      border:1px solid rgba(0,0,0,0.03);
+    }
+
+    .sura-list{
+      display:grid;
+      grid-template-columns: repeat(auto-fill,minmax(140px,1fr));
+      gap:10px;
+      max-height:56vh;
+      overflow:auto;
+      padding:6px;
+    }
+
+    .sura-btn{
+      background:linear-gradient(180deg,var(--green),#2b7a2b);
+      color:white;border:0;padding:10px;border-radius:10px;
+      font-weight:600;cursor:pointer;
+      box-shadow:0 6px 10px rgba(46,125,50,0.14);
+      transition: transform .14s ease, box-shadow .14s ease;
+      text-align:center;
+    }
+    .sura-btn:hover{transform:translateY(-4px);box-shadow:0 10px 18px rgba(46,125,50,0.20)}
+
+    /* right: controls & player */
+    .controls{
+      display:flex;flex-direction:column;gap:12px;
+    }
+    .readers{
+      display:flex;flex-wrap:wrap;gap:8px;
+      padding:8px;
+    }
+    .reader-btn{
+      background:transparent;border:2px solid var(--green);color:var(--dark-green);
+      padding:8px 12px;border-radius:10px;font-weight:700;cursor:pointer;
+      transition: all .16s ease;
+    }
+    .reader-btn.active{
+      background: linear-gradient(90deg,var(--green),#43a047);
+      color:white;border-color:transparent;transform:translateY(-3px);
+      box-shadow:0 8px 18px rgba(46,125,50,0.18);
+    }
+    .reader-section h4{margin:0 0 6px 0;color:var(--dark-green)}
+
+    .player-area{
+      display:flex;flex-direction:column;gap:8px;align-items:center;
+      padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+      border:1px solid rgba(0,0,0,0.03);
+    }
+
+    audio{
+      width:100%;
+      outline:none;border-radius:8px;
+      background:transparent;
+    }
+
+    .status{
+      font-size:0.95rem;color:rgba(20,90,50,0.9);
+      display:flex;gap:8px;align-items:center;justify-content:center;
+    }
+    .small-muted{font-size:0.86rem;color:rgba(20,90,50,0.6)}
+
+    .footer{margin-top:12px;text-align:center;color:rgba(20,90,50,0.65);font-size:0.9rem}
+
+    /* scrollbar small */
+    .sura-list::-webkit-scrollbar{height:8px;width:8px}
+    .sura-list::-webkit-scrollbar-thumb{background:rgba(20,90,50,0.12);border-radius:10px}
+
+    @media(max-width:880px){
+      .grid{grid-template-columns:1fr; }
+    }
+
+    /* glow effect */
+    .glow{
+      display:inline-block;padding:6px 10px;border-radius:8px;
+      background:linear-gradient(90deg, rgba(212,175,55,0.08), transparent);
+      box-shadow:0 6px 20px rgba(212,175,55,0.06);
+    }
+  </style>
+</head>
+<body>
+  <div class="app" role="main">
+    <header>
+      <div class="logo">قُرآن</div>
+      <div>
+        <h1>موقع القرآن الكريم — استماع</h1>
+        <p class="lead small-muted">اختر السورة ثم القارئ. النظام يحاول تلقائيًا أكثر من مصدر للملف الصوتي.</p>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="panel" aria-label="قائمة السور">
+        <h3 class="glow" style="display:inline-block;padding:6px 10px;border-radius:8px">اختر السورة</h3>
+        <div class="sura-list" id="suraList" role="list"></div>
+      </section>
+
+      <aside class="panel controls" aria-label="التحكم">
+        <div class="reader-section">
+          <h4>اختار القارئ</h4>
+          <div class="readers" id="readerList">
+            <!-- buttons injected -->
+          </div>
+        </div>
+
+        <div class="player-area">
+          <div class="status" id="status">لم يتم اختيار شيء بعد</div>
+          <audio id="player" controls preload="none"></audio>
+          <div class="small-muted" id="sourceInfo">المصدر: —</div>
+        </div>
+
+        <div class="footer">❤️🌟Eng:Hassan Sobeh</div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    /* ======================
+       بيانات السور (114) بالعربي + رقم ثلاثي
+       ====================== */
+    const suras = [
+      "الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة",
+      "يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه",
+      "الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم",
+      "لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر",
+      "فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات",
+      "ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر",
+      "الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة",
+      "المعارج","نوح","الجن","المزمل","المدثر","القيامة","الانسان","المرسلات","النبأ","النازعات",
+      "عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر",
+      "البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة",
+      "العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون",
+      "النصر","المسد","الإخلاص","الفلق","الناس"
+    ];
+
+    // helper zero-pad 3
+    const pad3 = n => (""+n).padStart(3,"0");
+
+    // construct list of {name, num}
+    const suraList = suras.map((name,i)=>({name, num:pad3(i+1)}));
+
+    /* ======================
+       القراء و مصادر محتملة (fallbacks)
+       نضع عدة قواعد/سيرفرات محتملة لكل قارئ.
+       الكود سيجرب كل مصدر بالتسلسل حتى ينجح تشغيل الملف.
+       ====================== */
+    const readers = [
+      {id:"yasser", label:"ياسر الدوسري", bases:[
+        "https://server11.mp3quran.net/yasser/"
+      ]},
+      {id:"sudais", label:"عبد الرحمن السديس", bases:[
+        // try common mp3quran path first then other public sources
+        "https://server11.mp3quran.net/sds/",
+        "https://www.mp3quran.net/ar/sds",
+        // Qurancentral / quranicaudio sometimes provide direct mp3 links but pattern is different;
+        // we include some cdn patterns which may or may not be reachable depending on CORS.
+        "https://download.quranicaudio.com/quran/abdulrahman_al-sudais_murattal/",
+        "https://audioquran.net/sudais/"
+      ]},
+      {id:"maher", label:"ماهر المعيقلي", bases:[
+        "https://server12.mp3quran.net/maher/Almusshaf-Al-Mojawwad/"
+      ]},
+      {id:"maher", label:"بدر التركي", bases:[
+        "https://server10.mp3quran.net/bader/Rewayat-Hafs-A-n-Assem/",
+        "https://server10.mp3quran.net/bader/Rewayat-Hafs-A-n-Assem/",
+        "https://server10.mp3quran.net/bader/Rewayat-Hafs-A-n-Assem/"
+      ]},
+
+
+      {id:"maher", label:"محمد صديق المنشاوي مجود", bases:[
+        "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/",
+        "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/",
+        "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/"
+        ]},
+
+
+        {id:"maher", label:"محمد صديق المنشاوي مجود", bases:[
+        "https://server10.mp3quran.net/minsh/minh-old-with-echo/"
+        ]},
+      
+        {id:"maher", label:"احمد العجمي", bases:[
+        "https://server10.mp3quran.net/ajm/128/"
+        ]},
+             
+
+        {id:"maher", label:"خالد الجليل", bases:[
+        "https://server10.mp3quran.net/jleel/"
+        ]},
+             
+       
+        {id:"maher", label:"علي عبدالله جابر", bases:[
+        "https://server11.mp3quran.net/a_jbr/"
+        ]},
+             
+ 
+        {id:"maher", label:"محمد ايوب", bases:[
+        "https://server8.mp3quran.net/ayyub/"
+        ]},
+
+        {id:"maher", label:"محمودعلي البنا مرتل", bases:[
+        "https://server8.mp3quran.net/bna/"
+        ]},
+        
+        {id:"maher", label:"محمود علي البنا مجود", bases:[
+        "https://server8.mp3quran.net/bna/Almusshaf-Al-Mojawwad/"
+        ]},
+
+        {id:"maher", label:"فارس عباد", bases:[
+        "https://server8.mp3quran.net/frs_a/"
+        ]},
+        
+        {id:"maher", label:"مشاري بن راشد العفاسي", bases:[
+        "https://server8.mp3quran.net/afs//"
+        ]},
+
+        {id:"maher", label:"عبدالباسط عبدالصمد مجود", bases:[
+        "https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/"
+        ]},
+
+        {id:"maher", label:"عبدالباسط عبدالصمد مرتل", bases:[
+        "https://server7.mp3quran.net/basit/128/"
+        ]},
+
+        {id:"maher", label:"سعد الغامدي", bases:[
+        "https://server7.mp3quran.net/s_gmd/128/"
+        ]},
+
+        {id:"maher", label:"ادريس ابكر", bases:[
+        "https://server6.mp3quran.net/abkr/"
+        ]},
+
+        {id:"maher", label:"ناصر القطامي", bases:[
+        "https://server6.mp3quran.net/qtm/"
+        ]},
+
+        {id:"maher", label:"محمود خليل الحصري مرتل", bases:[
+        "https://server13.mp3quran.net/husr/"
+        ]},
+
+        {id:"maher", label:"محمود خليل الحصري مجود", bases:[
+        "https://server13.mp3quran.net/husr/Almusshaf-Al-Mojawwad/"
+        ]},
+
+        {id:"maher", label:"سعود الشريم", bases:[
+        "https://server7.mp3quran.net/shur/128/"
+        ]},
+
+        {id:"maher", label:"علي الحذيفي", bases:[
+        "https://server9.mp3quran.net/hthfi/128-hfs/"
+        ]},
+
+        {id:"maher", label:"بندر بليله", bases:[
+        "https://server6.mp3quran.net/balilah/"
+        ]},
+
+        {id:"maher", label:"محمد اللحيدان", bases:[
+        "https://server8.mp3quran.net/lhdan/"
+        ]},
+
+        {id:"maher", label:"محمد الطبلاوي", bases:[
+        "https://server12.mp3quran.net/tblawi/"
+        ]},
+
+        {id:"maher", label:"اسلام صبحي", bases:[
+        "https://server14.mp3quran.net/islam/Rewayat-Hafs-A-n-Assem/"
+        ]},
+
+        {id:"maher", label:"مصطفي اسماعيل مرتل", bases:[
+        "https://server8.mp3quran.net/mustafa/"
+        ]},
+
+        {id:"maher", label:"مصطفي اسماعيل مجود", bases:[
+        "https://server8.mp3quran.net/mustafa/"
+        ]},
+
+
+
+
+
+
+    ];
+
+    /* ======================
+       واجهة: توليد القوائم
+       ====================== */
+    const suraListEl = document.getElementById("suraList");
+    const readerListEl = document.getElementById("readerList");
+    const statusEl = document.getElementById("status");
+    const sourceInfoEl = document.getElementById("sourceInfo");
+    const player = document.getElementById("player");
+
+    let selectedSura = null;
+    let selectedReader = null;
+
+    // add sura buttons
+    suraList.forEach(s=>{
+      const btn = document.createElement("button");
+      btn.className = "sura-btn";
+      btn.textContent = `${s.name} — ${s.num}`;
+      btn.title = `سورة ${s.name}`;
+      btn.addEventListener("click", ()=>{
+        // mark selection visually
+        Array.from(suraListEl.querySelectorAll(".sura-btn")).forEach(b=>b.style.opacity=0.85);
+        btn.style.opacity = 1;
+        selectedSura = s;
+        statusEl.textContent = `تم اختيار: ${s.name} — الآن اختر القارئ`;
+        // show readers (activate)
+        highlightSelectedReader(null);
+      });
+      suraListEl.appendChild(btn);
+    });
+
+    // add reader buttons
+    readers.forEach(r=>{
+      const btn = document.createElement("button");
+      btn.className = "reader-btn";
+      btn.textContent = r.label;
+      btn.title = `تشغيل بصوت ${r.label}`;
+      btn.addEventListener("click", ()=>{
+        // require sura chosen
+        if(!selectedSura){
+          statusEl.textContent = "من فضلك اختر السورة أولًا";
+          return;
+        }
+        selectedReader = r;
+        highlightSelectedReader(r.id);
+        playWithFallbacks(r, selectedSura.num, selectedSura.name);
+      });
+      readerListEl.appendChild(btn);
+    });
+
+    function highlightSelectedReader(id){
+      Array.from(readerListEl.querySelectorAll(".reader-btn")).forEach(b=>{
+        b.classList.remove("active");
+        if(id && b.textContent.includes(selectedReader.label)) b.classList.add("active");
+      });
+    }
+
+    /* ======================
+       تشغيل بصيغ fallback
+       الفكرة: نجرب كل baseURL وإللي يشتغل نوقف عنده.
+       نتعامل مع حدث error في عنصر audio للانتقال للمحاولة التالية.
+       ====================== */
+    async function playWithFallbacks(reader, suraNum, suraName){
+      statusEl.textContent = `جاري المحاولة لتشغيل سورة ${suraName} بصوت ${reader.label} ...`;
+      sourceInfoEl.textContent = `المصدر: جارٍ التجريب...`;
+      player.pause();
+      player.removeAttribute('src');
+      player.load();
+
+      // generate candidate urls (base + suraNum + .mp3) and some variants (leading zeros etc)
+      const candidates = [];
+
+      // common filename patterns
+      const patterns = [
+        `${suraNum}.mp3`,
+        `${suraNum}.MP3`,
+        `${suraNum}.mp3?download=true`,
+        `${parseInt(suraNum)}.mp3`,           // without leading zeros (may produce e.g. "1.mp3")
+        `${parseInt(suraNum)}.MP3`
+      ];
+
+      // for each base, produce candidates
+      reader.bases.forEach(base=>{
+        patterns.forEach(p=>{
+          // ensure base ends with slash
+          const b = base.endsWith('/') ? base : (base + '/');
+          candidates.push(b + p);
+        });
+      });
+
+      // remove duplicates
+      const uniq = [...new Set(candidates)];
+
+      let idx = 0;
+      let success = false;
+
+      // helper to try next
+      const tryNext = () => {
+        if(idx >= uniq.length){
+          // all failed
+          statusEl.textContent = `عذرًا — لم نتمكن من تشغيل السورة من المصادر المتاحة للقراء الحالي.`;
+          sourceInfoEl.textContent = `المحاولات انتهت — جرّب قارئًا آخر أو أعد المحاولة لاحقًا.`;
+          player.removeAttribute('src');
+          player.load();
+          return;
+        }
+        const url = uniq[idx++];
+        sourceInfoEl.textContent = `المصدر الجاري اختباره: ${url}`;
+        // set src and try play
+        player.src = url;
+        // important: reset events handlers each attempt
+        const onCanPlay = () => {
+          // نجح التحميل — شغل
+          success = true;
+          statusEl.textContent = `تم التشغيل من: ${reader.label}`;
+          sourceInfoEl.textContent = `المصدر: ${url}`;
+          player.play().catch(e=>{
+            // autoplay blocked by browser policies: user must press play
+            statusEl.textContent = `مصدر صالح لكن الاستئناف يتطلب تفاعل المستخدم (اضغط ▶).`;
+          });
+          cleanup();
+        };
+        const onError = () => {
+          // محاولة فشلت: ننتقل للتالية
+          // cleanup handlers then try next
+          cleanup();
+          tryNext();
+        };
+        const cleanup = () => {
+          player.removeEventListener('canplay', onCanPlay);
+          player.removeEventListener('error', onError);
+          player.removeEventListener('stalled', onError);
+        };
+        player.addEventListener('canplay', onCanPlay);
+        player.addEventListener('error', onError);
+        player.addEventListener('stalled', onError);
+
+        // try to load (some browsers won't fire canplay until play requested)
+        player.load();
+        // Also attempt to play (may be blocked)
+        player.play().then(()=>{/* played */}).catch(()=>{/* may be autoplay blocked — canplay will still fire later */});
+      };
+
+      tryNext();
+    }
+
+    // small UX: if user presses play manually after autoplay blocked, update status
+    player.addEventListener('play', () => {
+      if(selectedReader && selectedSura){
+        statusEl.textContent = `تشغيل: ${selectedSura.name} — ${selectedReader.label}`;
+      } else {
+        statusEl.textContent = `تشغيل...`;
+      }
+    });
+
+    player.addEventListener('pause', () => {
+      statusEl.textContent = `متوقف`;
+    });
+
+  </script>
+</body>
+</html>
+
+
