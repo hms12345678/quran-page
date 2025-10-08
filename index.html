@@ -17,11 +17,6 @@
 
 
 
-<!-- الجملة -->
-<div id="top-message">
-  🤲 نسألكم الدعاء لاجدادي رحمهم الله، ولجميع أموات المسلمين، أن يتغمّدهم الله بواسع رحمته، 
-  ويسكنهم فسيح جناته، ويجعل قبورهم روضةً من رياض الجنة.
-</div>
 
 <!-- شريط الصلاة القادمة -->
 <div id="prayer-timer">
@@ -337,9 +332,6 @@
 
 
 
-  <div class="top-banner">
-    🌿 نسألكم الدعاء لاجدادي رحمهم الله،ولجميع أموات المسلمين،وان يتغمدهم الله بواسع رحمته ويسكنهم فسيح جناته و يجعل قبورهم روضه من رياض الجنه.🌿
-  </div>
   
   <style>
   .top-banner {
@@ -977,74 +969,8 @@
 
 
 
-
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // روابط صور الكعبة (نهار / ليل) — لو عندك روابط خاصة استبدلهم هنا
-    const dayImg = "https://images.unsplash.com/photo-1508481787457-7c1e6fc1e4b0?auto=format&fit=crop&w=1600&q=80";
-    const nightImg = "https://images.unsplash.com/photo-1508881592256-92c1f98d1b9a?auto=format&fit=crop&w=1600&q=80";
+ 
   
-    // ضبط وقت التحويل (6 = 6 صباحاً ، 18 = 6 مساءً)
-    const dayStart = 6;
-    const nightStart = 18;
-  
-    // دالة تحميل الصورة (preload)
-    function preload(url) {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        img.onload = () => resolve(url);
-        img.onerror = () => reject(url);
-        img.src = url;
-      });
-    }
-  
-    async function setKaabaBackground() {
-      const hour = new Date().getHours();
-      const isDay = (hour >= dayStart && hour < nightStart);
-      const url = isDay ? dayImg : nightImg;
-  
-      try {
-        // نجرب نحمل الصورة أولاً
-        await preload(url);
-  
-        // نطبّق خلفية متعددة الطبقات: طبقة تلوين شفافة فوق الصورة علشان النص يبان
-        if (isDay) {
-          // شمس/نهار: غطاء فاتح بسيط
-          document.body.style.backgroundImage =
-            `linear-gradient(rgba(255,255,255,0.18), rgba(255,255,255,0.12)), url("${url}")`;
-        } else {
-          // ليل: غطاء غامق علشان النص يبان فوق
-          document.body.style.backgroundImage =
-            `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.35)), url("${url}")`;
-        }
-  
-        document.body.style.backgroundSize = "cover";
-        document.body.style.backgroundPosition = "center";
-        document.body.style.backgroundRepeat = "no-repeat";
-        document.body.style.backgroundAttachment = "fixed";
-        document.body.style.transition = "background-image 1s ease-in-out";
-        console.log("Kaaba background set:", isDay ? "day" : "night", url);
-      } catch (errUrl) {
-        console.warn("Failed to load image, using fallback gradient. URL:", errUrl);
-        // لو الصورة ما اشتغلتش نستخدم تدرج لوني كاحتياط
-        if (isDay) {
-          document.body.style.background = "linear-gradient(to bottom, #f6f3e8, #e8f6f0)";
-        } else {
-          document.body.style.background = "linear-gradient(to bottom, #0f1724, #071426)";
-        }
-      }
-    }
-  
-    // شغّل فوراً ثم كل ساعة
-    setKaabaBackground();
-    setInterval(setKaabaBackground, 1000 * 60 * 60); // كل ساعة
-  });
-  </script>
-  
-
 
 
 
@@ -1082,7 +1008,6 @@
 
 </body>
 </html>
-
 
 
 
