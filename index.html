@@ -6,37 +6,170 @@
 
 
   <body>
-    <div id="dhikr">سبحان الله وبحمده، سبحان الله العظيم</div>
-  
-    <style>
-      #dhikr {
-        position: fixed;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: rgba(230, 255, 230, 0.9); /* أخضر فاتح شفاف */
-        border: 1px solid #00b300;
-        color: #006600;
-        font-size: 18px;
-        font-weight: 500;
-        padding: 8px 20px;
-        border-radius: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        z-index: 9999;
-        opacity: 0;
-        animation: fadeInOut 3s ease-in-out forwards;
-        font-family: "Cairo", sans-serif;
-      }
-  
-      @keyframes fadeInOut {
-        0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-        10% { opacity: 1; transform: translateX(-50%) translateY(0); }
-        90% { opacity: 1; transform: translateX(-50%) translateY(0); }
-        100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-      }
-    </style>
-  </body>
-  
+
+
+
+
+
+
+
+
+
+
+
+<!-- الجملة -->
+<div id="top-message">
+  🤲 نسألكم الدعاء لاجدادي رحمهم الله، ولجميع أموات المسلمين، أن يتغمّدهم الله بواسع رحمته، 
+  ويسكنهم فسيح جناته، ويجعل قبورهم روضةً من رياض الجنة.
+</div>
+
+<!-- شريط الصلاة القادمة -->
+<div id="prayer-timer">
+  <div id="timer-left">
+    🕌 <span id="next-prayer-name">جاري التحميل...</span>
+    <span id="countdown"></span>
+  </div>
+  <div id="timer-right">
+    <span id="gregorian-date"></span><br>
+    <span id="hijri-date"></span>
+  </div>
+</div>
+
+<style>
+  #top-message {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #198754;
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    padding: 8px 10px;
+    z-index: 10000;
+    font-family: "Cairo", sans-serif;
+    line-height: 1.5;
+  }
+
+  #prayer-timer {
+    position: fixed;
+    top: 55px;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to right, #00b36b, #00995a);
+    color: white;
+    padding: 10px 20px;
+    font-family: 'Share Tech Mono', monospace;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 9999;
+  }
+
+  #timer-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  #timer-right {
+    text-align: right;
+    font-family: "Cairo", sans-serif;
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  #gregorian-date {
+    font-weight: 600;
+  }
+
+  #hijri-date {
+    opacity: 0.9;
+  }
+
+  body {
+    margin-top: 110px;
+  }
+</style>
+
+<script>
+  // --- مواقيت الصلاة ---
+  const prayerTimes = [
+    { name: "الفجر", time: "05:26" },
+    { name: "الظهر", time: "12:42" },
+    { name: "العصر", time: "16:02" },
+    { name: "المغرب", time: "18:31" },
+    { name: "العشاء", time: "19:48" }
+  ];
+
+  const nameEl = document.getElementById("next-prayer-name");
+  const countdownEl = document.getElementById("countdown");
+
+  function getNextPrayer() {
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    for (let p of prayerTimes) {
+      const [h, m] = p.time.split(":").map(Number);
+      const prayerMinutes = h * 60 + m;
+      if (prayerMinutes > currentMinutes) return p;
+    }
+    return prayerTimes[0];
+  }
+
+  function updateCountdown() {
+    const now = new Date();
+    const next = getNextPrayer();
+    const [h, m] = next.time.split(":").map(Number);
+
+    const nextTime = new Date();
+    nextTime.setHours(h, m, 0, 0);
+    if (nextTime <= now) nextTime.setDate(nextTime.getDate() + 1);
+
+    const diff = nextTime - now;
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    nameEl.textContent = "الصلاة القادمة: " + next.name;
+    countdownEl.textContent =
+      `${hours.toString().padStart(2, '0')}:` +
+      `${minutes.toString().padStart(2, '0')}:` +
+      `${seconds.toString().padStart(2, '0')}`;
+  }
+
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+
+  // --- التاريخ الميلادي والهجري ---
+  function updateDates() {
+    const now = new Date();
+
+    const gregorianOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const gregorian = now.toLocaleDateString('ar-EG', gregorianOptions);
+
+    const hijriOptions = { day: 'numeric', month: 'long', year: 'numeric', calendar: 'islamic' };
+    const hijri = now.toLocaleDateString('ar-SA', hijriOptions);
+
+    document.getElementById("gregorian-date").textContent = gregorian;
+    document.getElementById("hijri-date").textContent = hijri;
+  }
+
+  updateDates();
+
+  // تحديث التاريخ تلقائيًا كل دقيقة
+  let lastDay = new Date().getDate();
+  setInterval(() => {
+    const currentDay = new Date().getDate();
+    if (currentDay !== lastDay) {
+      lastDay = currentDay;
+      updateDates();
+    }
+  }, 60000); // كل دقيقة
+</script>
+
+
   
 
 
@@ -303,6 +436,7 @@
     const readers = [
       {id:"yasser", label:"ياسر الدوسري", bases:[
         "https://server11.mp3quran.net/yasser/"
+    
       ]},
       {id:"sudais", label:"عبد الرحمن السديس", bases:[
         // try common mp3quran path first then other public sources
@@ -598,6 +732,352 @@
     });
 
   </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- زر التسبيح العائم --><!-- زر التسبيح العائم -->
+<div id="tasbeeh-btn">📿</div>
+
+<!-- قائمة التسبيح -->
+<div id="tasbeeh-menu">
+  <h3>🌿 التسبيح</h3>
+  <p id="tasbeeh-count">العدد: 0</p>
+  <button class="tasbeeh-item" onclick="addTasbeeh('سبحان الله')">سبحان الله</button>
+  <button class="tasbeeh-item" onclick="addTasbeeh('الحمد لله')">الحمد لله</button>
+  <button class="tasbeeh-item" onclick="addTasbeeh('الله أكبر')">الله أكبر</button>
+  <button id="reset-btn" onclick="resetTasbeeh()">تصفير العداد</button>
+</div>
+
+<!-- زر الأذكار العائم -->
+<div id="adhkar-btn">🤲</div>
+
+<!-- قائمة الأذكار -->
+<div id="adhkar-menu">
+  <h3>🌿 الأذكار</h3>
+
+  <!-- أذكار الصباح -->
+  <div class="adhkar-category">
+    <button class="category-btn">أذكار الصباح</button>
+    <ul class="category-list">
+      <li>أستغفر الله العظيم (3 مرات)</li>
+      <li>سبحان الله وبحمده (100 مرة)</li>
+      <li>لا إله إلا الله وحده لا شريك له (10 مرات)</li>
+      <li>اللهم بك أصبحنا وبك أمسينا (1 مرة)</li>
+    </ul>
+  </div>
+
+  <!-- أذكار المساء -->
+  <div class="adhkar-category">
+    <button class="category-btn">أذكار المساء</button>
+    <ul class="category-list">
+      <li>سبحان الله وبحمده (100 مرة)</li>
+      <li>لا إله إلا الله وحده لا شريك له (10 مرات)</li>
+      <li>اللهم إني أسألك العافية (1 مرة)</li>
+    </ul>
+  </div>
+
+  <!-- قبل النوم -->
+  <div class="adhkar-category">
+    <button class="category-btn">قبل النوم</button>
+    <ul class="category-list">
+      <li>بسم الله الذي لا يضر مع اسمه شيء في الأرض ولا في السماء (3 مرات)</li>
+      <li>اللهم قني عذابك يوم تبعث عبادك (1 مرة)</li>
+    </ul>
+  </div>
+
+  <!-- بعد الصلاة -->
+  <div class="adhkar-category">
+    <button class="category-btn">بعد الصلاة</button>
+    <ul class="category-list">
+      <li>سبحان الله (33 مرة)</li>
+      <li>الحمد لله (33 مرة)</li>
+      <li>الله أكبر (34 مرة)</li>
+    </ul>
+  </div>
+
+</div>
+
+<style>
+  /* زر التسبيح */
+  #tasbeeh-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background-color: #00b300;
+    color: white;
+    font-size: 28px;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 9999;
+    transition: 0.3s;
+  }
+  #tasbeeh-btn:hover { background-color:#009900; transform: scale(1.1); }
+
+  /* قائمة التسبيح */
+  #tasbeeh-menu {
+    position: fixed;
+    bottom: 100px;
+    right: 25px;
+    background: #eaffea;
+    border: 2px solid #00b300;
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+    display: none;
+    z-index: 9998;
+    width: 200px;
+  }
+  #tasbeeh-menu h3 { margin:0 0 10px 0; color:#006600; }
+  .tasbeeh-item {
+    display: block;
+    background-color:#00b300;
+    color:white;
+    border:none;
+    margin:5px 0;
+    padding:8px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    width:100%;
+    transition:0.2s;
+  }
+  .tasbeeh-item:hover { background-color:#009900; }
+  #reset-btn { margin-top:10px; background-color:#ff4d4d; }
+  #reset-btn:hover { background-color:#e60000; }
+
+  /* زر الأذكار */
+  #adhkar-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 100px;
+    background-color: #0066cc;
+    color: white;
+    font-size: 28px;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 9999;
+    transition: 0.3s;
+  }
+  #adhkar-btn:hover { background-color:#004d99; transform:scale(1.1); }
+
+  /* قائمة الأذكار */
+  #adhkar-menu {
+    position: fixed;
+    bottom: 100px;
+    right: 100px;
+    background: #e6f0ff;
+    border: 2px solid #0066cc;
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+    display: none;
+    z-index: 9998;
+    width: 300px;
+  }
+
+  .adhkar-category { margin-bottom: 10px; text-align: right; }
+  .category-btn {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    background-color: #0066cc;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  .category-btn:hover { background-color: #004d99; }
+
+  .category-list {
+    display: none;
+    list-style: none;
+    padding: 5px;
+    margin: 5px 0 0 0;
+    text-align: right;
+  }
+  .category-list li {
+    background-color: #e0ecff;
+    margin: 3px 0;
+    padding: 5px 8px;
+    border-radius: 5px;
+  }
+</style>
+
+<script>
+  // زر التسبيح
+  const btnTasbeeh = document.getElementById("tasbeeh-btn");
+  const menuTasbeeh = document.getElementById("tasbeeh-menu");
+  let countTasbeeh = 0;
+
+  btnTasbeeh.addEventListener("click", () => {
+    menuTasbeeh.style.display = menuTasbeeh.style.display==="block"?"none":"block";
+  });
+
+  function addTasbeeh(text){
+    countTasbeeh++;
+    document.getElementById("tasbeeh-count").innerText="العدد: "+countTasbeeh;
+  }
+  function resetTasbeeh(){ countTasbeeh=0; document.getElementById("tasbeeh-count").innerText="العدد: 0"; }
+
+  // زر الأذكار
+  const btnAdhkar = document.getElementById("adhkar-btn");
+  const menuAdhkar = document.getElementById("adhkar-menu");
+
+  btnAdhkar.addEventListener("click", () => {
+    menuAdhkar.style.display = menuAdhkar.style.display==="block"?"none":"block";
+  });
+
+  // فتح/إغلاق كل فئة عند الضغط على اسمها
+  const categoryButtons = document.querySelectorAll(".category-btn");
+  categoryButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const list = btn.nextElementSibling;
+      list.style.display = list.style.display === "block" ? "none" : "block";
+    });
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // روابط صور الكعبة (نهار / ليل) — لو عندك روابط خاصة استبدلهم هنا
+    const dayImg = "https://images.unsplash.com/photo-1508481787457-7c1e6fc1e4b0?auto=format&fit=crop&w=1600&q=80";
+    const nightImg = "https://images.unsplash.com/photo-1508881592256-92c1f98d1b9a?auto=format&fit=crop&w=1600&q=80";
+  
+    // ضبط وقت التحويل (6 = 6 صباحاً ، 18 = 6 مساءً)
+    const dayStart = 6;
+    const nightStart = 18;
+  
+    // دالة تحميل الصورة (preload)
+    function preload(url) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => resolve(url);
+        img.onerror = () => reject(url);
+        img.src = url;
+      });
+    }
+  
+    async function setKaabaBackground() {
+      const hour = new Date().getHours();
+      const isDay = (hour >= dayStart && hour < nightStart);
+      const url = isDay ? dayImg : nightImg;
+  
+      try {
+        // نجرب نحمل الصورة أولاً
+        await preload(url);
+  
+        // نطبّق خلفية متعددة الطبقات: طبقة تلوين شفافة فوق الصورة علشان النص يبان
+        if (isDay) {
+          // شمس/نهار: غطاء فاتح بسيط
+          document.body.style.backgroundImage =
+            `linear-gradient(rgba(255,255,255,0.18), rgba(255,255,255,0.12)), url("${url}")`;
+        } else {
+          // ليل: غطاء غامق علشان النص يبان فوق
+          document.body.style.backgroundImage =
+            `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.35)), url("${url}")`;
+        }
+  
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundPosition = "center";
+        document.body.style.backgroundRepeat = "no-repeat";
+        document.body.style.backgroundAttachment = "fixed";
+        document.body.style.transition = "background-image 1s ease-in-out";
+        console.log("Kaaba background set:", isDay ? "day" : "night", url);
+      } catch (errUrl) {
+        console.warn("Failed to load image, using fallback gradient. URL:", errUrl);
+        // لو الصورة ما اشتغلتش نستخدم تدرج لوني كاحتياط
+        if (isDay) {
+          document.body.style.background = "linear-gradient(to bottom, #f6f3e8, #e8f6f0)";
+        } else {
+          document.body.style.background = "linear-gradient(to bottom, #0f1724, #071426)";
+        }
+      }
+    }
+  
+    // شغّل فوراً ثم كل ساعة
+    setKaabaBackground();
+    setInterval(setKaabaBackground, 1000 * 60 * 60); // كل ساعة
+  });
+  </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </body>
 </html>
 
