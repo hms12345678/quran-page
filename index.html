@@ -11,28 +11,32 @@
     <style>
       #dhikr {
         position: fixed;
-        top: 50%;
+        top: 10px;
         left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #e6ffe6;
-        border: 3px solid #00b300;
-        color: #004d00;
-        font-size: 24px;
-        font-weight: bold;
-        padding: 20px 40px;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        text-align: center;
+        transform: translateX(-50%);
+        background-color: rgba(230, 255, 230, 0.9); /* أخضر فاتح شفاف */
+        border: 1px solid #00b300;
+        color: #006600;
+        font-size: 18px;
+        font-weight: 500;
+        padding: 8px 20px;
+        border-radius: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         z-index: 9999;
-        animation: fadeOut 3s forwards 2s;
+        opacity: 0;
+        animation: fadeInOut 3s ease-in-out forwards;
+        font-family: "Cairo", sans-serif;
       }
   
-      @keyframes fadeOut {
-        from { opacity: 1; }
-        to { opacity: 0; visibility: hidden; }
+      @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+        10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
       }
     </style>
   </body>
+  
   
 
 
@@ -596,6 +600,7 @@
   </script>
 </body>
 </html>
+
 
 
 
