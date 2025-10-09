@@ -960,8 +960,53 @@
 
 
 
+<!-- شريط الجملة عند الفتح -->
+<div id="opening-dua">
+  نسألكم الدعاء للاجدادي رحمهم الله، ولجميع أموات المسلمين، أن يتغمّدهم الله بواسع رحمته، ويسكنهم فسيح جناته، ويجعل قبورهم روضةً من رياض الجنة.
+</div>
 
+<style>
+  #opening-dua {
+    position: fixed;
+    top: 20px; /* مسافة بسيطة من أعلى الصفحة */
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 90%;
+    background: rgba(25, 135, 84, 0.9); /* أخضر نصف شفاف */
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    padding: 12px 15px;
+    font-family: "Cairo", sans-serif;
+    line-height: 1.5;
+    z-index: 10000;
+    opacity: 1;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    transition: opacity 0.5s ease;
+    word-wrap: break-word;
+  }
 
+  @media screen and (max-width:480px){
+    #opening-dua {
+      font-size: 14px;
+      padding: 10px 8px;
+    }
+  }
+</style>
+
+<script>
+  // إخفاء الجملة بعد 5 ثواني
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const dua = document.getElementById('opening-dua');
+      dua.style.opacity = '0';
+      setTimeout(() => {
+        dua.style.display = 'none';
+      }, 500); // مدة انتقال الاختفاء
+    }, 5000); // مدة عرض الجملة
+  });
+</script>
 
 
 
@@ -984,6 +1029,18 @@
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
