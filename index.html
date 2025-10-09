@@ -12,13 +12,7 @@
 
 
 
-
-
-
-
-
-
-<!-- شريط الصلاة القادمة -->
+<!-- شريط الصلاة والتاريخ -->
 <div id="prayer-timer">
   <div id="timer-left">
     🕌 <span id="next-prayer-name">جاري التحميل...</span>
@@ -31,24 +25,10 @@
 </div>
 
 <style>
-  #top-message {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background: #198754;
-    color: white;
-    text-align: center;
-    font-size: 18px;
-    padding: 8px 10px;
-    z-index: 10000;
-    font-family: "Cairo", sans-serif;
-    line-height: 1.5;
-  }
-
+  /* شريط الصلاة والتاريخ ثابت أعلى الصفحة */
   #prayer-timer {
     position: fixed;
-    top: 55px;
+    top: 0;
     left: 0;
     width: 100%;
     background: linear-gradient(to right, #00b36b, #00995a);
@@ -61,12 +41,14 @@
     font-size: 20px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     z-index: 9999;
+    flex-wrap: wrap;
   }
 
   #timer-left {
     display: flex;
     align-items: center;
     gap: 10px;
+    font-size: 18px;
   }
 
   #timer-right {
@@ -76,16 +58,21 @@
     line-height: 1.2;
   }
 
-  #gregorian-date {
-    font-weight: 600;
-  }
+  #gregorian-date { font-weight: 600; }
+  #hijri-date { opacity: 0.9; }
 
-  #hijri-date {
-    opacity: 0.9;
-  }
+  /* المسافة بين الشريط وباقي الصفحة */
+  body { margin-top: 60px; }
 
-  body {
-    margin-top: 110px;
+  @media screen and (max-width:480px){
+    #prayer-timer {
+      font-size: 16px;
+      padding: 8px 15px;
+      flex-direction: column;
+      gap: 5px;
+      align-items: flex-start;
+    }
+    #timer-left, #timer-right { font-size: 14px; }
   }
 </style>
 
@@ -152,20 +139,9 @@
   }
 
   updateDates();
-
-  // تحديث التاريخ تلقائيًا كل دقيقة
-  let lastDay = new Date().getDate();
-  setInterval(() => {
-    const currentDay = new Date().getDate();
-    if (currentDay !== lastDay) {
-      lastDay = currentDay;
-      updateDates();
-    }
-  }, 60000); // كل دقيقة
+  setInterval(updateDates, 60000); // تحديث كل دقيقة
 </script>
 
-
-  
 
 
 
@@ -1008,6 +984,8 @@
 
 </body>
 </html>
+
+
 
 
 
