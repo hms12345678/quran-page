@@ -1066,8 +1066,6 @@
 
 
 
-
-
 <!-- أيقونة واتساب للتواصل -->
 <a
   href="https://wa.me/201067367119?text=السلام%20عليكم"
@@ -1086,8 +1084,8 @@
 <style>
 .whatsapp-float {
   position: fixed;
-  bottom: 20px;
-  left: 20px;
+  bottom: 15px;
+  left: 15px;
   text-decoration: none;
   z-index: 1000;
 }
@@ -1097,19 +1095,20 @@
   color: white;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 15px;
-  border-radius: 30px;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 25px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: 0.3s ease;
   font-family: "Cairo", sans-serif;
   font-weight: bold;
+  font-size: 13px;
   animation: shake 4s infinite;
 }
 
 .whatsapp-btn img {
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
 }
 
 .whatsapp-btn:hover {
@@ -1119,11 +1118,27 @@
 
 @keyframes shake {
   0%, 100% { transform: rotate(0deg); }
-  5% { transform: rotate(-10deg); }
-  10% { transform: rotate(10deg); }
-  15% { transform: rotate(-10deg); }
-  20% { transform: rotate(10deg); }
+  5% { transform: rotate(-8deg); }
+  10% { transform: rotate(8deg); }
+  15% { transform: rotate(-8deg); }
+  20% { transform: rotate(8deg); }
   25% { transform: rotate(0deg); }
+}
+
+/* تحسين العرض على الشاشات الصغيرة */
+@media (max-width: 600px) {
+  .whatsapp-btn {
+    font-size: 12px;
+    padding: 6px 8px;
+    gap: 4px;
+  }
+  .whatsapp-btn img {
+    width: 20px;
+    height: 20px;
+  }
+  .whatsapp-btn span {
+    display: none; /* يخفي النص على الموبايل لتكون الأيقونة فقط */
+  }
 }
 </style>
 
@@ -1145,21 +1160,6 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
