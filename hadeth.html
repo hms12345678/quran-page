@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حديث اليوم</title>
+
+
+<style>
+body {
+  margin:0;
+  padding:0;
+  font-family:'Amiri', serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  background: linear-gradient(135deg, #0b5d2d, #0f8a4a);
+  color:white;
+  text-align:center;
+  font-size:1.6rem;
+  padding:20px;
+  direction:rtl;
+}
+.container {
+  background: rgba(255,255,255,0.1);
+  padding:25px 30px;
+  border-radius:20px;
+  box-shadow:0 0 20px rgba(0,0,0,0.3);
+  max-width:700px;
+  animation: fadeIn 2s ease-in-out;
+}
+#hadith {
+  line-height:1.8;
+  font-weight:bold;
+  margin:15px 0;
+}
+#narrator {
+  font-size:1.2rem;
+  color:#d5ffd9;
+  margin-top:10px;
+}
+.prophet {
+  font-size:1.4rem;
+  color:#fff7b3;
+}
+@keyframes fadeIn {
+  from {opacity:0; transform:scale(0.9);}
+  to {opacity:1; transform:scale(1);}
+}
+audio {display:none;}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="prophet">قال رسول الله ﷺ :</div>
+  <div id="hadith">جارٍ تحميل الحديث الشريف...</div>
+  <div id="narrator"></div>
+  <audio autoplay loop>
+    <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_b0e1fa1a16.mp3" type="audio/mpeg">
+  </audio>
+</div>
+
+<script>
+const ahadith = [
+  {text:"إنما الأعمال بالنيات، وإنما لكل امرئ ما نوى.", source:"البخاري"},
+  {text:"من كان يؤمن بالله واليوم الآخر فليقل خيرا أو ليصمت.", source:"البخاري"},
+  {text:"لا يؤمن أحدكم حتى يحب لأخيه ما يحب لنفسه.", source:"البخاري"},
+  {text:"من حسن إسلام المرء تركه ما لا يعنيه.", source:"مسلم"},
+  {text:"الدين النصيحة.", source:"مسلم"},
+  {text:"من دل على خير فله مثل أجر فاعله.", source:"مسلم"},
+  {text:"من سلك طريقا يلتمس فيه علما سهل الله له به طريقا إلى الجنة.", source:"البخاري"},
+  {text:"الراحمون يرحمهم الرحمن.", source:"الترمذي"},
+  {text:"الكلمة الطيبة صدقة.", source:"البخاري"},
+  {text:"من لا يشكر الناس لا يشكر الله.", source:"أبو داود"},
+  {text:"المؤمن للمؤمن كالبنيان يشد بعضه بعضا.", source:"البخاري"},
+  {text:"تبسمك في وجه أخيك صدقة.", source:"الترمذي"},
+  {text:"خيركم من تعلم القرآن وعلمه.", source:"البخاري"},
+  {text:"الطهور شطر الإيمان.", source:"مسلم"},
+  {text:"اتق الله حيثما كنت.", source:"الترمذي"},
+  {text:"أحب الأعمال إلى الله أدومها وإن قل.", source:"البخاري"},
+  {text:"من كان في حاجة أخيه كان الله في حاجته.", source:"البخاري"},
+  {text:"إن الله جميل يحب الجمال.", source:"مسلم"},
+  {text:"يسروا ولا تعسروا وبشروا ولا تنفروا.", source:"الترمذي"},
+  {text:"أقرب ما يكون العبد من ربه وهو ساجد.", source:"البخاري"},
+  {text:"إن الله لا ينظر إلى صوركم ولا إلى أموالكم ولكن ينظر إلى قلوبكم وأعمالكم.", source:"مسلم"},
+  {text:"لا تغضب.", source:"البخاري"},
+  {text:"ازهد في الدنيا يحبك الله وازهد فيما عند الناس يحبك الناس.", source:"الترمذي"},
+  {text:"من لا يرحم لا يُرحم.", source:"البخاري"},
+  {text:"الدعاء هو العبادة.", source:"مسلم"},
+  {text:"أحب الناس إلى الله أنفعهم للناس.", source:"البخاري"},
+  {text:"المسلم من سلم المسلمون من لسانه ويده.", source:"مسلم"},
+  {text:"الرفق لا يكون في شيء إلا زانه.", source:"البخاري"},
+  {text:"من توضأ فأحسن الوضوء خرجت خطاياه من جسده.", source:"مسلم"},
+  {text:"من قال لا إله إلا الله دخل الجنة.", source:"البخاري"},
+  {text:"إن الله كتب الإحسان على كل شيء.", source:"مسلم"},
+  {text:"من لا يشكر القليل لا يشكر الكثير.", source:"الترمذي"},
+  {text:"ما نقص مال من صدقة.", source:"البخاري"},
+  {text:"من صلى عليّ صلاة صلى الله عليه بها عشرا.", source:"مسلم"},
+  {text:"الحياء لا يأتي إلا بخير.", source:"البخاري"},
+  {text:"المؤمن مرآة أخيه.", source:"مسلم"},
+  {text:"من غشنا فليس منا.", source:"البخاري"},
+  {text:"الصدقة تطفئ الخطيئة كما يطفئ الماء النار.", source:"الترمذي"},
+  {text:"الجار قبل الدار.", source:"البخاري"},
+  {text:"أحب البلاد إلى الله مساجدها.", source:"مسلم"},
+  {text:"طلب العلم فريضة على كل مسلم.", source:"ابن ماجه"},
+  {text:"البر حسن الخلق.", source:"البخاري"},
+  {text:"المؤمن القوي خير وأحب إلى الله من المؤمن الضعيف.", source:"مسلم"},
+  {text:"إن الله مع الصابرين.", source:"البخاري"},
+  {text:"اتقوا النار ولو بشق تمرة.", source:"البخاري"}
+];
+
+// اختيار حديث عشوائي مع الراوي الصحيح
+const randomIndex = Math.floor(Math.random() * ahadith.length);
+const randomHadith = ahadith[randomIndex];
+
+document.getElementById("hadith").textContent = randomHadith.text;
+document.getElementById("narrator").textContent = `رواه ${randomHadith.source}`;
+
+// بعد 10 ثواني يدخل على موقعك
+setTimeout(() => {
+  window.location.href = "page1.html";
+}, 6500);
+</script>
+
+
+<div class="notice">سيتم توجيهك إلى الصفحة الرئيسية بعد <span id="count">5</span> ثوانٍ</div>
+
+
+
+
+
+</body>
+</html>

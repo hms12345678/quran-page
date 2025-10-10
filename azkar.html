@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أذكار اليوم</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+        background: #006400;
+    }
+
+    /* الخلفية المتحركة */
+    .background-animation {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(0,255,0,0.1) 2%, transparent 2%) repeat;
+        background-size: 50px 50px;
+        animation: moveBackground 30s linear infinite;
+        z-index: 0;
+    }
+
+    @keyframes moveBackground {
+        0% { transform: translate(0,0); }
+        100% { transform: translate(50px,50px); }
+    }
+
+    /* تصميم الأزرار */
+    .tab {
+        position: relative;
+        background-color: #008000; /* أخضر */
+        color: white;
+        padding: 25px 50px;
+        margin: 15px;
+        border-radius: 15px;
+        font-size: 22px;
+        font-weight: bold;
+        text-align: center;
+        width: 80%;
+        max-width: 400px;
+        cursor: pointer;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+        transition: 0.3s;
+        z-index: 1;
+    }
+
+    .tab:hover {
+        background-color: #00b300;
+        transform: translateY(-3px);
+        box-shadow: 0 12px 20px rgba(0,0,0,0.4);
+    }
+
+    .tab span {
+        display: block;
+        font-size: 14px;
+        color: #e0ffe0;
+        margin-top: 5px;
+        font-weight: normal;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="background-animation"></div>
+
+<div class="tab" onclick="window.location.href='moorning.html'">
+    🌅 أذكار الصباح
+    <span>اضغط للانتقال للصفحة</span>
+</div>
+
+<div class="tab" onclick="window.location.href='night.html'">
+    🌃 أذكار المساء
+    <span>اضغط للانتقال للصفحة</span>
+</div>
+
+<div class="tab" onclick="window.location.href='noom.html'">
+    💤 أذكار قبل النوم
+    <span>اضغط للانتقال للصفحة</span>
+</div>
+
+<div class="tab" onclick="window.location.href='salah.html'">
+    📿 أذكار بعد الصلاة
+    <span>اضغط للانتقال للصفحة</span>
+</div>
+
+</body>
+</html>
