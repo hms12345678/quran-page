@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <title> خالص لوجه الله  </title>
+    <title>خالص لوجه الله | Eng. Hassan Sobeh</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -20,19 +20,21 @@
             background-attachment: fixed;
             color: var(--text);
             padding-top: 90px;
-            padding-bottom: 150px;
+            padding-bottom: 180px; /* زيادة المساحة للتوقيع */
         }
 
-        /* شريط المعلومات */
+        /* شريط المعلومات المطور */
         #top-info-bar {
             position: fixed; top: 0; left: 0; width: 100%;
             background: rgba(15, 23, 42, 0.98);
             border-bottom: 2px solid var(--accent);
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 15px; z-index: 2000; box-sizing: border-box;
+            padding: 10px 15px; z-index: 2000; box-sizing: border-box;
         }
 
-        .prayer-time { font-size: 18px; font-weight: 700; color: var(--accent); }
+        .prayer-next-info { text-align: right; }
+        .prayer-name-tag { font-size: 11px; opacity: 0.8; color: var(--accent); }
+        .countdown-val { font-size: 18px; font-weight: 700; font-family: monospace; display: block; }
 
         .container { padding: 15px; max-width: 500px; margin: 0 auto; }
 
@@ -44,68 +46,53 @@
             overflow: hidden; transition: 0.3s;
         }
         .reader-card.open { border-color: var(--accent); }
-
-        .reader-header {
-            display: flex; align-items: center;
-            padding: 12px; cursor: pointer; gap: 15px;
-        }
-
-        .reader-avatar {
-            width: 60px; height: 60px; border-radius: 50%;
-            object-fit: cover; border: 2px solid var(--accent);
-        }
-
+        .reader-header { display: flex; align-items: center; padding: 12px; cursor: pointer; gap: 15px; }
+        .reader-avatar { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
         .reader-name { font-weight: 700; flex-grow: 1; }
 
-        /* مفتاح التحويل (مجود / مرتل) */
-        .mode-selector {
-            display: none; /* يظهر فقط عند فتح البطاقة */
-            justify-content: center;
-            gap: 10px; padding: 10px;
-            background: rgba(0,0,0,0.2);
-        }
+        .mode-selector { display: none; justify-content: center; gap: 10px; padding: 10px; background: rgba(0,0,0,0.2); }
         .open .mode-selector { display: flex; }
-
-        .mode-btn {
-            padding: 5px 15px; border-radius: 20px; font-size: 12px;
-            cursor: pointer; border: 1px solid var(--accent); color: var(--accent);
-        }
+        .mode-btn { padding: 5px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid var(--accent); color: var(--accent); }
         .mode-btn.active { background: var(--accent); color: #000; font-weight: bold; }
 
-        /* قائمة السور */
         .suras-box {
             max-height: 0; overflow: hidden;
             transition: max-height 0.4s ease-out;
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
         }
         .open .suras-box { max-height: 380px; overflow-y: auto; padding: 15px; }
+        .sura-item { background: rgba(255,255,255,0.05); padding: 10px 2px; border-radius: 8px; font-size: 12px; text-align: center; cursor: pointer; }
 
-        .sura-item {
-            background: rgba(255,255,255,0.05); padding: 10px 2px;
-            border-radius: 8px; font-size: 12px; text-align: center;
-        }
-
-        /* المشغل */
-       .player-fixed {
+        /* المشغل والتوقيع */
+        .player-fixed {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: #0f172a; border-top: 2px solid var(--accent);
-            padding: 15px; z-index: 3000;
+            padding: 10px 15px; z-index: 3000;
         }
-        audio { width: 100%; filter: invert(0.9); }
-
+        audio { width: 100%; filter: invert(0.9); height: 35px; }
         .playing-title { text-align: center; color: var(--accent); font-size: 13px; margin-bottom: 5px; font-weight: bold; }
+        
+        /* توقيع المهندس حسن */
+        .eng-signature {
+            text-align: center;
+            font-size: 10px;
+            letter-spacing: 2px;
+            opacity: 0.5;
+            margin-top: 8px;
+            color: var(--text);
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
 
 <div id="top-info-bar">
-    <div style="text-align: right;">
-        <span style="font-size: 12px; opacity: 0.7;">الصلاة القادمة</span><br>
-        <span class="prayer-time" id="p-timer">--:--</span>
+    <div class="prayer-next-info">
+        <span class="prayer-name-tag">باقي على <span id="p-name">--</span></span>
+        <span class="countdown-val" id="p-countdown">00:00:00</span>
     </div>
-    <div style="text-align: left; font-size: 11px;">
-        <div id="h-date"></div>
+    <div style="text-align: left; font-size: 11px; line-height: 1.4;">
+        <div id="h-date" style="color: var(--accent); font-weight: bold;"></div>
         <div id="m-date"></div>
     </div>
 </div>
@@ -115,13 +102,12 @@
 <div class="player-fixed">
     <div class="playing-title" id="trackName">جاهز للاستماع..</div>
     <audio id="mainAudio" controls></audio>
+    <div class="eng-signature">Eng/Hassan Sobeh</div>
 </div>
 
 <script>
     const suras = ["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الانسان","المرسلات","النبأ","النازعات","عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
 
-    // قاعدة بيانات القراء (30 قارئ)
-    // لاحظ: القارئ اللي عنده مجود ومرتل بنحط له "base_murattal" و "base_mojawwad"
     const readers = [
         { name: "محمد صديق المنشاوي", img:"minshawi.jpg", base_murattal: "https://server10.mp3quran.net/minsh/", base_mojawwad: "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/", mode: "murattal" },
         { name: "عبدالباسط عبدالصمد", img: "baset.jpg", base_murattal: "https://server7.mp3quran.net/basit/", base_mojawwad: "https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/", mode: "murattal" },
@@ -151,50 +137,15 @@
         { name: "خليفة الطنيجي", img: " khalifa-al-tunaiji.png", base: "https://server12.mp3quran.net/tnjy/" },
         { name: "الدوكالي العالم", img: " doukali-muhammad-al-alam2.webp", base: "https://server7.mp3quran.net/dokali/" },
         { name: "علي الحذيفي", img: " الحذيفي.jpg", base: "https://server9.mp3quran.net/hthfi/128-hfs/" },
-      { name: "بندر بليله", img: " بندر بليله.jpg", base: "https://server6.mp3quran.net/balilah/" },
-
-      { name: " احمد نعينع", img: "احمد نعينع.jpg", base: "https://server11.mp3quran.net/ahmad_nu/" },
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        { name: "بندر بليله", img: " بندر بليله.jpg", base: "https://server6.mp3quran.net/balilah/" },
+        { name: " احمد نعينع", img: "احمد نعينع.jpg", base: "https://server11.mp3quran.net/ahmad_nu/" }
     ];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     const list = document.getElementById("rList");
 
     readers.forEach((r, idx) => {
         const card = document.createElement("div");
         card.className = "reader-card";
-        
-        // لو القارئ عنده النوعين، نطلع زراير التحويل
         const hasModes = r.base_mojawwad ? true : false;
         const modeHTML = hasModes ? `
             <div class="mode-selector">
@@ -235,39 +186,69 @@
         });
     }
 
+    // تشغيل مباشر وبدون تراكم
     function play(rIdx, sName, sNum) {
         const r = readers[rIdx];
         const audio = document.getElementById("mainAudio");
         let baseUrl = r.base;
-        
-        if(r.base_mojawwad) {
-            baseUrl = (r.mode === 'mojawwad') ? r.base_mojawwad : r.base_murattal;
-        }
+        if(r.base_mojawwad) baseUrl = (r.mode === 'mojawwad') ? r.base_mojawwad : r.base_murattal;
 
+        audio.pause();
         audio.src = `${baseUrl}${sNum.toString().padStart(3,'0')}.mp3`;
-        document.getElementById("trackName").textContent = `تشغيل: ${sName} - ${r.name} (${r.mode === 'mojawwad' ? 'مجود' : 'مرتل'})`;
+        audio.load(); // إجبار المتصفح على تحميل الملف الجديد فوراً
+        document.getElementById("trackName").textContent = `تشغيل: ${sName} - ${r.name}`;
         audio.play();
     }
 
-    // التاريخ وصلاة القادمة
-    function updateClock() {
+    // --- نظام المواقيت والعد التنازلي لمصر ---
+    let timings = null;
+    const pNames = {Fajr:"الفجر", Dhuhr:"الظهر", Asr:"العصر", Maghrib:"المغرب", Isha:"العشاء"};
+
+    async function getCairoTimes() {
+        try {
+            const res = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5');
+            const data = await res.json();
+            timings = data.data.timings;
+            updateInfo();
+        } catch(e) { console.error("API Error"); }
+    }
+
+    function updateInfo() {
         const now = new Date();
         document.getElementById("m-date").textContent = now.toLocaleDateString('ar-EG', {day:'numeric', month:'short', year:'numeric'});
         document.getElementById("h-date").textContent = now.toLocaleDateString('ar-SA', {calendar:'islamic', day:'numeric', month:'long'});
         
-        const prayers = [
-            {n:"الفجر", t:"05:10"}, {n:"الظهر", t:"12:05"}, {n:"العصر", t:"15:35"}, {n:"المغرب", t:"18:10"}, {n:"العشاء", t:"19:30"}
-        ];
-        const curStr = now.getHours().toString().padStart(2,'0')+":"+now.getMinutes().toString().padStart(2,'0');
-        let next = prayers.find(p => p.t > curStr) || prayers[0];
-        
-        let [h, m] = next.t.split(':');
-        let hh = parseInt(h);
-        let suffix = hh >= 12 ? "م" : "ص";
-        hh = hh % 12 || 12;
-        document.getElementById("p-timer").textContent = `${hh}:${m} ${suffix}`;
+        if (!timings) return;
+
+        const pKeys = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+        let nextP = null;
+
+        for (let k of pKeys) {
+            const [h, m] = timings[k].split(':');
+            const target = new Date();
+            target.setHours(h, m, 0);
+            if (target > now) { nextP = {n: pNames[k], t: target}; break; }
+        }
+
+        if (!nextP) { // لو بعد العشاء، يبقى الفجر بكرة
+            const [h, m] = timings['Fajr'].split(':');
+            const target = new Date();
+            target.setDate(target.getDate() + 1);
+            target.setHours(h, m, 0);
+            nextP = {n: "الفجر", t: target};
+        }
+
+        document.getElementById("p-name").textContent = nextP.n;
+        const diff = nextP.t - now;
+        const hh = Math.floor(diff / 3600000);
+        const mm = Math.floor((diff % 3600000) / 60000);
+        const ss = Math.floor((diff % 60000) / 1000);
+        document.getElementById("p-countdown").textContent = 
+            `${hh.toString().padStart(2,'0')}:${mm.toString().padStart(2,'0')}:${ss.toString().padStart(2,'0')}`;
     }
-    setInterval(updateClock, 60000); updateClock();
+
+    getCairoTimes();
+    setInterval(updateInfo, 1000);
 </script>
 </body>
 </html>
