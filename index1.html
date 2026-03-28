@@ -11,6 +11,7 @@
             --card-bg: rgba(30, 41, 59, 0.9);
             --accent: #facc15; 
             --text: #f8fafc;
+            --heart-red: #ff4757;
         }
 
         body {
@@ -20,10 +21,9 @@
             background-attachment: fixed;
             color: var(--text);
             padding-top: 90px;
-            padding-bottom: 180px; /* زيادة المساحة للتوقيع */
+            padding-bottom: 180px;
         }
 
-        /* شريط المعلومات المطور */
         #top-info-bar {
             position: fixed; top: 0; left: 0; width: 100%;
             background: rgba(15, 23, 42, 0.98);
@@ -38,7 +38,12 @@
 
         .container { padding: 15px; max-width: 500px; margin: 0 auto; }
 
-        /* بطاقات القراء */
+        /* عنوان الأقسام */
+        .section-title { 
+            font-size: 14px; color: var(--accent); margin: 20px 0 10px; 
+            display: flex; align-items: center; gap: 8px; font-weight: bold;
+        }
+
         .reader-card {
             background: var(--card-bg);
             border: 1px solid rgba(255,255,255,0.1);
@@ -46,13 +51,20 @@
             overflow: hidden; transition: 0.3s;
         }
         .reader-card.open { border-color: var(--accent); }
-        .reader-header { display: flex; align-items: center; padding: 12px; cursor: pointer; gap: 15px; }
-        .reader-avatar { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
-        .reader-name { font-weight: 700; flex-grow: 1; }
+        .reader-header { display: flex; align-items: center; padding: 12px; cursor: pointer; gap: 12px; }
+        .reader-avatar { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+        .reader-name { font-weight: 700; flex-grow: 1; font-size: 15px; }
+
+        /* زر القلب */
+        .fav-btn {
+            background: none; border: none; font-size: 22px; cursor: pointer;
+            color: rgba(255,255,255,0.2); transition: 0.3s; padding: 5px;
+        }
+        .fav-btn.is-fav { color: var(--heart-red); transform: scale(1.1); }
 
         .mode-selector { display: none; justify-content: center; gap: 10px; padding: 10px; background: rgba(0,0,0,0.2); }
         .open .mode-selector { display: flex; }
-        .mode-btn { padding: 5px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid var(--accent); color: var(--accent); }
+        .mode-btn { padding: 4px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; border: 1px solid var(--accent); color: var(--accent); }
         .mode-btn.active { background: var(--accent); color: #000; font-weight: bold; }
 
         .suras-box {
@@ -63,7 +75,6 @@
         .open .suras-box { max-height: 380px; overflow-y: auto; padding: 15px; }
         .sura-item { background: rgba(255,255,255,0.05); padding: 10px 2px; border-radius: 8px; font-size: 12px; text-align: center; cursor: pointer; }
 
-        /* المشغل والتوقيع */
         .player-fixed {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: #0f172a; border-top: 2px solid var(--accent);
@@ -72,15 +83,9 @@
         audio { width: 100%; filter: invert(0.9); height: 35px; }
         .playing-title { text-align: center; color: var(--accent); font-size: 13px; margin-bottom: 5px; font-weight: bold; }
         
-        /* توقيع المهندس حسن */
         .eng-signature {
-            text-align: center;
-            font-size: 10px;
-            letter-spacing: 2px;
-            opacity: 0.5;
-            margin-top: 8px;
-            color: var(--text);
-            text-transform: uppercase;
+            text-align: center; font-size: 10px; letter-spacing: 2px;
+            opacity: 0.5; margin-top: 8px; color: var(--text); text-transform: uppercase;
         }
     </style>
 </head>
@@ -97,7 +102,15 @@
     </div>
 </div>
 
-<div class="container" id="rList"></div>
+<div class="container">
+    <div id="fav-section" style="display: none;">
+        <div class="section-title">⭐ القراء المفضلون</div>
+        <div id="favList"></div>
+    </div>
+
+    <div class="section-title">📖 كل القراء</div>
+    <div id="rList"></div>
+</div>
 
 <div class="player-fixed">
     <div class="playing-title" id="trackName">جاهز للاستماع..</div>
@@ -109,61 +122,81 @@
     const suras = ["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الانسان","المرسلات","النبأ","النازعات","عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
 
     const readers = [
-        { name: "محمد صديق المنشاوي", img:"minshawi.jpg", base_murattal: "https://server10.mp3quran.net/minsh/", base_mojawwad: "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-        { name: "عبدالباسط عبدالصمد", img: "baset.jpg", base_murattal: "https://server7.mp3quran.net/basit/", base_mojawwad: "https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-        { name: "محمود خليل الحصري", img: " hosary.jpg", base_murattal: "https://server13.mp3quran.net/husr/", base_mojawwad: "https://server13.mp3quran.net/husr/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-        { name: "مصطفى إسماعيل", img: " mostafa.jpg", base_murattal: "https://server8.mp3quran.net/mustafa/", base_mojawwad: "https://server8.mp3quran.net/mustafa/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-        { name: "محمود علي البنا", img: " bana.jpg", base_murattal: "https://server8.mp3quran.net/bna/", base_mojawwad: " https://server8.mp3quran.net/bna/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-        { name: "ياسر الدوسري", img: " dosri.jpg", base: "https://server11.mp3quran.net/yasser/" },
-        { name: "ماهر المعيقلي", img: " Maher_Al_Mueaqly.png", base: "https://server12.mp3quran.net/maher/Almusshaf-Al-Mojawwad/" },
-        { name: "مشاري العفاسي", img: " afasy.jpg", base: "https://server8.mp3quran.net/afs/" },
-        { name: "إسلام صبحي", img: "islam sobhi.jpg ", base: " https://server14.mp3quran.net/islam/Rewayat-Hafs-A-n-Assem/" },
-        { name: "أحمد العجمي", img: " أحمد بن علي العجمي.jpg", base: "https://server10.mp3quran.net/ajm/128/" },
-        { name: "سعد الغامدي", img: " الغامدي.jpg", base: "https://server7.mp3quran.net/s_gmd/128/" },
-        { name: "سعود الشريم", img: " الشريم.jpg", base: "https://server7.mp3quran.net/shur/128/" },
-        { name: "عبدالرحمن السديس", img: " السديس.jpg", base: "https://server11.mp3quran.net/sds/" },
-        { name: "خالد الجليل", img: " الجليل.jpg", base: "https://server10.mp3quran.net/jleel/" },
-        { name: "فارس عباد", img: " فارس عباد.webp", base: "https://server8.mp3quran.net/frs_a/" },
-        { name: "إدريس أبكر", img: " idrees-abkar.jpg", base: "https://server6.mp3quran.net/abkr/" },
-        { name: "ناصر القطامي", img: " القطامي.jpg", base: "https://server6.mp3quran.net/qtm/" },
-        { name: "محمد اللحيدان", img: " اللحيدان.jpg", base: "https://server8.mp3quran.net/lhdan/" },
-        { name: "بدر التركي", img: " بدر التركي.jpg", base: " https://server10.mp3quran.net/bader/Rewayat-Hafs-A-n-Assem/" },
-        { name: "صلاح بو خاطر", img: " صلاح بو خاطر.jpg", base: "https://server8.mp3quran.net/bu_khtr/" },
-        { name: "محمد محمود الطبلاوي", img: " الطبلاوي.webp", base: "https://server12.mp3quran.net/tblawi/" },
-        { name: "هاني الرفاعي", img: " هاني الرفاعي.jpg", base: "https://server8.mp3quran.net/hani/" },
-        { name: "أبو بكر الشاطري", img: "abu-bakr-al-shatri.jpg ", base: "https://server11.mp3quran.net/shatri/" },
-        { name: "علي جابر", img: " علي جابر.jpg", base: "https://server11.mp3quran.net/a_jbr/" },
-        { name: "محمد أيوب", img: " محمد ايوب.jpg", base: "https://server8.mp3quran.net/ayyub/" },
-        { name: "خليفة الطنيجي", img: " khalifa-al-tunaiji.png", base: "https://server12.mp3quran.net/tnjy/" },
-        { name: "الدوكالي العالم", img: " doukali-muhammad-al-alam2.webp", base: "https://server7.mp3quran.net/dokali/" },
-        { name: "علي الحذيفي", img: " الحذيفي.jpg", base: "https://server9.mp3quran.net/hthfi/128-hfs/" },
-        { name: "بندر بليله", img: " بندر بليله.jpg", base: "https://server6.mp3quran.net/balilah/" },
-        { name: " احمد نعينع", img: "احمد نعينع.jpg", base: "https://server11.mp3quran.net/ahmad_nu/" }
+        { id: 1, name: "محمد صديق المنشاوي", img:"minshawi.jpg", base_murattal: "https://server10.mp3quran.net/minsh/", base_mojawwad: "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+        { id: 2, name: "عبدالباسط عبدالصمد", img: "baset.jpg", base_murattal: "https://server7.mp3quran.net/basit/", base_mojawwad: "https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+        { id: 3, name: "محمود خليل الحصري", img: " hosary.jpg", base_murattal: "https://server13.mp3quran.net/husr/", base_mojawwad: "https://server13.mp3quran.net/husr/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+        { id: 4, name: "مصطفى إسماعيل", img: " mostafa.jpg", base_murattal: "https://server8.mp3quran.net/mustafa/", base_mojawwad: "https://server8.mp3quran.net/mustafa/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+        { id: 5, name: "محمود علي البنا", img: " bana.jpg", base_murattal: "https://server8.mp3quran.net/bna/", base_mojawwad: " https://server8.mp3quran.net/bna/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+        { id: 6, name: "ياسر الدوسري", img: " dosri.jpg", base: "https://server11.mp3quran.net/yasser/" },
+        { id: 7, name: "ماهر المعيقلي", img: " Maher_Al_Mueaqly.png", base: "https://server12.mp3quran.net/maher/Almusshaf-Al-Mojawwad/" },
+        { id: 8, name: "مشاري العفاسي", img: " afasy.jpg", base: "https://server8.mp3quran.net/afs/" },
+        { id: 9, name: "إسلام صبحي", img: "islam sobhi.jpg ", base: " https://server14.mp3quran.net/islam/Rewayat-Hafs-A-n-Assem/" },
+        { id: 10, name: "أحمد العجمي", img: " أحمد بن علي العجمي.jpg", base: "https://server10.mp3quran.net/ajm/128/" },
+        { id: 11, name: "سعد الغامدي", img: " الغامدي.jpg", base: "https://server7.mp3quran.net/s_gmd/128/" },
+        { id: 12, name: "سعود الشريم", img: " الشريم.jpg", base: "https://server7.mp3quran.net/shur/128/" },
+        { id: 13, name: "عبدالرحمن السديس", img: " السديس.jpg", base: "https://server11.mp3quran.net/sds/" },
+        { id: 14, name: "خالد الجليل", img: " الجليل.jpg", base: "https://server10.mp3quran.net/jleel/" },
+        { id: 15, name: "فارس عباد", img: " فارس عباد.webp", base: "https://server8.mp3quran.net/frs_a/" },
+        { id: 16, name: "إدريس أبكر", img: " idrees-abkar.jpg", base: "https://server6.mp3quran.net/abkr/" },
+        { id: 17, name: "ناصر القطامي", img: " القطامي.jpg", base: "https://server6.mp3quran.net/qtm/" },
+        { id: 18, name: "محمد اللحيدان", img: " اللحيدان.jpg", base: "https://server8.mp3quran.net/lhdan/" },
+        { id: 19, name: "بدر التركي", img: " بدر التركي.jpg", base: " https://server10.mp3quran.net/bader/Rewayat-Hafs-A-n-Assem/" },
+        { id: 20, name: "صلاح بو خاطر", img: " صلاح بو خاطر.jpg", base: "https://server8.mp3quran.net/bu_khtr/" },
+        { id: 21, name: "محمد محمود الطبلاوي", img: " الطبلاوي.webp", base: "https://server12.mp3quran.net/tblawi/" },
+        { id: 22, name: "هاني الرفاعي", img: " هاني الرفاعي.jpg", base: "https://server8.mp3quran.net/hani/" },
+        { id: 23, name: "أبو بكر الشاطري", img: "abu-bakr-al-shatri.jpg ", base: "https://server11.mp3quran.net/shatri/" },
+        { id: 24, name: "علي جابر", img: " علي جابر.jpg", base: "https://server11.mp3quran.net/a_jbr/" },
+        { id: 25, name: "محمد أيوب", img: " محمد ايوب.jpg", base: "https://server8.mp3quran.net/ayyub/" },
+        { id: 26, name: "خليفة الطنيجي", img: " khalifa-al-tunaiji.png", base: "https://server12.mp3quran.net/tnjy/" },
+        { id: 27, name: "الدوكالي العالم", img: " doukali-muhammad-al-alam2.webp", base: "https://server7.mp3quran.net/dokali/" },
+        { id: 28, name: "علي الحذيفي", img: " الحذيفي.jpg", base: "https://server9.mp3quran.net/hthfi/128-hfs/" },
+        { id: 29, name: "بندر بليله", img: " بندر بليله.jpg", base: "https://server6.mp3quran.net/balilah/" },
+        { id: 30, name: " احمد نعينع", img: "احمد نعينع.jpg", base: "https://server11.mp3quran.net/ahmad_nu/" }
     ];
 
-    const list = document.getElementById("rList");
+    let favorites = JSON.parse(localStorage.getItem('favReaders')) || [];
 
-    readers.forEach((r, idx) => {
+    function renderReaders() {
+        const rList = document.getElementById("rList");
+        const favList = document.getElementById("favList");
+        rList.innerHTML = "";
+        favList.innerHTML = "";
+
+        readers.forEach((r, idx) => {
+            const isFav = favorites.includes(r.id);
+            const card = createCard(r, idx, isFav);
+            
+            rList.appendChild(card);
+            if(isFav) favList.appendChild(createCard(r, idx, isFav, true));
+        });
+
+        document.getElementById('fav-section').style.display = favorites.length > 0 ? 'block' : 'none';
+    }
+
+    function createCard(r, idx, isFav, isFavCopy = false) {
         const card = document.createElement("div");
         card.className = "reader-card";
+        const suffix = isFavCopy ? '-fav' : '';
+        
         const hasModes = r.base_mojawwad ? true : false;
         const modeHTML = hasModes ? `
             <div class="mode-selector">
-                <div class="mode-btn active" id="btn-murt-${idx}" onclick="setMode(${idx}, 'murattal')">مرتل</div>
-                <div class="mode-btn" id="btn-moj-${idx}" onclick="setMode(${idx}, 'mojawwad')">مجود</div>
+                <div class="mode-btn active" id="btn-murt-${idx}${suffix}" onclick="setMode(${idx}, 'murattal', '${suffix}')">مرتل</div>
+                <div class="mode-btn" id="btn-moj-${idx}${suffix}" onclick="setMode(${idx}, 'mojawwad', '${suffix}')">مجود</div>
             </div>
         ` : '';
 
         card.innerHTML = `
-            <div class="reader-header" onclick="toggleCard(${idx})">
+            <div class="reader-header" onclick="toggleCard('${idx}${suffix}')">
                 <img src="${r.img}" class="reader-avatar" onerror="this.src='https://via.placeholder.com/100/1e293b/facc15?text=Q'">
                 <div class="reader-name">${r.name}</div>
+                <button class="fav-btn ${isFav ? 'is-fav' : ''}" onclick="toggleFav(event, ${r.id})">♥</button>
             </div>
             ${modeHTML}
-            <div class="suras-box" id="box-${idx}"></div>
+            <div class="suras-box" id="box-${idx}${suffix}"></div>
         `;
 
-        const box = card.querySelector(`#box-${idx}`);
+        const box = card.querySelector(`#box-${idx}${suffix}`);
         suras.forEach((s, sIdx) => {
             const btn = document.createElement("div");
             btn.className = "sura-item";
@@ -171,31 +204,43 @@
             btn.onclick = (e) => { e.stopPropagation(); play(idx, s, sIdx+1); };
             box.appendChild(btn);
         });
-        list.appendChild(card);
-    });
-
-    function setMode(rIdx, mode) {
-        readers[rIdx].mode = mode;
-        document.getElementById(`btn-murt-${rIdx}`).classList.toggle("active", mode === 'murattal');
-        document.getElementById(`btn-moj-${rIdx}`).classList.toggle("active", mode === 'mojawwad');
+        return card;
     }
 
-    function toggleCard(i) {
-        document.querySelectorAll(".reader-card").forEach((c, idx) => {
-            if(i === idx) c.classList.toggle("open"); else c.classList.remove("open");
+    function toggleFav(e, id) {
+        e.stopPropagation();
+        if(favorites.includes(id)) {
+            favorites = favorites.filter(favId => favId !== id);
+        } else {
+            favorites.push(id);
+        }
+        localStorage.setItem('favReaders', JSON.stringify(favorites));
+        renderReaders();
+    }
+
+    function setMode(rIdx, mode, suffix) {
+        readers[rIdx].mode = mode;
+        const mBtn = document.getElementById(`btn-murt-${rIdx}${suffix}`);
+        const jBtn = document.getElementById(`btn-moj-${rIdx}${suffix}`);
+        if(mBtn) mBtn.classList.toggle("active", mode === 'murattal');
+        if(jBtn) jBtn.classList.toggle("active", mode === 'mojawwad');
+    }
+
+    function toggleCard(id) {
+        document.querySelectorAll(".reader-card").forEach(c => {
+            if(c.querySelector(`[id^="box-${id}"]`)) c.classList.toggle("open");
+            else c.classList.remove("open");
         });
     }
 
-    // تشغيل مباشر وبدون تراكم
     function play(rIdx, sName, sNum) {
         const r = readers[rIdx];
         const audio = document.getElementById("mainAudio");
         let baseUrl = r.base;
         if(r.base_mojawwad) baseUrl = (r.mode === 'mojawwad') ? r.base_mojawwad : r.base_murattal;
-
         audio.pause();
         audio.src = `${baseUrl}${sNum.toString().padStart(3,'0')}.mp3`;
-        audio.load(); // إجبار المتصفح على تحميل الملف الجديد فوراً
+        audio.load();
         document.getElementById("trackName").textContent = `تشغيل: ${sName} - ${r.name}`;
         audio.play();
     }
@@ -203,7 +248,6 @@
     // --- نظام المواقيت والعد التنازلي لمصر ---
     let timings = null;
     const pNames = {Fajr:"الفجر", Dhuhr:"الظهر", Asr:"العصر", Maghrib:"المغرب", Isha:"العشاء"};
-
     async function getCairoTimes() {
         try {
             const res = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5');
@@ -212,43 +256,32 @@
             updateInfo();
         } catch(e) { console.error("API Error"); }
     }
-
     function updateInfo() {
         const now = new Date();
         document.getElementById("m-date").textContent = now.toLocaleDateString('ar-EG', {day:'numeric', month:'short', year:'numeric'});
         document.getElementById("h-date").textContent = now.toLocaleDateString('ar-SA', {calendar:'islamic', day:'numeric', month:'long'});
-        
         if (!timings) return;
-
         const pKeys = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
         let nextP = null;
-
         for (let k of pKeys) {
             const [h, m] = timings[k].split(':');
-            const target = new Date();
-            target.setHours(h, m, 0);
+            const target = new Date(); target.setHours(h, m, 0);
             if (target > now) { nextP = {n: pNames[k], t: target}; break; }
         }
-
-        if (!nextP) { // لو بعد العشاء، يبقى الفجر بكرة
+        if (!nextP) {
             const [h, m] = timings['Fajr'].split(':');
-            const target = new Date();
-            target.setDate(target.getDate() + 1);
-            target.setHours(h, m, 0);
+            const target = new Date(); target.setDate(target.getDate() + 1); target.setHours(h, m, 0);
             nextP = {n: "الفجر", t: target};
         }
-
         document.getElementById("p-name").textContent = nextP.n;
         const diff = nextP.t - now;
-        const hh = Math.floor(diff / 3600000);
-        const mm = Math.floor((diff % 3600000) / 60000);
-        const ss = Math.floor((diff % 60000) / 1000);
-        document.getElementById("p-countdown").textContent = 
-            `${hh.toString().padStart(2,'0')}:${mm.toString().padStart(2,'0')}:${ss.toString().padStart(2,'0')}`;
+        const hh = Math.floor(diff / 3600000), mm = Math.floor((diff % 3600000) / 60000), ss = Math.floor((diff % 60000) / 1000);
+        document.getElementById("p-countdown").textContent = `${hh.toString().padStart(2,'0')}:${mm.toString().padStart(2,'0')}:${ss.toString().padStart(2,'0')}`;
     }
 
     getCairoTimes();
     setInterval(updateInfo, 1000);
+    renderReaders();
 </script>
 </body>
 </html>
