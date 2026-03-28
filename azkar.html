@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>أذكار اليوم</title>
+<title>أذكار اليوم - أزرق</title>
 <style>
     body {
         margin: 0;
         padding: 0;
-        font-family: Arial, sans-serif;
+        font-family: 'Arial', sans-serif;
         height: 100vh;
         display: flex;
         justify-content: center;
@@ -16,17 +16,18 @@
         flex-direction: column;
         overflow: hidden;
         position: relative;
-        background: #006400;
+        /* تغيير الخلفية للأزرق الغامق */
+        background: #0f172a; 
     }
 
-    /* الخلفية المتحركة */
+    /* الخلفية المتحركة بلون أزرق سماوي خفيف */
     .background-animation {
         position: absolute;
         top: -50%;
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle, rgba(0,255,0,0.1) 2%, transparent 2%) repeat;
+        background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 2%, transparent 2%) repeat;
         background-size: 50px 50px;
         animation: moveBackground 30s linear infinite;
         z-index: 0;
@@ -37,10 +38,10 @@
         100% { transform: translate(50px,50px); }
     }
 
-    /* تصميم الأزرار */
+    /* تصميم الأزرار باللون الأزرق */
     .tab {
         position: relative;
-        background-color: #008000; /* أخضر */
+        background-color: #1e293b; /* أزرق مائل للرمادي وقور */
         color: white;
         padding: 25px 50px;
         margin: 15px;
@@ -51,21 +52,23 @@
         width: 80%;
         max-width: 400px;
         cursor: pointer;
-        box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.4);
         transition: 0.3s;
         z-index: 1;
+        border: 1px solid rgba(56, 189, 248, 0.2); /* إطار أزرق خفيف */
     }
 
     .tab:hover {
-        background-color: #00b300;
+        background-color: #334155; /* تفتيح اللون عند الوقوف عليه */
         transform: translateY(-3px);
-        box-shadow: 0 12px 20px rgba(0,0,0,0.4);
+        box-shadow: 0 12px 20px rgba(0,0,0,0.5);
+        border-color: #38bdf8; /* توهج أزرق */
     }
 
     .tab span {
         display: block;
         font-size: 14px;
-        color: #e0ffe0;
+        color: #94a3b8; /* لون نص فرعي هادئ */
         margin-top: 5px;
         font-weight: normal;
     }
