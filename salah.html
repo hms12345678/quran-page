@@ -1,216 +1,122 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>اذكار بعد الصلاه</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>أذكار بعد الصلاة - التصميم الملكي</title>
 <style>
+  :root {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --accent: #38bdf8;
+    --gold: #facc15;
+  }
+
   body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background: linear-gradient(to bottom, #004d00, #00b300);
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    margin: 0; padding: 0;
+    background: var(--bg-color);
     color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: right;
-    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; min-height: 100vh;
+    padding-bottom: 40px;
   }
+
   h1 {
-    margin: 20px;
-    font-size: 28px;
-    text-shadow: 1px 1px 3px black;
+    margin: 25px 0; font-size: 24px;
+    color: var(--accent);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
   }
+
+  .zikr-container { width: 100%; display: flex; flex-direction: column; align-items: center; }
+
   .zikr {
-    background-color: rgba(0, 128, 0, 0.85);
-    padding: 15px;
-    margin: 10px;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 600px;
-    font-size: 18px;
-    line-height: 1.6;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    cursor: pointer;
-    transition: transform 0.2s;
+    background-color: var(--card-bg);
+    padding: 20px; margin: 10px;
+    border-radius: 18px; width: 88%;
+    max-width: 500px; font-size: 1.1rem;
+    line-height: 1.8; box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    cursor: pointer; transition: all 0.3s ease;
+    border: 1px solid rgba(56, 189, 248, 0.1);
+    position: relative; -webkit-tap-highlight-color: transparent;
   }
-  .zikr:hover {
-    transform: scale(1.02);
+
+  .zikr:active { transform: scale(0.98); background-color: #334155; }
+  
+  .done {
+    opacity: 0.3;
+    transform: scale(0.95);
+    background-color: #111827;
+    pointer-events: none;
+    filter: grayscale(1);
   }
-  .count {
-    margin-top: 8px;
-    font-weight: bold;
-    color: #ffd700;
+
+  .footer-row {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-top: 15px;
+    border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;
+  }
+
+  .count-badge {
+    background: var(--accent); color: #0f172a;
+    width: 35px; height: 35px; line-height: 35px;
+    text-align: center; border-radius: 50%;
+    font-weight: bold; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+  }
+
+  .count-label { color: var(--gold); font-size: 0.9rem; }
+
+  .back-btn {
+    position: fixed; top: 15px; right: 15px;
+    background: rgba(255,255,255,0.1); color: white;
+    padding: 8px 15px; border-radius: 10px;
+    text-decoration: none; font-size: 14px; z-index: 100;
+    backdrop-filter: blur(5px);
   }
 </style>
 </head>
 <body>
 
-<h1>اذكر بعد الصلاه📿</h1>
+<a href="azkar.html" class="back-btn">رجوع ↩</a>
+<h1>أذكار بعد الصلاة 📿</h1>
 
-
-<div class="zikr" data-count="1">
-    أَسْـتَغْفِرُ الله، أَسْـتَغْفِرُ الله، أَسْـتَغْفِرُ الله.
-    اللّهُـمَّ أَنْـتَ السَّلامُ ، وَمِـنْكَ السَّلام ، تَبارَكْتَ يا ذا الجَـلالِ وَالإِكْـرام . 
-    <div class="count">1</div>
-    </div>
-
-    
-    <div class="zikr" data-count="1">
-        لا إلهَ إلاّ اللّهُ وحدَهُ لا شريكَ لهُ، لهُ المُـلْكُ ولهُ الحَمْد، وهوَ على كلّ شَيءٍ قَدير، اللّهُـمَّ لا مانِعَ لِما أَعْطَـيْت، وَلا مُعْطِـيَ لِما مَنَـعْت، وَلا يَنْفَـعُ ذا الجَـدِّ مِنْـكَ الجَـد. 
-        <div class="count">1</div>
-        </div>
-    
-        
-        <div class="zikr" data-count="1">
-            لا إلهَ إلاّ اللّه, وحدَهُ لا شريكَ لهُ، لهُ الملكُ ولهُ الحَمد، وهوَ على كلّ شيءٍ قدير، لا حَـوْلَ وَلا قـوَّةَ إِلاّ بِاللهِ، لا إلهَ إلاّ اللّـه، وَلا نَعْـبُـدُ إِلاّ إيّـاه, لَهُ النِّعْـمَةُ وَلَهُ الفَضْل وَلَهُ الثَّـناءُ الحَـسَن، لا إلهَ إلاّ اللّهُ مخْلِصـينَ لَـهُ الدِّينَ وَلَوْ كَـرِهَ الكـافِرون. 
-            <div class="count">1</div>
-            </div>
-        
-            
-            <div class="zikr" data-count="33">
-                سُـبْحانَ اللهِ، والحَمْـدُ لله ، واللهُ أكْـبَر. 
-                <div class="count">33</div>
-                </div>
-            
-                
-                <div class="zikr" data-count="1">
-                    لا إلهَ إلاّ اللّهُ وَحْـدَهُ لا شريكَ لهُ، لهُ الملكُ ولهُ الحَمْد، وهُوَ على كُلّ شَيءٍ قَـدير. 
-                    <div class="count">1</div>
-                    </div>
-                
-                    
-                    <div class="zikr" data-count="3">
-                        بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم
-                        قُلْ هُوَ ٱللَّهُ أَحَدٌ، ٱللَّهُ ٱلصَّمَدُ، لَمْ يَلِدْ وَلَمْ يُولَدْ، وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ.
-                        بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم
-                        قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ، مِن شَرِّ مَا خَلَقَ، وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ، وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِى ٱلْعُقَدِ، وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ.
-                        بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم
-                        
-                    قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ، مَلِكِ ٱلنَّاسِ، إِلَٰهِ ٱلنَّاسِ، مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ، ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ، مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ.
-                      
-
-            .
-                    ثلاث مرات بعد صلاتي الفجر والمغرب. ومرة بعد الصلوات الأخرى.
-                
-                    
-                        <div class="count">3</div>
-                        </div>
-                    
-                        
-                        <div class="zikr" data-count="1">
-                            أَعُوذُ بِاللهِ مِنْ الشَّيْطَانِ الرَّجِيمِ
-                            اللّهُ لاَ إِلَـهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ لاَ تَأْخُذُهُ سِنَةٌ وَلاَ نَوْمٌ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الأَرْضِ مَن ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلاَّ بِإِذْنِهِ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ وَلاَ يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلاَّ بِمَا شَاء وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالأَرْضَ وَلاَ يَؤُودُهُ حِفْظُهُمَا وَهُوَ الْعَلِيُّ الْعَظِيمُ. [آية الكرسى - البقرة 255] 
-                            <div class="count">1</div>
-                            </div>
-                        
-                            
-                            <div class="zikr" data-count="10">
-                                لا إلهَ إلاّ اللّهُ وحْـدَهُ لا شريكَ لهُ، لهُ المُلكُ ولهُ الحَمْد، يُحيـي وَيُمـيتُ وهُوَ على كُلّ شيءٍ قدير. 
-                                <div class="count">10</div>
-                                </div>
-                            
-                                
-                                <div class="zikr" data-count="1">
-                                    اللّهُـمَّ إِنِّـي أَسْأَلُـكَ عِلْمـاً نافِعـاً وَرِزْقـاً طَيِّـباً ، وَعَمَـلاً مُتَقَـبَّلاً. 
-                                    <div class="count">1</div>
-                                    </div>
-                                
-                                    
-                                    <div class="zikr" data-count="7">
-                                        اللَّهُمَّ أَجِرْنِي مِنْ النَّار. 
-
-                                        <div class="count">7</div>
-                                        </div>
-                                    
-                                        
-                                        <div class="zikr" data-count="1">
-                                            اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ. 
-                                            <div class="count">1</div>
-                                            </div>
-                                        
-                                            
-                                                                                                                                                                                                                            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<div class="zikr-container" id="afterSalahList"></div>
 
 <script>
-    // كل مرة المستخدم يضغط على ذكر
-    const zikrs = document.querySelectorAll('.zikr');
-    zikrs.forEach(z => {
-      z.addEventListener('click', () => {
-        let count = parseInt(z.getAttribute('data-count'));
-        if(count > 0){
-          count--;
-          z.setAttribute('data-count', count);
-          z.querySelector('.count').innerText = count;
-        }
-    
-        // تشغيل الصوت عند كل ضغطة
-        const clickSound = new Audio('click.mp3'); // حط ملف click.mp3 في نفس مجلد الصفحة
-        clickSound.play().catch(e => console.log('Error playing sound:', e));
-      });
-    });
-</script>
+const afterSalahAzkar = [
+  { text: "أَسْـتَغْفِرُ الله (3 مرات).<br>اللّهُـمَّ أَنْـتَ السَّلامُ ، وَمِـنْكَ السَّلام ، تَبارَكْتَ يا ذا الجَـلالِ وَالإِكْـرام.", count: 1 },
+  { text: "لا إلهَ إلاّ اللّهُ وحدَهُ لا شريكَ لهُ، لهُ المُـلْكُ ولهُ الحَمْد، وهوَ على كلّ شَيءٍ قَدير، اللّهُـمَّ لا مانِعَ لِما أَعْطَـيْت، وَلا مُعْطِـيَ لِما مَنَـعْت، وَلا يَنْفَـعُ ذا الجَـدِّ مِنْـكَ الجَـد.", count: 1 },
+  { text: "لا إلهَ إلاّ اللّه, وحدَهُ لا شريكَ لهُ، لهُ الملكُ ولهُ الحَمد، وهوَ على كلّ شيءٍ قدير، لا حَـوْلَ وَلا قـوَّةَ إِلاّ بِاللهِ، لا إلهَ إلاّ اللّـه، وَلا نَعْـبُـدُ إِلاّ إيّـاه.", count: 1 },
+  { text: "سُـبْحانَ اللهِ (33).<br>الحَمْـدُ لله (33).<br>اللهُ أكْـبَر (33).", count: 1 },
+  { text: "لا إلهَ إلاّ اللّهُ وَحْـدَهُ لا شريكَ لهُ، لهُ الملكُ ولهُ الحَمْد، وهُوَ على كُلّ شَيءٍ قَـدير.", count: 1 },
+  { text: "بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم: { قُلْ هُوَ ٱللَّهُ أَحَدٌ }.. { قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ }.. { قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ }.<br><small>(تقرأ مرة بعد كل صلاة، و3 مرات بعد الفجر والمغرب)</small>", count: 1 },
+  { text: "آية الكرسى: أَعُوذُ بِاللهِ مِنْ الشَّيْطَانِ الرَّجِيمِ: اللّهُ لاَ إِلَـهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ...", count: 1 },
+  { text: "لا إلهَ إلاّ اللّهُ وحْـدَهُ لا شريكَ لهُ، لهُ المُلكُ ولهُ الحَمْد، يُحيـي وَيُمـيتُ وهُوَ على كُلّ شيءٍ قدير.<br><small>(10 مرات بعد المغرب والفجر)</small>", count: 10 },
+  { text: "اللّهُـمَّ إِنِّـي أَسْأَلُـكَ عِلْمـاً نافِعـاً وَرِزْقـاً طَيِّـباً ، وَعَمَـلاً مُتَقَـبَّلاً.<br><small>(بعد صلاة الصبح)</small>", count: 1 },
+  { text: "اللَّهُمَّ أَجِرْنِي مِنْ النَّار.<br><small>(7 مرات بعد الصبح والمغرب)</small>", count: 7 },
+  { text: "اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ.", count: 1 }
+];
 
+const container = document.getElementById('afterSalahList');
 
+afterSalahAzkar.forEach(item => {
+  const card = document.createElement('div');
+  card.className = 'zikr';
+  card.innerHTML = `${item.text}<div class="footer-row"><span class="count-label">التكرار</span><div class="count-badge">${item.count}</div></div>`;
 
-
-
-
-
-
-<script>
-const zikrs = document.querySelectorAll('.zikr');
-zikrs.forEach(z => {
-  z.addEventListener('click', () => {
-    let count = parseInt(z.getAttribute('data-count'));
-    if(count > 0){
-      count--;
-      z.setAttribute('data-count', count);
-      z.querySelector('.count').innerText = count;
+  card.onclick = function() {
+    const badge = this.querySelector('.count-badge');
+    let current = parseInt(badge.innerText);
+    if (current > 0) {
+      current--;
+      badge.innerText = current;
+      if (navigator.vibrate) navigator.vibrate(40);
+      new Audio('click.mp3').play().catch(()=>{});
+      if (current === 0) this.classList.add('done');
     }
-  });
+  };
+  container.appendChild(card);
 });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </body>
 </html>
