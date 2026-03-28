@@ -1,92 +1,197 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>الصفحة الإسلامية</title>
+
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    height: 100vh;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0f3460 100%);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    direction: rtl;
+    overflow-x: hidden;
+    position: relative;
+    touch-action: manipulation;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.2) 0%, transparent 50%);
+    animation: float 25s ease-in-out infinite;
+    z-index: 1;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+}
+
+/* العنوان الرئيسي */
+.title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #ffd700;
+    margin-bottom: 35px;
+    text-align: center;
+    text-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
+    z-index: 3;
+    position: relative;
+}
+
+/* الأزرار */
+.tab {
+    position: relative;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    padding: 22px 30px;
+    margin: 15px 0;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    width: 100%;
+    max-width: 380px;
+    cursor: pointer;
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 3;
+    overflow: hidden;
+    text-decoration: none;
+    display: block;
+}
+
+.tab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.tab:hover::before {
+    left: 100%;
+}
+
+.tab:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.tab:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+.tab-icon {
+    display: block;
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+}
+
+.tab span {
+    display: block;
+    font-size: 0.95rem;
+    color: #e8f4fd;
+    font-weight: 500;
+    margin-top: 4px;
+    opacity: 0.9;
+}
+
+/* Mobile First */
+@media (max-width: 480px) {
     body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        overflow: hidden;
-        background: #006400;
-        position: relative;
+        padding: 15px;
     }
-
-    /* الطبقة المتحركة */
-    .background-animation {
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(0,255,0,0.1) 2%, transparent 2%) repeat;
-        background-size: 50px 50px;
-        animation: moveBackground 30s linear infinite;
-        z-index: 0;
+    
+    .title {
+        font-size: 1.4rem;
+        margin-bottom: 25px;
     }
-
-    @keyframes moveBackground {
-        0% { transform: translate(0,0); }
-        100% { transform: translate(50px,50px); }
-    }
-
-    /* الأزرار فوق الخلفية */
+    
     .tab {
-        position: relative;
-        background-color: #008000; /* أخضر */
-        color: white;
-        padding: 25px 50px;
-        margin: 15px;
-        border-radius: 15px;
-        font-size: 22px;
-        font-weight: bold;
-        text-align: center;
-        width: 80%;
-        max-width: 400px;
-        cursor: pointer;
-        box-shadow: 0 8px 15px rgba(0,0,0,0.3);
-        transition: 0.3s;
-        z-index: 1;
+        padding: 20px 25px;
+        margin: 12px 0;
+        font-size: 1.1rem;
+        max-width: 340px;
     }
-
-    .tab:hover {
-        background-color: #00b300;
-        transform: translateY(-3px);
-        box-shadow: 0 12px 20px rgba(0,0,0,0.4);
+    
+    .tab-icon {
+        font-size: 1.6rem;
     }
-
+    
     .tab span {
-        display: block;
-        font-size: 14px;
-        color: #e0ffe0;
-        margin-top: 5px;
-        font-weight: normal;
+        font-size: 0.9rem;
     }
+}
 
+/* شاشات أكبر */
+@media (min-width: 768px) {
+    .tab {
+        max-width: 420px;
+        padding: 25px 35px;
+        font-size: 1.25rem;
+    }
+    
+    .title {
+        font-size: 1.8rem;
+    }
+}
+
+/* Safe area للـ iPhone */
+@supports(padding: max(0px)) {
+    body {
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-top: env(safe-area-inset-top);
+    }
+}
 </style>
 </head>
 <body>
+<div class="title">✨ الصفحة الإسلامية ✨</div>
 
-<div class="background-animation"></div>
-
-<div class="tab" onclick="window.location.href='index1.html'">
-    🕋 لسماع القرآن الكريم
+<a href="index1.html" class="tab">
+    <span class="tab-icon">🕋</span>
+    لسماع القرآن الكريم
     <span>اضغط للانتقال للصفحة</span>
-</div>
+</a>
 
-<div class="tab" onclick="window.location.href='azkar.html'">
-    📿 الأذكار
+<a href="azkar.html" class="tab">
+    <span class="tab-icon">📿</span>
+    الأذكار
     <span>اضغط للانتقال للصفحة</span>
-</div>
-
-
+</a>
 </body>
 </html>
-
