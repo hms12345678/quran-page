@@ -24,6 +24,7 @@
             padding-bottom: 120px;
         }
 
+        /* شريط المعلومات العلوي */
         #top-info-bar {
             position: fixed; top: 0; left: 0; width: 100%;
             background: rgba(15, 23, 42, 0.95);
@@ -37,6 +38,7 @@
         .container { padding: 15px; max-width: 500px; margin: 0 auto; }
         .section-title { font-size: 14px; color: var(--accent); margin: 20px 0 10px; font-weight: bold; }
 
+        /* كروت القراء */
         .reader-card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; margin-bottom: 12px; overflow: hidden; transition: 0.3s; }
         .reader-card.open { border-color: var(--accent); }
         .reader-header { display: flex; align-items: center; padding: 12px; cursor: pointer; gap: 12px; }
@@ -55,6 +57,7 @@
         .open .suras-box { max-height: 380px; overflow-y: auto; padding: 15px; }
         .sura-item { background: rgba(255,255,255,0.05); padding: 8px 2px; border-radius: 8px; font-size: 11px; text-align: center; cursor: pointer; }
 
+        /* المشغل الحديث */
         .modern-player {
             position: fixed; bottom: 15px; left: 10px; right: 10px;
             background: #1e293b; border-radius: 12px; z-index: 3000;
@@ -80,6 +83,27 @@
         .main-controls { display: flex; justify-content: center; align-items: center; gap: 30px; }
         .play-pause-btn { width: 60px; height: 60px; background: var(--accent); color: black; border-radius: 50%; font-size: 24px; border: none; cursor: pointer; }
 
+        /* زر الإبلاغ */
+        .report-fab {
+            position: fixed; left: 20px; bottom: 140px; 
+            background: var(--heart-red); width: 45px; height: 45px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; z-index: 4000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+            border: 2px solid rgba(255,255,255,0.2); transition: 0.3s;
+        }
+        .report-fab:active { transform: scale(0.9); }
+
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(15, 23, 42, 0.9); z-index: 5000; align-items: center; 
+            justify-content: center; backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: var(--card-bg); padding: 25px; border-radius: 20px; 
+            width: 85%; max-width: 350px; border: 1px solid var(--accent); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
         .eng-footer { margin-top: auto; padding-bottom: 20px; font-weight: bold; color: var(--accent); font-size: 11px; letter-spacing: 2px; }
     </style>
 </head>
@@ -99,6 +123,25 @@
 <div class="container">
     <div id="fav-section" style="display: none;"><div class="section-title">⭐ المفضلون</div><div id="favList"></div></div>
     <div class="section-title">📖 كل القراء</div><div id="rList"></div>
+</div>
+
+<div class="report-fab" onclick="openReportModal()" title="إبلاغ عن مشكلة">
+    <span style="font-size: 20px;">⚠️</span>
+</div>
+
+<div class="modal-overlay" id="reportModal">
+    <div class="modal-content">
+        <h3 style="color:var(--accent); margin: 0 0 10px 0; text-align: center;">إبلاغ عن مشكلة</h3>
+        <p style="font-size: 12px; opacity: 0.8; text-align: center; margin-bottom: 20px;">يرجى كتابة الشكوى وسيتم تحويلك لواتساب المهندس حسن مباشرة.</p>
+        
+        <textarea id="issueText" placeholder="اشرح المشكلة هنا..." rows="5" 
+            style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.2); color:#fff; font-family:'Cairo'; font-size:14px; resize:none; box-sizing:border-box; outline:none;"></textarea>
+            
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button onclick="sendToWhatsApp()" style="flex:2; background:var(--accent); color:#000; border:none; padding:12px; border-radius:10px; font-weight:bold; cursor:pointer; font-family:'Cairo';">إرسال واتساب</button>
+            <button onclick="closeReportModal()" style="flex:1; background:#334155; color:#fff; border:none; padding:12px; border-radius:10px; cursor:pointer; font-family:'Cairo';">إلغاء</button>
+        </div>
+    </div>
 </div>
 
 <div class="modern-player" id="playerWrap">
@@ -141,7 +184,7 @@
     const suras = ["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الانسان","المرسلات","النبأ","النازعات","عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
     
     const readers = [
-        { id: 1, name: "محمد صديق المنشاوي", img:"minshawi.jpg", base_murattal: "https://server10.mp3quran.net/minsh/", base_mojawwad: "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+    { id: 1, name: "محمد صديق المنشاوي", img:"minshawi.jpg", base_murattal: "https://server10.mp3quran.net/minsh/", base_mojawwad: "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/", mode: "murattal" },
         { id: 2, name: "عبدالباسط عبدالصمد", img: "baset.jpg", base_murattal: "https://server7.mp3quran.net/basit/", base_mojawwad: "https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/", mode: "murattal" },
         { id: 3, name: "محمود خليل الحصري", img: " hosary.jpg", base_murattal: "https://server13.mp3quran.net/husr/", base_mojawwad: "https://server13.mp3quran.net/husr/Almusshaf-Al-Mojawwad/", mode: "murattal" },
         { id: 4, name: "مصطفى إسماعيل", img: " mostafa.jpg", base_murattal: "https://server8.mp3quran.net/mustafa/", base_mojawwad: "https://server8.mp3quran.net/mustafa/Almusshaf-Al-Mojawwad/", mode: "murattal" },
@@ -173,16 +216,27 @@
         { id: 30, name: " احمد نعينع", img: "احمد نعينع.jpg", base: "https://server11.mp3quran.net/ahmad_nu/" },
         { id: 31, name: " عبدالبديع غيلان", img: "عبدالبديع غيلان.jpg", base: "https://server16.mp3quran.net/A-Ghailan/Rewayat-Hafs-A-n-Assem/" },
     ];
-
     let favorites = JSON.parse(localStorage.getItem('favReaders')) || [];
     const audio = document.getElementById("mainAudio");
     const playerWrap = document.getElementById("playerWrap");
+
+    // وظائف الإبلاغ والواتساب
+    function openReportModal() { document.getElementById('reportModal').style.display = 'flex'; }
+    function closeReportModal() { document.getElementById('reportModal').style.display = 'none'; document.getElementById('issueText').value = ''; }
+    
+    function sendToWhatsApp() {
+        const issue = document.getElementById('issueText').value.trim();
+        if(!issue) { alert("اكتب المشكلة يا هندسة"); return; }
+        const phoneNumber = "201067367119";
+        const message = encodeURIComponent("السلام عليكم بشمهندس حسن، واجهت مشكلة في موقع القرآن:\n\n" + issue);
+        window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+        closeReportModal();
+    }
 
     function renderReaders() {
         const rList = document.getElementById("rList");
         const favList = document.getElementById("favList");
         rList.innerHTML = ""; favList.innerHTML = "";
-        
         readers.forEach((r) => {
             const isFav = favorites.includes(r.id);
             rList.appendChild(createCard(r, isFav));
@@ -195,8 +249,8 @@
         const card = document.createElement("div");
         card.className = "reader-card";
         const uniqueId = isFavCopy ? `fav-${r.id}` : `all-${r.id}`;
-
         const hasModes = r.base_mojawwad ? true : false;
+        
         const modeHTML = hasModes ? `
             <div class="mode-selector">
                 <div class="mode-btn active" id="murt-${uniqueId}" onclick="setModeByReaderId(${r.id}, 'murattal', '${uniqueId}')">مرتل</div>
@@ -227,11 +281,7 @@
     function toggleFav(event, readerId) {
         event.stopPropagation();
         const index = favorites.indexOf(readerId);
-        if (index > -1) {
-            favorites.splice(index, 1);
-        } else {
-            favorites.push(readerId);
-        }
+        index > -1 ? favorites.splice(index, 1) : favorites.push(readerId);
         localStorage.setItem('favReaders', JSON.stringify(favorites));
         renderReaders(); 
     }
@@ -254,25 +304,21 @@
     function playByReaderId(readerId, sName, sNum) {
         const r = readers.find(item => item.id === readerId);
         if(!r) return;
-        
         let base = r.base || (r.mode === 'mojawwad' ? r.base_mojawwad : r.base_murattal);
         audio.src = `${base}${sNum.toString().padStart(3,'0')}.mp3`;
-        
         document.getElementById("m-track").textContent = sName;
         document.getElementById("e-track").textContent = sName;
         document.getElementById("m-reader").textContent = r.name + (r.mode === 'mojawwad' ? " (مجود)" : "");
         document.getElementById("e-reader").textContent = r.name;
         document.getElementById("m-img").src = r.img;
         document.getElementById("e-img").src = r.img;
-
         playerWrap.style.display = "flex";
         audio.play();
         updatePlayIcons(true);
     }
 
     function togglePlay() {
-        if(audio.paused) { audio.play(); updatePlayIcons(true); }
-        else { audio.pause(); updatePlayIcons(false); }
+        audio.paused ? (audio.play(), updatePlayIcons(true)) : (audio.pause(), updatePlayIcons(false));
     }
 
     function updatePlayIcons(isPlaying) {
@@ -303,12 +349,9 @@
     let timings = null;
     async function getPrayers() {
         try {
-            const response = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5');
-            if(!response.ok) throw new Error();
-            const d = await response.json(); timings = d.data.timings;
-        } catch(e) {
-            console.log("Prayer timings load failed, but page will continue.");
-        }
+            const res = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5');
+            const d = await res.json(); timings = d.data.timings;
+        } catch(e) {}
     }
     function updateCountdown() {
         const now = new Date();
@@ -325,7 +368,7 @@
         }
         if(!nextP) {
             const [h, m] = timings["Fajr"].split(':');
-            const pDate = new Date(); pDate.setDate(pDate.getDate()+1); pDate.setHours(h, m, 0);
+            const pDate = new Date(now.getTime() + 86400000); pDate.setHours(h, m, 0);
             nextP = { n: "الفجر", t: pDate };
         }
         document.getElementById("p-name").textContent = nextP.n;
