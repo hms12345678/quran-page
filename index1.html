@@ -43,7 +43,6 @@
         .reader-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
         .reader-name { font-weight: 700; flex-grow: 1; font-size: 15px; }
 
-        /* تعديل زر المفضلة */
         .fav-btn { transition: 0.3s; }
         .fav-btn.is-fav { color: var(--heart-red) !important; transform: scale(1.2); }
 
@@ -146,7 +145,7 @@
         { id: 2, name: "عبدالباسط عبدالصمد", img: "baset.jpg", base_murattal: "https://server7.mp3quran.net/basit/", base_mojawwad: "https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/", mode: "murattal" },
         { id: 3, name: "محمود خليل الحصري", img: " hosary.jpg", base_murattal: "https://server13.mp3quran.net/husr/", base_mojawwad: "https://server13.mp3quran.net/husr/Almusshaf-Al-Mojawwad/", mode: "murattal" },
         { id: 4, name: "مصطفى إسماعيل", img: " mostafa.jpg", base_murattal: "https://server8.mp3quran.net/mustafa/", base_mojawwad: "https://server8.mp3quran.net/mustafa/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-        { id: 5, name: "محمود علي البنا", img: " bana.jpg", base_murattal: "https://server8.mp3quran.net/bna/", base_mojawwad: " https://server8.mp3quran.net/bna/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+        { id: 5, name: "محمود علي البنا", img: " bna.jpg", base_murattal: "https://server8.mp3quran.net/bna/", base_mojawwad: " https://server8.mp3quran.net/bna/Almusshaf-Al-Mojawwad/", mode: "murattal" },
         { id: 6, name: "ياسر الدوسري", img: " dosri.jpg", base: "https://server11.mp3quran.net/yasser/" },
         { id: 7, name: "ماهر المعيقلي", img: " Maher_Al_Mueaqly.png", base: "https://server12.mp3quran.net/maher/Almusshaf-Al-Mojawwad/" },
         { id: 8, name: "مشاري العفاسي", img: " afasy.jpg", base: "https://server8.mp3quran.net/afs/" },
@@ -171,7 +170,8 @@
         { id: 27, name: "الدوكالي العالم", img: " doukali-muhammad-al-alam2.webp", base: "https://server7.mp3quran.net/dokali/" },
         { id: 28, name: "علي الحذيفي", img: " الحذيفي.jpg", base: "https://server9.mp3quran.net/hthfi/128-hfs/" },
         { id: 29, name: "بندر بليله", img: " بندر بليله.jpg", base: "https://server6.mp3quran.net/balilah/" },
-        { id: 30, name: " احمد نعينع", img: "احمد نعينع.jpg", base: "https://server11.mp3quran.net/ahmad_nu/" }
+        { id: 30, name: " احمد نعينع", img: "احمد نعينع.jpg", base: "https://server11.mp3quran.net/ahmad_nu/" },
+        { id: 31, name: " عبدالبديع غيلان", img: "عبدالبديع غيلان.jpg", base: "https://server16.mp3quran.net/A-Ghailan/Rewayat-Hafs-A-n-Assem/" },
     ];
 
     let favorites = JSON.parse(localStorage.getItem('favReaders')) || [];
@@ -182,48 +182,48 @@
         const rList = document.getElementById("rList");
         const favList = document.getElementById("favList");
         rList.innerHTML = ""; favList.innerHTML = "";
-        readers.forEach((r, idx) => {
+        
+        readers.forEach((r) => {
             const isFav = favorites.includes(r.id);
-            rList.appendChild(createCard(r, idx, isFav));
-            if(isFav) favList.appendChild(createCard(r, idx, isFav, true));
+            rList.appendChild(createCard(r, isFav));
+            if(isFav) favList.appendChild(createCard(r, isFav, true));
         });
         document.getElementById('fav-section').style.display = favorites.length > 0 ? 'block' : 'none';
     }
 
-    function createCard(r, idx, isFav, isFavCopy = false) {
+    function createCard(r, isFav, isFavCopy = false) {
         const card = document.createElement("div");
         card.className = "reader-card";
-        const suffix = isFavCopy ? '-fav' : '';
-        const id = idx + suffix;
+        const uniqueId = isFavCopy ? `fav-${r.id}` : `all-${r.id}`;
 
         const hasModes = r.base_mojawwad ? true : false;
         const modeHTML = hasModes ? `
             <div class="mode-selector">
-                <div class="mode-btn active" id="murt-${id}" onclick="setMode(${idx}, 'murattal', '${suffix}')">مرتل</div>
-                <div class="mode-btn" id="moj-${id}" onclick="setMode(${idx}, 'mojawwad', '${suffix}')">مجود</div>
+                <div class="mode-btn active" id="murt-${uniqueId}" onclick="setModeByReaderId(${r.id}, 'murattal', '${uniqueId}')">مرتل</div>
+                <div class="mode-btn" id="moj-${uniqueId}" onclick="setModeByReaderId(${r.id}, 'mojawwad', '${uniqueId}')">مجود</div>
             </div>
         ` : '';
 
         card.innerHTML = `
-            <div class="reader-header" onclick="toggleCard('${id}')">
-                <img src="${r.img}" class="reader-avatar" onerror="this.src='https://via.placeholder.com/50'">
+            <div class="reader-header" onclick="toggleCard('${uniqueId}')">
+                <img src="${r.img}" class="reader-avatar" onerror="this.style.display='none'; this.parentElement.style.paddingRight='62px';">
                 <div class="reader-name">${r.name}</div>
                 <button class="fav-btn ${isFav ? 'is-fav' : ''}" onclick="toggleFav(event, ${r.id})" style="background:none; border:none; color:rgba(255,255,255,0.2); font-size:20px; cursor:pointer;">♥</button>
             </div>
             ${modeHTML}
-            <div class="suras-box" id="box-${id}"></div>
+            <div class="suras-box" id="box-${uniqueId}"></div>
         `;
-        const box = card.querySelector(`#box-${id}`);
+        
+        const box = card.querySelector(`#box-${uniqueId}`);
         suras.forEach((s, sIdx) => {
             const btn = document.createElement("div");
             btn.className = "sura-item"; btn.textContent = s;
-            btn.onclick = (e) => { e.stopPropagation(); play(idx, s, sIdx+1); };
+            btn.onclick = (e) => { e.stopPropagation(); playByReaderId(r.id, s, sIdx+1); };
             box.appendChild(btn);
         });
         return card;
     }
 
-    // --- إضافة دالة التبديل في المفضلة ---
     function toggleFav(event, readerId) {
         event.stopPropagation();
         const index = favorites.indexOf(readerId);
@@ -233,25 +233,28 @@
             favorites.push(readerId);
         }
         localStorage.setItem('favReaders', JSON.stringify(favorites));
-        renderReaders(); // إعادة الرسم لتحديث القائمة
+        renderReaders(); 
     }
 
-    function setMode(rIdx, mode, suffix) {
-        readers[rIdx].mode = mode;
-        const id = rIdx + suffix;
-        document.getElementById(`murt-${id}`).classList.toggle("active", mode === 'murattal');
-        document.getElementById(`moj-${id}`).classList.toggle("active", mode === 'mojawwad');
+    function setModeByReaderId(readerId, mode, uniqueId) {
+        const r = readers.find(item => item.id === readerId);
+        if(r) r.mode = mode;
+        document.getElementById(`murt-${uniqueId}`).classList.toggle("active", mode === 'murattal');
+        document.getElementById(`moj-${uniqueId}`).classList.toggle("active", mode === 'mojawwad');
     }
 
     function toggleCard(id) {
-        const card = document.getElementById(`box-${id}`).parentElement;
+        const box = document.getElementById(`box-${id}`);
+        const card = box.parentElement;
         const isOpen = card.classList.contains('open');
         document.querySelectorAll('.reader-card').forEach(c => c.classList.remove('open'));
         if(!isOpen) card.classList.add('open');
     }
 
-    function play(rIdx, sName, sNum) {
-        const r = readers[rIdx];
+    function playByReaderId(readerId, sName, sNum) {
+        const r = readers.find(item => item.id === readerId);
+        if(!r) return;
+        
         let base = r.base || (r.mode === 'mojawwad' ? r.base_mojawwad : r.base_murattal);
         audio.src = `${base}${sNum.toString().padStart(3,'0')}.mp3`;
         
@@ -297,13 +300,15 @@
         return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
     }
 
-    // مواقيت الصلاة
     let timings = null;
     async function getPrayers() {
         try {
-            const r = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5');
-            const d = await r.json(); timings = d.data.timings;
-        } catch(e) {}
+            const response = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5');
+            if(!response.ok) throw new Error();
+            const d = await response.json(); timings = d.data.timings;
+        } catch(e) {
+            console.log("Prayer timings load failed, but page will continue.");
+        }
     }
     function updateCountdown() {
         const now = new Date();
