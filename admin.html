@@ -6,85 +6,27 @@
     <title>لوحة إدارة المحتوى | Eng/ Hassan Sobeh</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #facc15;
-            --bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.8);
-            --text: #f8fafc;
-            --danger: #ef4444;
-        }
-
-        body {
-            font-family: 'Cairo', sans-serif;
-            background: radial-gradient(circle at top, #1e293b, #0f172a);
-            background-attachment: fixed;
-            color: var(--text);
-            margin: 0;
-            padding: 10px; /* تقليل البادينج للموبايل */
-            min-height: 100vh;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* شاشة الدخول */
-        #auth-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center;
-        }
-        .login-box {
-            background: var(--card-bg); padding: 30px 20px; border-radius: 20px;
-            border: 1px solid var(--primary); text-align: center; width: 85%; max-width: 350px;
-            backdrop-filter: blur(10px);
-        }
-
-        /* الهيدر */
+        :root { --primary: #facc15; --bg: #0f172a; --card-bg: rgba(30, 41, 59, 0.8); --text: #f8fafc; --danger: #ef4444; --edit: #3b82f6; }
+        body { font-family: 'Cairo', sans-serif; background: radial-gradient(circle at top, #1e293b, #0f172a); background-attachment: fixed; color: var(--text); margin: 0; padding: 10px; min-height: 100vh; }
+        #auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: var(--card-bg); padding: 30px 20px; border-radius: 20px; border: 1px solid var(--primary); text-align: center; width: 85%; max-width: 350px; backdrop-filter: blur(10px); }
         .header-brand { text-align: center; margin: 20px 0 30px; }
         .header-brand h1 { color: var(--primary); font-size: 24px; margin: 0; }
         .header-brand p { opacity: 0.6; font-size: 12px; letter-spacing: 1px; margin-top: 5px; }
-
         .container { max-width: 600px; margin: 0 auto; display: none; }
-
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
+        .glass-card { background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px; }
         h2 { color: var(--primary); font-size: 18px; margin-bottom: 15px; border-right: 3px solid var(--primary); padding-right: 10px; }
-
-        /* تنسيق المدخلات للموبايل */
         .input-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-size: 12px; color: var(--primary); }
-        input, select {
-            width: 100%; padding: 12px; border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3);
-            color: white; font-family: 'Cairo'; outline: none; font-size: 14px;
-            box-sizing: border-box;
-        }
-        
-        .btn-main {
-            width: 100%; padding: 14px; border-radius: 10px; border: none;
-            background: var(--primary); color: #000; font-weight: 800;
-            cursor: pointer; font-family: 'Cairo'; font-size: 16px; margin-top: 10px;
-        }
-
-        /* جدول المشايخ المطور للموبايل */
-        .reader-item {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 12px; background: rgba(255,255,255,0.03);
-            border-radius: 10px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05);
-        }
+        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: white; font-family: 'Cairo'; outline: none; font-size: 14px; box-sizing: border-box; }
+        .btn-main { width: 100%; padding: 14px; border-radius: 10px; border: none; background: var(--primary); color: #000; font-weight: 800; cursor: pointer; font-family: 'Cairo'; font-size: 16px; margin-top: 10px; }
+        .btn-cancel { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; background: transparent; color: #ccc; margin-top: 8px; cursor: pointer; font-family: 'Cairo'; display: none; }
+        .reader-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 10px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05); }
         .reader-info h4 { margin: 0; font-size: 14px; }
         .reader-info span { font-size: 11px; opacity: 0.6; }
-        
-        .btn-del {
-            background: rgba(239, 68, 68, 0.2); color: var(--danger);
-            border: 1px solid var(--danger); padding: 6px 12px; border-radius: 8px;
-            font-size: 12px; cursor: pointer; font-family: 'Cairo';
-        }
-
+        .actions { display: flex; gap: 5px; }
+        .btn-del { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-family: 'Cairo'; }
+        .btn-edit { background: rgba(59, 130, 246, 0.2); color: var(--edit); border: 1px solid var(--edit); padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-family: 'Cairo'; }
         .footer-sign { text-align: center; margin-top: 40px; padding-bottom: 20px; opacity: 0.5; font-size: 12px; }
         .hidden { display: none; }
     </style>
@@ -93,7 +35,7 @@
 
 <div id="auth-overlay">
     <div class="login-box">
-        <h2 style="border:none; text-align:center; margin-top:0;">إدارة المهندس حسن</h2>
+        <h2>إدارة المهندس حسن</h2>
         <input type="password" id="passInput" placeholder="كلمة السر" style="text-align:center;">
         <button class="btn-main" onclick="checkPass()">دخول</button>
         <p id="errorMsg" style="color:var(--danger); font-size:12px; margin-top:10px; display:none;">خطأ يا هندسة!</p>
@@ -107,7 +49,8 @@
     </div>
 
     <div class="glass-card">
-        <h2>إضافة قارئ</h2>
+        <h2 id="formTitle">إضافة قارئ</h2>
+        <input type="hidden" id="editId">
         <div class="input-group">
             <label>اسم الشيخ</label>
             <input type="text" id="rName" placeholder="الاسم">
@@ -135,13 +78,13 @@
             <input type="text" id="rBaseMoj" placeholder="رابط السيرفر">
         </div>
 
-        <button class="btn-main" onclick="saveData()">إضافة الآن</button>
+        <button class="btn-main" id="submitBtn" onclick="saveData()">إضافة الآن</button>
+        <button class="btn-cancel" id="cancelBtn" onclick="resetForm()">إلغاء التعديل</button>
     </div>
 
     <div class="glass-card">
         <h2>القراء المضافون</h2>
-        <div id="readersList">
-            </div>
+        <div id="readersList"></div>
     </div>
 
     <div class="footer-sign">Eng/ Hassan Sobeh © 2026</div>
@@ -149,7 +92,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBw812AvM_R21kHCUVaSk7W8DjhjW1-bJ0",
@@ -162,14 +105,13 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    let allReadersData = [];
 
     window.checkPass = () => {
         if(document.getElementById('passInput').value === "hassan2026") {
             document.getElementById('auth-overlay').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
-        } else {
-            document.getElementById('errorMsg').style.display = 'block';
-        }
+        } else { document.getElementById('errorMsg').style.display = 'block'; }
     };
 
     window.toggleFields = () => {
@@ -179,52 +121,91 @@
     };
 
     window.saveData = async () => {
+        const id = document.getElementById('editId').value;
         const name = document.getElementById('rName').value;
         const img = document.getElementById('rImg').value;
         const type = document.getElementById('rType').value;
         const urlM = document.getElementById('rBaseM').value;
         const urlMoj = document.getElementById('rBaseMoj').value;
 
-        if(!name || !urlM) return alert("امسح الخانات الفاضية يا هندسة!");
+        if(!name || !urlM) return alert("البيانات ناقصة يا هندسة!");
 
-        let data = { name, img, createdAt: serverTimestamp() };
+        let data = { name, img, updatedAt: serverTimestamp() };
         if(type === 'both') {
-            data.base_murattal = urlM;
-            data.base_mojawwad = urlMoj;
-            data.mode = "murattal";
+            data.base_murattal = urlM; data.base_mojawwad = urlMoj; data.mode = "murattal";
+            data.base = null; // تنظيف الحقل القديم لو وجد
         } else {
-            data.base = urlM;
-            data.mode = type;
+            data.base = urlM; data.mode = type;
+            data.base_murattal = null; data.base_mojawwad = null;
         }
 
         try {
-            await addDoc(collection(db, "readers"), data);
-            alert("تمت الإضافة!");
-            document.getElementById('rName').value = ""; document.getElementById('rBaseM').value = "";
-        } catch(e) { alert("حصل مشكلة!"); }
+            if(id) {
+                await updateDoc(doc(db, "readers", id), data);
+                alert("تم التحديث بنجاح!");
+            } else {
+                data.createdAt = serverTimestamp();
+                await addDoc(collection(db, "readers"), data);
+                alert("تمت الإضافة!");
+            }
+            resetForm();
+        } catch(e) { alert("حدث خطأ!"); }
+    };
+
+    window.editR = (id) => {
+        const r = allReadersData.find(x => x.id === id);
+        if(!r) return;
+        document.getElementById('editId').value = id;
+        document.getElementById('rName').value = r.name;
+        document.getElementById('rImg').value = r.img || "";
+        
+        if(r.base_murattal && r.base_mojawwad) {
+            document.getElementById('rType').value = "both";
+            document.getElementById('rBaseM').value = r.base_murattal;
+            document.getElementById('rBaseMoj').value = r.base_mojawwad;
+        } else {
+            document.getElementById('rType').value = r.mode || "murattal";
+            document.getElementById('rBaseM').value = r.base || "";
+        }
+        
+        toggleFields();
+        document.getElementById('formTitle').innerText = "تعديل بيانات القارئ";
+        document.getElementById('submitBtn').innerText = "تحديث البيانات الآن";
+        document.getElementById('cancelBtn').style.display = "block";
+        window.scrollTo(0, 0);
+    };
+
+    window.resetForm = () => {
+        document.getElementById('editId').value = "";
+        document.getElementById('rName').value = "";
+        document.getElementById('rImg').value = "";
+        document.getElementById('rBaseM').value = "";
+        document.getElementById('rBaseMoj').value = "";
+        document.getElementById('rType').value = "murattal";
+        toggleFields();
+        document.getElementById('formTitle').innerText = "إضافة قارئ";
+        document.getElementById('submitBtn').innerText = "إضافة الآن";
+        document.getElementById('cancelBtn').style.display = "none";
     };
 
     onSnapshot(query(collection(db, "readers"), orderBy("createdAt", "desc")), (snap) => {
         const list = document.getElementById('readersList');
         list.innerHTML = "";
-        snap.forEach(d => {
-            const r = d.data();
+        allReadersData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        allReadersData.forEach(r => {
             const typeText = r.base_mojawwad ? "مرتل + مجود" : (r.mode === "mojawwad" ? "مجود" : "مرتل");
             list.innerHTML += `
                 <div class="reader-item">
-                    <div class="reader-info">
-                        <h4>${r.name}</h4>
-                        <span>${typeText}</span>
+                    <div class="reader-info"><h4>${r.name}</h4><span>${typeText}</span></div>
+                    <div class="actions">
+                        <button class="btn-edit" onclick="editR('${r.id}')">تعديل</button>
+                        <button class="btn-del" onclick="deleteR('${r.id}')">حذف</button>
                     </div>
-                    <button class="btn-del" onclick="deleteR('${d.id}')">حذف</button>
-                </div>
-            `;
+                </div>`;
         });
     });
 
-    window.deleteR = async (id) => {
-        if(confirm("نحذف القارئ؟")) await deleteDoc(doc(db, "readers", id));
-    };
+    window.deleteR = async (id) => { if(confirm("نحذف القارئ؟")) await deleteDoc(doc(db, "readers", id)); };
 </script>
 </body>
 </html>
