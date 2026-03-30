@@ -20,7 +20,7 @@
             background: radial-gradient(circle at top, #1e293b, #0f172a);
             background-attachment: fixed;
             color: var(--text);
-            padding-top: 100px;
+            padding-top: 155px; /* تم تعديله ليستوعب البحث */
             padding-bottom: 120px;
         }
 
@@ -32,6 +32,26 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px 15px; z-index: 2000; box-sizing: border-box;
         }
+        
+        /* خانة البحث */
+        .search-container {
+            position: fixed; top: 65px; left: 0; width: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 12px 15px; z-index: 1900; box-sizing: border-box;
+        }
+        .search-wrapper { position: relative; width: 100%; }
+        .search-input {
+            width: 100%; padding: 12px 40px 12px 15px; border-radius: 12px;
+            border: 1px solid rgba(250, 204, 21, 0.2);
+            background: rgba(255,255,255,0.07); color: #fff;
+            font-family: 'Cairo'; font-size: 16px; outline: none; box-sizing: border-box;
+        }
+        .clear-search {
+            position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+            color: #94a3b8; font-size: 20px; cursor: pointer; display: none;
+        }
+
         .prayer-next-info { text-align: right; }
         .countdown-val { font-size: 18px; font-weight: 700; font-family: monospace; display: block; color: var(--accent); }
 
@@ -120,6 +140,13 @@
     </div>
 </div>
 
+<div class="search-container">
+    <div class="search-wrapper">
+        <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن قارئ..." oninput="handleSearch()">
+        <span id="clearSearchBtn" class="clear-search" onclick="clearSearch()">✕</span>
+    </div>
+</div>
+
 <div class="container">
     <div id="fav-section" style="display: none;"><div class="section-title">⭐ المفضلون</div><div id="favList"></div></div>
     <div class="section-title">📖 كل القراء</div><div id="rList"></div>
@@ -148,7 +175,7 @@
     <div class="mini-view" onclick="expandPlayer()">
         <img id="m-img" src="" class="mini-img">
         <div class="mini-info">
-            <h4 id="m-track" style="margin:0; font-size:13px; color:var(--accent)">--</h4>
+            <h4 id="m-track" style="margin:0; font-size:13px; color:var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">--</h4>
             <p id="m-reader" style="margin:0; font-size:10px; opacity:0.7">--</p>
         </div>
         <div class="mini-btns">
@@ -184,7 +211,7 @@
     const suras = ["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الانسان","المرسلات","النبأ","النازعات","عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
     
     const readers = [
-    { id: 1, name: "محمد صديق المنشاوي", img:"minshawi.jpg", base_murattal: "https://server10.mp3quran.net/minsh/", base_mojawwad: "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+        { id: 1, name: "محمد صديق المنشاوي", img:"minshawi.jpg", base_murattal: "https://server10.mp3quran.net/minsh/", base_mojawwad: "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/", mode: "murattal" },
         { id: 2, name: "عبدالباسط عبدالصمد", img: "baset.jpg", base_murattal: "https://server7.mp3quran.net/basit/", base_mojawwad: "https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/", mode: "murattal" },
         { id: 3, name: "محمود خليل الحصري", img: " hosary.jpg", base_murattal: "https://server13.mp3quran.net/husr/", base_mojawwad: "https://server13.mp3quran.net/husr/Almusshaf-Al-Mojawwad/", mode: "murattal" },
         { id: 4, name: "مصطفى إسماعيل", img: " mostafa.jpg", base_murattal: "https://server8.mp3quran.net/mustafa/", base_mojawwad: "https://server8.mp3quran.net/mustafa/Almusshaf-Al-Mojawwad/", mode: "murattal" },
@@ -216,11 +243,13 @@
         { id: 30, name: " احمد نعينع", img: "احمد نعينع.jpg", base: "https://server11.mp3quran.net/ahmad_nu/" },
         { id: 31, name: " عبدالبديع غيلان", img: "عبدالبديع غيلان.jpg", base: "https://server16.mp3quran.net/A-Ghailan/Rewayat-Hafs-A-n-Assem/" },
     ];
+
     let favorites = JSON.parse(localStorage.getItem('favReaders')) || [];
     const audio = document.getElementById("mainAudio");
     const playerWrap = document.getElementById("playerWrap");
+    const searchInput = document.getElementById("searchInput");
+    const clearBtn = document.getElementById("clearSearchBtn");
 
-    // وظائف الإبلاغ والواتساب
     function openReportModal() { document.getElementById('reportModal').style.display = 'flex'; }
     function closeReportModal() { document.getElementById('reportModal').style.display = 'none'; document.getElementById('issueText').value = ''; }
     
@@ -233,16 +262,31 @@
         closeReportModal();
     }
 
-    function renderReaders() {
+    function handleSearch() {
+        const val = searchInput.value.trim();
+        clearBtn.style.display = val.length > 0 ? "block" : "none";
+        renderReaders(val);
+    }
+
+    function clearSearch() {
+        searchInput.value = "";
+        clearBtn.style.display = "none";
+        renderReaders("");
+    }
+
+    function renderReaders(query = "") {
         const rList = document.getElementById("rList");
         const favList = document.getElementById("favList");
         rList.innerHTML = ""; favList.innerHTML = "";
-        readers.forEach((r) => {
+        
+        const filtered = readers.filter(r => r.name.includes(query));
+        
+        filtered.forEach((r) => {
             const isFav = favorites.includes(r.id);
             rList.appendChild(createCard(r, isFav));
-            if(isFav) favList.appendChild(createCard(r, isFav, true));
+            if(isFav && query === "") favList.appendChild(createCard(r, isFav, true));
         });
-        document.getElementById('fav-section').style.display = favorites.length > 0 ? 'block' : 'none';
+        document.getElementById('fav-section').style.display = (favorites.length > 0 && query === "") ? 'block' : 'none';
     }
 
     function createCard(r, isFav, isFavCopy = false) {
@@ -253,8 +297,8 @@
         
         const modeHTML = hasModes ? `
             <div class="mode-selector">
-                <div class="mode-btn active" id="murt-${uniqueId}" onclick="setModeByReaderId(${r.id}, 'murattal', '${uniqueId}')">مرتل</div>
-                <div class="mode-btn" id="moj-${uniqueId}" onclick="setModeByReaderId(${r.id}, 'mojawwad', '${uniqueId}')">مجود</div>
+                <div class="mode-btn active" id="murt-${uniqueId}" onclick="event.stopPropagation(); setModeByReaderId(${r.id}, 'murattal', '${uniqueId}')">مرتل</div>
+                <div class="mode-btn" id="moj-${uniqueId}" onclick="event.stopPropagation(); setModeByReaderId(${r.id}, 'mojawwad', '${uniqueId}')">مجود</div>
             </div>
         ` : '';
 
@@ -283,14 +327,15 @@
         const index = favorites.indexOf(readerId);
         index > -1 ? favorites.splice(index, 1) : favorites.push(readerId);
         localStorage.setItem('favReaders', JSON.stringify(favorites));
-        renderReaders(); 
+        renderReaders(searchInput.value); 
     }
 
     function setModeByReaderId(readerId, mode, uniqueId) {
         const r = readers.find(item => item.id === readerId);
         if(r) r.mode = mode;
-        document.getElementById(`murt-${uniqueId}`).classList.toggle("active", mode === 'murattal');
-        document.getElementById(`moj-${uniqueId}`).classList.toggle("active", mode === 'mojawwad');
+        const selector = document.getElementById(`box-${uniqueId}`).parentElement;
+        selector.querySelector('.mode-btn[id^="murt-"]').classList.toggle("active", mode === 'murattal');
+        selector.querySelector('.mode-btn[id^="moj-"]').classList.toggle("active", mode === 'mojawwad');
     }
 
     function toggleCard(id) {
@@ -341,6 +386,7 @@
         }
     };
     document.getElementById("seekSlider").oninput = (e) => audio.currentTime = (e.target.value / 100) * audio.duration;
+    
     function formatTime(sec) {
         let m = Math.floor(sec/60), s = Math.floor(sec%60);
         return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
@@ -353,6 +399,7 @@
             const d = await res.json(); timings = d.data.timings;
         } catch(e) {}
     }
+    
     function updateCountdown() {
         const now = new Date();
         document.getElementById("m-date").textContent = now.toLocaleDateString('ar-EG', {day:'numeric', month:'short'});
@@ -377,7 +424,9 @@
         document.getElementById("p-countdown").textContent = `${hh.toString().padStart(2,'0')}:${mm.toString().padStart(2,'0')}:${ss.toString().padStart(2,'0')}`;
     }
 
-    getPrayers(); setInterval(updateCountdown, 1000); renderReaders();
+    getPrayers(); 
+    setInterval(updateCountdown, 1000); 
+    renderReaders();
 </script>
 </body>
 </html>
