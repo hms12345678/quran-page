@@ -81,15 +81,10 @@
 <div class="modal-overlay" id="reportModal">
     <div class="modal-content">
         <h3 style="color:var(--accent); text-align: center; margin-top: 0;">إبلاغ عن عطل 🚨</h3>
-        
         <label style="font-size: 11px; color: var(--accent); display: block; margin-bottom: 5px;">اسم الشيخ أو السورة</label>
-        <input type="text" id="reportReaderName" placeholder="مثال: المنشاوي - سورة البقرة" 
-               style="width:100%; padding:10px; border-radius:10px; background:rgba(0,0,0,0.2); color:#fff; border:1px solid #334155; margin-bottom:15px; font-family:'Cairo'; box-sizing: border-box;">
-
+        <input type="text" id="reportReaderName" placeholder="مثال: المنشاوي - سورة البقرة" style="width:100%; padding:10px; border-radius:10px; background:rgba(0,0,0,0.2); color:#fff; border:1px solid #334155; margin-bottom:15px; font-family:'Cairo'; box-sizing: border-box;">
         <label style="font-size: 11px; color: var(--accent); display: block; margin-bottom: 5px;">وصف المشكلة</label>
-        <textarea id="issueText" placeholder="الرابط لا يعمل، الصوت يقطع..." rows="3" 
-                  style="width:100%; padding:10px; border-radius:10px; background:rgba(0,0,0,0.2); color:#fff; border:1px solid #334155; outline:none; resize:none; font-family:'Cairo'; box-sizing: border-box;"></textarea>
-        
+        <textarea id="issueText" placeholder="الرابط لا يعمل، الصوت يقطع..." rows="3" style="width:100%; padding:10px; border-radius:10px; background:rgba(0,0,0,0.2); color:#fff; border:1px solid #334155; outline:none; resize:none; font-family:'Cairo'; box-sizing: border-box;"></textarea>
         <div style="display:flex; gap:10px; margin-top:20px;">
             <button id="sendReportBtn" onclick="submitReportToFirebase()" style="flex:2; background:var(--accent); border:none; padding:12px; border-radius:10px; font-weight:bold; cursor:pointer; font-family:'Cairo';">إرسال للبلاغات</button>
             <button onclick="closeReportModal()" style="flex:1; background:#334155; color:#fff; border:none; padding:12px; border-radius:10px; cursor:pointer; font-family:'Cairo';">إلغاء</button>
@@ -128,7 +123,7 @@
         </div>
         <div class="eng-footer">Eng / Hassan Sobeh</div>
     </div>
-    <audio id="mainAudio"></audio>
+    <audio id="mainAudio" preload="auto"></audio>
 </div>
 
 <script type="module">
@@ -147,7 +142,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // تحديث القراء من Firebase
     const q = query(collection(db, "readers"), orderBy("createdAt", "asc"));
     onSnapshot(q, (snapshot) => {
         const dynamicReaders = snapshot.docs.map(doc => ({
@@ -158,40 +152,25 @@
         window.updateAllReaders(dynamicReaders);
     });
 
-    // وظيفة إرسال البلاغ لـ Firebase
     window.submitReportToFirebase = async () => {
         const rName = document.getElementById('reportReaderName').value;
         const msg = document.getElementById('issueText').value;
         const btn = document.getElementById('sendReportBtn');
-
         if(!rName || !msg) return alert("يا هندسة كمل البيانات عشان أعرف أصلح المشكلة");
-
         btn.innerText = "جاري الإرسال...";
         btn.disabled = true;
-
         try {
-            await addDoc(collection(db, "reports"), {
-                readerName: rName,
-                message: msg,
-                createdAt: serverTimestamp()
-            });
+            await addDoc(collection(db, "reports"), { readerName: rName, message: msg, createdAt: serverTimestamp() });
             alert("تم إرسال البلاغ للمهندس حسن، وسيتم الإصلاح قريباً إن شاء الله");
             document.getElementById('reportReaderName').value = "";
             document.getElementById('issueText').value = "";
             closeReportModal();
-        } catch (e) {
-            alert("حدث خطأ، جرب تاني يا هندسة");
-        } finally {
-            btn.innerText = "إرسال للبلاغات";
-            btn.disabled = false;
-        }
+        } catch (e) { alert("حدث خطأ، جرب تاني يا هندسة"); } finally { btn.innerText = "إرسال للبلاغات"; btn.disabled = false; }
     };
 </script>
 
 <script>
-    // الإعدادات العامة والبيانات الثابتة
     const suras = ["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الانسان","المرسلات","النبأ","النازعات","عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
-    
     const staticReaders = [
         { id: 1, name: "محمد صديق المنشاوي", img:"minshawi.jpg", base_murattal: "https://server10.mp3quran.net/minsh/", base_mojawwad: "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/", mode: "murattal" },
         { id: 2, name: "عبدالباسط عبدالصمد", img: "baset.jpg", base_murattal: "https://server7.mp3quran.net/basit/", base_mojawwad: "https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/", mode: "murattal" },
@@ -254,15 +233,12 @@
         const card = document.createElement("div");
         card.className = "reader-card";
         const uniqueId = isFavCopy ? `fav-${r.id}` : `all-${r.id}`;
-        const hasBoth = (r.base_murattal && r.base_mojawwad) ? true : false;
-        
+        const hasBoth = (r.base_murattal && r.base_mojawwad);
         const modeHTML = hasBoth ? `
             <div class="mode-selector">
                 <div class="mode-btn ${r.mode === 'murattal' ? 'active' : ''}" id="murt-${uniqueId}" onclick="event.stopPropagation(); setModeByReaderId('${r.id}', 'murattal', '${uniqueId}')">مرتل</div>
                 <div class="mode-btn ${r.mode === 'mojawwad' ? 'active' : ''}" id="moj-${uniqueId}" onclick="event.stopPropagation(); setModeByReaderId('${r.id}', 'mojawwad', '${uniqueId}')">مجود</div>
-            </div>
-        ` : '';
-
+            </div>` : '';
         card.innerHTML = `
             <div class="reader-header" onclick="toggleCard('${uniqueId}')">
                 <img src="${r.img}" class="reader-avatar" onerror="this.src='https://via.placeholder.com/50';">
@@ -270,9 +246,7 @@
                 <button class="fav-btn ${isFav ? 'is-fav' : ''}" onclick="toggleFav(event, '${r.id}')" style="background:none; border:none; color:rgba(255,255,255,0.2); font-size:20px; cursor:pointer;">♥</button>
             </div>
             ${modeHTML}
-            <div class="suras-box" id="box-${uniqueId}"></div>
-        `;
-        
+            <div class="suras-box" id="box-${uniqueId}"></div>`;
         const box = card.querySelector(`#box-${uniqueId}`);
         suras.forEach((s, sIdx) => {
             const btn = document.createElement("div");
@@ -298,6 +272,18 @@
         playerWrap.style.display = "flex";
         audio.play();
         updatePlayIcons(true);
+
+        // Media Session API لمنع التقطيع عند قفل الشاشة
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: sName,
+                artist: r.name,
+                album: 'خالص لوجه الله',
+                artwork: [{ src: r.img, sizes: '512x512', type: 'image/jpg' }]
+            });
+            navigator.mediaSession.setActionHandler('play', () => { audio.play(); updatePlayIcons(true); });
+            navigator.mediaSession.setActionHandler('pause', () => { audio.pause(); updatePlayIcons(false); });
+        }
     }
 
     function setModeByReaderId(readerId, mode, uniqueId) {
@@ -306,28 +292,11 @@
         const card = document.getElementById(`box-${uniqueId}`).parentElement;
         const murtBtn = card.querySelector('.mode-btn[id^="murt-"]');
         const mojBtn = card.querySelector('.mode-btn[id^="moj-"]');
-        if(murtBtn && mojBtn) {
-            murtBtn.classList.toggle("active", mode === 'murattal');
-            mojBtn.classList.toggle("active", mode === 'mojawwad');
-        }
+        if(murtBtn && mojBtn) { murtBtn.classList.toggle("active", mode === 'murattal'); mojBtn.classList.toggle("active", mode === 'mojawwad'); }
     }
 
-    function toggleFav(e, id) {
-        e.stopPropagation();
-        const strId = id.toString();
-        const idx = favorites.indexOf(strId);
-        idx > -1 ? favorites.splice(idx, 1) : favorites.push(strId);
-        localStorage.setItem('favReaders', JSON.stringify(favorites));
-        renderReaders(searchInput.value);
-    }
-
-    function toggleCard(id) {
-        const card = document.getElementById(`box-${id}`).parentElement;
-        const isOpen = card.classList.contains('open');
-        document.querySelectorAll('.reader-card').forEach(c => c.classList.remove('open'));
-        if(!isOpen) card.classList.add('open');
-    }
-
+    function toggleFav(e, id) { e.stopPropagation(); const strId = id.toString(); const idx = favorites.indexOf(strId); idx > -1 ? favorites.splice(idx, 1) : favorites.push(strId); localStorage.setItem('favReaders', JSON.stringify(favorites)); renderReaders(searchInput.value); }
+    function toggleCard(id) { const card = document.getElementById(`box-${id}`).parentElement; const isOpen = card.classList.contains('open'); document.querySelectorAll('.reader-card').forEach(c => c.classList.remove('open')); if(!isOpen) card.classList.add('open'); }
     function togglePlay() { audio.paused ? (audio.play(), updatePlayIcons(true)) : (audio.pause(), updatePlayIcons(false)); }
     function updatePlayIcons(isPlaying) { const icon = isPlaying ? "⏸" : "▶"; document.getElementById("miniPlayBtn").textContent = icon; document.getElementById("e-playBtn").textContent = icon; }
     function closePlayer() { audio.pause(); playerWrap.style.display = "none"; playerWrap.classList.remove("expanded"); }
@@ -336,17 +305,10 @@
     function skip(sec) { audio.currentTime += sec; }
     function handleSearch() { renderReaders(searchInput.value); }
     function clearSearch() { searchInput.value = ""; renderReaders(""); }
-    
     function openReportModal() { document.getElementById('reportModal').style.display = 'flex'; }
     function closeReportModal() { document.getElementById('reportModal').style.display = 'none'; }
     
-    audio.ontimeupdate = () => {
-        if(!isNaN(audio.duration)) {
-            document.getElementById("seekSlider").value = (audio.currentTime / audio.duration) * 100;
-            document.getElementById("currentTime").textContent = formatTime(audio.currentTime);
-            document.getElementById("totalTime").textContent = formatTime(audio.duration);
-        }
-    };
+    audio.ontimeupdate = () => { if(!isNaN(audio.duration)) { document.getElementById("seekSlider").value = (audio.currentTime / audio.duration) * 100; document.getElementById("currentTime").textContent = formatTime(audio.currentTime); document.getElementById("totalTime").textContent = formatTime(audio.duration); } };
     document.getElementById("seekSlider").oninput = (e) => audio.currentTime = (e.target.value / 100) * audio.duration;
     function formatTime(s) { let m = Math.floor(s/60); s = Math.floor(s%60); return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }
 
