@@ -80,11 +80,19 @@
 
 <div class="modal-overlay" id="reportModal">
     <div class="modal-content">
-        <h3 style="color:var(--accent); text-align: center;">إبلاغ عن مشكلة</h3>
-        <textarea id="issueText" placeholder="اشرح المشكلة هنا..." rows="5" style="width:100%; padding:12px; border-radius:10px; background:rgba(0,0,0,0.2); color:#fff; border:1px solid #334155; outline:none; resize:none; font-family:'Cairo';"></textarea>
+        <h3 style="color:var(--accent); text-align: center; margin-top: 0;">إبلاغ عن عطل 🚨</h3>
+        
+        <label style="font-size: 11px; color: var(--accent); display: block; margin-bottom: 5px;">اسم الشيخ أو السورة</label>
+        <input type="text" id="reportReaderName" placeholder="مثال: المنشاوي - سورة البقرة" 
+               style="width:100%; padding:10px; border-radius:10px; background:rgba(0,0,0,0.2); color:#fff; border:1px solid #334155; margin-bottom:15px; font-family:'Cairo'; box-sizing: border-box;">
+
+        <label style="font-size: 11px; color: var(--accent); display: block; margin-bottom: 5px;">وصف المشكلة</label>
+        <textarea id="issueText" placeholder="الرابط لا يعمل، الصوت يقطع..." rows="3" 
+                  style="width:100%; padding:10px; border-radius:10px; background:rgba(0,0,0,0.2); color:#fff; border:1px solid #334155; outline:none; resize:none; font-family:'Cairo'; box-sizing: border-box;"></textarea>
+        
         <div style="display:flex; gap:10px; margin-top:20px;">
-            <button onclick="sendToWhatsApp()" style="flex:2; background:var(--accent); border:none; padding:12px; border-radius:10px; font-weight:bold;">إرسال</button>
-            <button onclick="closeReportModal()" style="flex:1; background:#334155; color:#fff; border:none; padding:12px; border-radius:10px;">إلغاء</button>
+            <button id="sendReportBtn" onclick="submitReportToFirebase()" style="flex:2; background:var(--accent); border:none; padding:12px; border-radius:10px; font-weight:bold; cursor:pointer; font-family:'Cairo';">إرسال للبلاغات</button>
+            <button onclick="closeReportModal()" style="flex:1; background:#334155; color:#fff; border:none; padding:12px; border-radius:10px; cursor:pointer; font-family:'Cairo';">إلغاء</button>
         </div>
     </div>
 </div>
@@ -125,7 +133,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-    import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+    import { getFirestore, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBw812AvM_R21kHCUVaSk7W8DjhjW1-bJ0",
@@ -139,6 +147,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // تحديث القراء من Firebase
     const q = query(collection(db, "readers"), orderBy("createdAt", "asc"));
     onSnapshot(q, (snapshot) => {
         const dynamicReaders = snapshot.docs.map(doc => ({
@@ -148,9 +157,39 @@
         }));
         window.updateAllReaders(dynamicReaders);
     });
+
+    // وظيفة إرسال البلاغ لـ Firebase
+    window.submitReportToFirebase = async () => {
+        const rName = document.getElementById('reportReaderName').value;
+        const msg = document.getElementById('issueText').value;
+        const btn = document.getElementById('sendReportBtn');
+
+        if(!rName || !msg) return alert("يا هندسة كمل البيانات عشان أعرف أصلح المشكلة");
+
+        btn.innerText = "جاري الإرسال...";
+        btn.disabled = true;
+
+        try {
+            await addDoc(collection(db, "reports"), {
+                readerName: rName,
+                message: msg,
+                createdAt: serverTimestamp()
+            });
+            alert("تم إرسال البلاغ للمهندس حسن، وسيتم الإصلاح قريباً إن شاء الله");
+            document.getElementById('reportReaderName').value = "";
+            document.getElementById('issueText').value = "";
+            closeReportModal();
+        } catch (e) {
+            alert("حدث خطأ، جرب تاني يا هندسة");
+        } finally {
+            btn.innerText = "إرسال للبلاغات";
+            btn.disabled = false;
+        }
+    };
 </script>
 
 <script>
+    // الإعدادات العامة والبيانات الثابتة
     const suras = ["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الانسان","المرسلات","النبأ","النازعات","عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
     
     const staticReaders = [
@@ -215,8 +254,6 @@
         const card = document.createElement("div");
         card.className = "reader-card";
         const uniqueId = isFavCopy ? `fav-${r.id}` : `all-${r.id}`;
-        
-        // التحقق من وجود النوعين (كلاهما)
         const hasBoth = (r.base_murattal && r.base_mojawwad) ? true : false;
         
         const modeHTML = hasBoth ? `
@@ -249,22 +286,11 @@
     function playByReaderId(readerId, sName, sNum) {
         const r = allReaders.find(item => item.id == readerId);
         if(!r) return;
-        
-        let base = "";
-        if (r.base_murattal && r.base_mojawwad) {
-            base = (r.mode === 'mojawwad') ? r.base_mojawwad : r.base_murattal;
-        } else {
-            base = r.base || (r.mode === 'mojawwad' ? r.base_mojawwad : r.base_murattal);
-        }
-
+        let base = (r.base_murattal && r.base_mojawwad) ? (r.mode === 'mojawwad' ? r.base_mojawwad : r.base_murattal) : (r.base || r.base_murattal);
         audio.src = `${base}${sNum.toString().padStart(3,'0')}.mp3`;
         document.getElementById("m-track").textContent = sName;
         document.getElementById("e-track").textContent = sName;
-        
-        let modeType = "";
-        if(r.base_murattal && r.base_mojawwad) modeType = (r.mode === 'mojawwad' ? " (مجود)" : " (مرتل)");
-        else if (r.mode === 'mojawwad') modeType = " (مجود)";
-
+        let modeType = (r.base_murattal && r.base_mojawwad) ? (r.mode === 'mojawwad' ? " (مجود)" : " (مرتل)") : (r.mode === 'mojawwad' ? " (مجود)" : "");
         document.getElementById("m-reader").textContent = r.name + modeType;
         document.getElementById("e-reader").textContent = r.name + modeType;
         document.getElementById("m-img").src = r.img;
@@ -310,9 +336,9 @@
     function skip(sec) { audio.currentTime += sec; }
     function handleSearch() { renderReaders(searchInput.value); }
     function clearSearch() { searchInput.value = ""; renderReaders(""); }
+    
     function openReportModal() { document.getElementById('reportModal').style.display = 'flex'; }
     function closeReportModal() { document.getElementById('reportModal').style.display = 'none'; }
-    function sendToWhatsApp() { const msg = document.getElementById('issueText').value; window.open(`https://wa.me/201067367119?text=${encodeURIComponent(msg)}`); closeReportModal(); }
     
     audio.ontimeupdate = () => {
         if(!isNaN(audio.duration)) {
