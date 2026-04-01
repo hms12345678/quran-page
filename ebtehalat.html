@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>مكتبة الابتهالات - م/ حسن صبيح</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+
+        :root {
+            --primary: #ffd700;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent: #ff4757;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            color: #fff;
+            padding: 20px;
+            padding-bottom: 120px;
+        }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: var(--primary); font-size: 1.8rem; }
+
+        /* معرض المنشدين */
+        .artists-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .artist-item {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .artist-item:active { transform: scale(0.95); }
+        .artist-item img { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; margin-bottom: 10px; }
+        .artist-item h3 { font-size: 0.9rem; color: var(--primary); }
+
+        /* صفحة الابتهالات */
+        #tracksPage { display: none; }
+        .back-btn {
+            background: var(--primary); color: #000; border: none; padding: 8px 15px;
+            border-radius: 10px; font-family: 'Cairo'; cursor: pointer; margin-bottom: 20px;
+        }
+
+        /* البحث والمفضلة */
+        .search-box {
+            background: var(--card-bg); padding: 15px; border-radius: 20px; margin-bottom: 25px;
+        }
+        #searchInput {
+            width: 100%; padding: 12px; border-radius: 12px; border: none;
+            background: rgba(255,255,255,0.05); color: #fff; outline: none; margin-bottom: 10px;
+        }
+        .fav-btn-toggle {
+            width: 100%; padding: 10px; border-radius: 12px; border: 1px solid var(--primary);
+            background: transparent; color: var(--primary); font-family: 'Cairo';
+        }
+        .fav-btn-toggle.active { background: var(--primary); color: #000; }
+
+        /* القائمة */
+        .track-card {
+            background: var(--card-bg); padding: 15px; border-radius: 15px;
+            margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .track-info { flex: 1; cursor: pointer; }
+        .fav-heart { font-size: 1.3rem; color: rgba(255,255,255,0.1); padding-right: 15px; }
+        .fav-heart.active { color: var(--accent); }
+
+        /* المشغل السفلي */
+        .mini-player {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: #1e293b; border-top: 2px solid var(--primary);
+            padding: 10px 20px; z-index: 1000; display: none;
+        }
+        .mini-flex { display: flex; align-items: center; gap: 12px; }
+        .mini-img { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; }
+        .mini-text { flex: 1; overflow: hidden; }
+        .mini-text h4 { font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mini-time { font-size: 0.7rem; color: var(--primary); }
+        .mini-controls { font-size: 1.8rem; color: var(--primary); }
+
+        .mini-progress-bar {
+            width: 100%; height: 3px; background: rgba(255,255,255,0.1);
+            margin-top: 8px; border-radius: 2px;
+        }
+        #miniProgressFill { height: 100%; width: 0%; background: var(--primary); transition: 0.1s linear; }
+
+        /* المشغل الكامل */
+        .full-player {
+            position: fixed; top: 100%; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 2000; transition: 0.5s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px;
+        }
+        .full-player.open { top: 0; }
+        .full-img { width: 250px; height: 250px; border-radius: 20px; border: 3px solid var(--primary); margin-bottom: 30px; }
+        
+        .full-progress-container { width: 100%; max-width: 400px; margin: 20px 0; }
+        .full-progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; }
+        .full-fill { height: 100%; width: 0%; background: var(--primary); border-radius: 10px; }
+        .time-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 8px; color: var(--primary); }
+
+        .full-controls { display: flex; align-items: center; gap: 30px; }
+        .play-btn-big { width: 65px; height: 65px; background: var(--primary); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
+    </style>
+</head>
+<body>
+
+    <div id="mainPage">
+        <div class="header">
+            <h1>مكتبة الابتهالات</h1>
+            <p style="font-size: 0.8rem; opacity: 0.6;">اختر المنشد يا هندسة</p>
+        </div>
+        <div class="artists-grid" id="artistsGrid"></div>
+    </div>
+
+    <div id="tracksPage">
+        <button class="back-btn" onclick="showMainPage()">⬅ رجوع للمنشدين</button>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="ابحث في ابتهالات المنشد..." oninput="filterTracks()">
+            <button class="fav-btn-toggle" id="favFilterBtn" onclick="toggleFavFilter()">❤️ المفضلة</button>
+        </div>
+        <div id="tracksList"></div>
+    </div>
+
+    <div class="mini-player" id="miniPlayer" onclick="openFullPlayer()">
+        <div class="mini-flex">
+            <img src="" id="playingImg" class="mini-img">
+            <div class="mini-text">
+                <h4 id="miniTitle">جاري التشغيل...</h4>
+                <span class="mini-time" id="miniTimeDisplay">00:00 / 00:00</span>
+            </div>
+            <div class="mini-controls" onclick="event.stopPropagation(); togglePlay();" id="miniPlayBtn">⏸</div>
+        </div>
+        <div class="mini-progress-bar"><div id="miniProgressFill"></div></div>
+    </div>
+
+    <div class="full-player" id="fullPlayer">
+        <span onclick="closeFullPlayer()" style="position:absolute; top:40px; left:30px; font-size:1.5rem;">▼</span>
+        <img src="" id="fullPlayingImg" class="full-img">
+        <h2 id="fullTitle" style="color:var(--primary); text-align:center;">اسم الابتهال</h2>
+        <p id="fullArtist" style="opacity:0.6; margin-bottom:20px;"></p>
+
+        <div class="full-progress-container">
+            <div class="full-progress-bar" id="fullProgressBg"><div class="full-fill" id="fullProgressFill"></div></div>
+            <div class="time-labels"><span id="currentTime">00:00</span><span id="durationTime">00:00</span></div>
+        </div>
+
+        <div class="full-controls">
+            <div onclick="seek(-10)" style="font-size:1.5rem;">⏪</div>
+            <div class="play-btn-big" onclick="togglePlay()" id="fullPlayBtn">⏸</div>
+            <div onclick="seek(10)" style="font-size:1.5rem;">⏩</div>
+        </div>
+    </div>
+
+    <audio id="mainAudio"></audio>
+
+    <script>
+        const data = [
+            { 
+                name: "سيد النقشبندي", 
+                img: "النقشبندي.jpg",
+                tracks: [
+                { title: " اغيب ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%A3%D8%BA%D9%8A%D8%A8.mp3" },
+            { title: " ايها الساهر ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%A3%D9%8A%D9%87%D8%A7%20%D8%A7%D9%84%D8%B3%D8%A7%D9%87%D8%B1.mp3" },
+            { title: " الهي ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%A5%D9%84%D9%87%D9%8A.mp3" },
+            { title: " ايها الناس ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%A3%D9%8A%D9%87%D8%A7%20%D8%A7%D9%84%D9%86%D8%A7%D8%B3.mp3" },
+            { title: "  اليك وجهت وجهي", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%A5%D9%84%D9%8A%D9%83%20%D9%88%D8%AC%D9%87%D8%AA%20%D9%88%D8%AC%D9%87%D9%8A.mp3" },
+            { title: " النفس تشكو ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%A7%D9%84%D9%86%D9%81%D8%B3%20%D8%AA%D8%B4%D9%83%D9%88.mp3" },
+            { title: " ببابك ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%A8%D8%A8%D8%A7%D8%A8%D9%83.mp3" },
+            { title: " تبتلت مشتاقا ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%AA%D8%A8%D8%AA%D9%84%D8%AA%20%D9%85%D8%B4%D8%AA%D8%A7%D9%82%D8%A7%D9%8B.mp3" },
+            { title: " تلطفي يا ريح ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%AA%D8%A8%D8%AA%D9%84%D8%AA%20%D9%85%D8%B4%D8%AA%D8%A7%D9%82%D8%A7%D9%8B.mp3" },
+            { title: " جبين الوجود  ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%AC%D8%A8%D9%8A%D9%86%20%D8%A7%D9%84%D9%88%D8%AC%D9%88%D8%AF.mp3" },
+            { title: " جل شان الاله ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%AC%D9%84%20%D8%B4%D8%A3%D9%86%20%D8%A7%D9%84%D8%A5%D9%84%D9%87.mp3" },
+            { title: " رب هب لي هدى ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%B1%D8%A8%D9%89%20%D9%87%D8%A8%D9%84%D9%89%20%D9%87%D8%AF%D9%89.MP3" },
+            { title: " رجوتك الهي ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%B1%D8%AC%D9%88%D8%AA%D9%83%20%D9%8A%D8%A7%D8%A5%D9%84%D9%87%D9%8A.mp3" },
+            { title: " رحب الناس بالاسلام ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%B1%D8%AD%D8%A8.mp3" },
+            { title: " رسول الله ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%B1%D8%B3%D9%88%D9%84%20%D8%A7%D9%84%D9%84%D9%87.mp3" },
+            { title: " سبحانك اللهم ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%B3%D8%A8%D8%AD%D8%A7%D9%86%D9%83%20%D8%A7%D9%84%D9%84%D9%87%D9%85.mp3" },
+            { title: "  سبحانك ربي وبحمدك", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%B3%D8%A8%D8%AD%D8%A7%D9%86%D9%83%20%D8%B1%D8%A8%D9%89%20%D9%88%D8%A8%D8%AD%D9%85%D8%AF%D9%83.mp3" },
+            { title: " سيدي يا رسول الله ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%B3%D9%8A%D8%AF%D9%8A%20%D9%8A%D8%A7%20%D8%B1%D8%B3%D9%88%D9%84%20%D8%A7%D9%84%D9%84%D9%87%20_%D8%A7%D9%84%D9%86%D9%82%D8%B4%D8%A8%D9%86%D8%AF%D9%8A.%20%D9%83%D8%A7%D9%85%D9%84%D8%A7%20%D9%8B.mp3" },
+            { title: " صلوات الله وسلامه عليك ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%B5%D9%84%D8%A7%D9%88%D8%A7%D8%AA%20%D8%A7%D9%84%D9%84%D9%87%20%D9%88%D8%B3%D9%84%D8%A7%D9%85%D9%87%20%D8%B9%D9%84%D9%8A%D9%83.mp3" },
+            { title: "  علي هدي الاقدار", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D8%B9%D9%84%D9%89%20%D9%87%D8%AF%D9%89%20%D8%A7%D9%84%D8%A7%D9%82%D8%AF%D8%A7%D8%B1.mp3" },
+            { title: " قبضة الله ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%82%D8%A8%D8%B6%D8%A9%20%D8%A7%D9%84%D9%84%D9%87.MP3" },
+            { title: " ليلة القدر ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%84%D9%8A%D9%84%D8%A9%20%D8%A7%D9%84%D9%82%D8%AF%D8%B11.mp3" },
+            { title: " مناجاة ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%85%D9%86%D8%A7%D8%AC%D8%A7%D8%A9.mp3" },
+            { title: " نشيد الكون ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%86%D8%B4%D9%8A%D8%AF%20%D8%A7%D9%84%D9%83%D9%88%D9%86.mp3" },
+            { title: "  ساعه من النوادر", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%86%D9%82%D8%B4%D8%A8%D9%86%D8%AF%D9%8A%D8%A7%D8%AA%20%D8%B1%D9%85%D8%B6%D8%A7%D9%86%D9%8A%D8%A9.%20%D9%85%D9%86%20%D9%86%D9%88%D8%A7%D8%AF%D8%B1.mp3" },
+            { title: "  يا اله العالمين", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%8A%D8%A7%20%D8%A3%D9%84%D9%87%20%D8%A7%D9%84%D8%B9%D8%A7%D9%84%D9%85%D9%8A%D9%86.mp3" },
+            { title: " يا الهي لبيك ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%8A%D8%A7%20%D8%A5%D9%84%D9%87%D9%8A%20%D9%84%D8%A8%D9%8A%D9%83.mp3" },
+            { title: " يا رب ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%8A%D8%A7%20%D8%B1%D8%A8.mp3" },
+            { title: "  يا صاحبي", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%8A%D8%A7%20%D8%B5%D8%A7%D8%AD%D8%A8%D9%8A.mp3" },
+            { title: " يا من له الامر ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%8A%D8%A7%20%D9%85%D9%86%20%D9%84%D9%87%20%D8%A7%D9%84%D8%A3%D9%85%D8%B1.mp3" },
+            { title: " يا نور ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%8A%D8%A7%20%D9%86%D9%88%D8%B1.mp3" },
+            { title: " يا واصف الاقصي ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%8A%D8%A7%20%D9%88%D8%A7%D8%B5%D9%81%20%D8%A7%D9%84%D8%A7%D9%82%D8%B5%D9%89.mp3" },
+            { title: " يا الله ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%8A%D8%A7%D8%A7%D9%84%D9%84%D9%87.mp3" },
+            { title: " يا رب وحد شملنا ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%8A%D8%A7%D8%B1%D8%A8%20%D9%88%D8%AD%D8%AF%20%D8%B4%D9%85%D9%84%D9%86%D8%A7.mp3" },
+            { title: " يا ربي ان عظمت ذنوبي ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%8A%D8%A7%D8%B1%D8%A8%D9%8A%20%D8%A5%D9%86%20%D8%B9%D8%B8%D9%85%D8%AA%20%D8%B0%D9%86%D9%88%D8%A8%D9%8A.mp3" },
+            { title: " يا ربي ثبتني علي الايمان ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%8A%D8%A7%D8%B1%D8%A8%D9%8A%20%D8%AB%D8%A8%D8%AA%D9%86%D9%8A%20%D8%B9%D9%84%D9%89%20%D8%A7%D9%84%D8%A7%D9%8A%D9%85%D8%A7%D9%86.mp3" },
+            { title: " يا من ", url: "https://dn721800.ca.archive.org/0/items/Sama3almelouk_yahoo_20160525/%D9%8A%D9%80%D9%80%D8%A7%D9%85%D9%86.mp3" },
+                ]
+            },
+
+        ];
+
+        let currentArtist = null;
+        let favorites = JSON.parse(localStorage.getItem('hassan_favs')) || [];
+        let showingFavs = false;
+        const audio = document.getElementById('mainAudio');
+
+        function init() {
+            const grid = document.getElementById('artistsGrid');
+            data.forEach((artist, index) => {
+                grid.innerHTML += `
+                    <div class="artist-item" onclick="showArtistTracks(${index})">
+                        <img src="${artist.img}">
+                        <h3>${artist.name}</h3>
+                    </div>`;
+            });
+        }
+
+        function showArtistTracks(index) {
+            currentArtist = data[index];
+            document.getElementById('mainPage').style.display = 'none';
+            document.getElementById('tracksPage').style.display = 'block';
+            filterTracks();
+        }
+
+        function showMainPage() {
+            document.getElementById('mainPage').style.display = 'block';
+            document.getElementById('tracksPage').style.display = 'none';
+        }
+
+        function renderTracks(list) {
+            const container = document.getElementById('tracksList');
+            container.innerHTML = '';
+            list.forEach(t => {
+                const isFav = favorites.includes(t.title);
+                container.innerHTML += `
+                    <div class="track-card">
+                        <div class="track-info" onclick="playTrack('${t.url}', '${t.title}', '${currentArtist.name}', '${currentArtist.img}')">
+                            <strong>${t.title}</strong>
+                            <p style="font-size:0.7rem; opacity:0.5;">${currentArtist.name}</p>
+                        </div>
+                        <span class="fav-heart ${isFav?'active':''}" onclick="toggleFav('${t.title}')">❤️</span>
+                    </div>`;
+            });
+        }
+
+        function playTrack(url, title, artistName, artistImg) {
+            audio.src = url;
+            audio.play();
+            document.getElementById('miniPlayer').style.display = 'block';
+            document.getElementById('miniTitle').innerText = title;
+            document.getElementById('fullTitle').innerText = title;
+            document.getElementById('fullArtist').innerText = artistName;
+            document.getElementById('playingImg').src = artistImg;
+            document.getElementById('fullPlayingImg').src = artistImg;
+            
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: title, artist: artistName, artwork: [{ src: artistImg, sizes: '512x512', type: 'image/jpg' }]
+                });
+            }
+            updateUI(true);
+        }
+
+        audio.ontimeupdate = () => {
+            const pct = (audio.currentTime / audio.duration) * 100 || 0;
+            document.getElementById('miniProgressFill').style.width = pct + "%";
+            document.getElementById('fullProgressFill').style.width = pct + "%";
+            document.getElementById('miniTimeDisplay').innerText = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+            document.getElementById('currentTime').innerText = formatTime(audio.currentTime);
+            document.getElementById('durationTime').innerText = formatTime(audio.duration || 0);
+        };
+
+        function formatTime(s) {
+            let m = Math.floor(s/60), sec = Math.floor(s%60);
+            return `${m}:${sec < 10 ? '0'+sec : sec}`;
+        }
+
+        function togglePlay() {
+            if(audio.paused) { audio.play(); updateUI(true); }
+            else { audio.pause(); updateUI(false); }
+        }
+
+        function updateUI(playing) {
+            const icon = playing ? '⏸' : '▶️';
+            document.getElementById('miniPlayBtn').innerText = icon;
+            document.getElementById('fullPlayBtn').innerText = icon;
+        }
+
+        function seek(s) { audio.currentTime += s; }
+        function openFullPlayer() { document.getElementById('fullPlayer').classList.add('open'); }
+        function closeFullPlayer() { document.getElementById('fullPlayer').classList.remove('open'); }
+        
+        document.getElementById('fullProgressBg').onclick = (e) => {
+            audio.currentTime = (e.offsetX / e.target.clientWidth) * audio.duration;
+        };
+
+        function toggleFav(title) {
+            if(favorites.includes(title)) favorites = favorites.filter(f => f !== title);
+            else favorites.push(title);
+            localStorage.setItem('hassan_favs', JSON.stringify(favorites));
+            filterTracks();
+        }
+
+        function toggleFavFilter() {
+            showingFavs = !showingFavs;
+            document.getElementById('favFilterBtn').classList.toggle('active', showingFavs);
+            filterTracks();
+        }
+
+        function filterTracks() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            let list = currentArtist.tracks;
+            if(showingFavs) list = list.filter(t => favorites.includes(t.title));
+            list = list.filter(t => t.title.toLowerCase().includes(query));
+            renderTracks(list);
+        }
+
+        init();
+    </script>
+</body>
+</html>
