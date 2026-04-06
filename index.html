@@ -1,232 +1,138 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>حديث اليوم</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>حديث اليوم | خالص لوجه الله</title>
 
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#1e3c72">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="خالص لوجه الله">
+    <link rel="apple-touch-icon" href="icon-192.png">
 
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#0f172a">
-<link rel="apple-touch-icon" href="icon-192.png"> 
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 
-    
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
+        body {
+            font-family: 'Cairo', sans-serif;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0f3460 100%);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            direction: rtl;
+            overflow: hidden;
+            position: relative;
+            touch-action: manipulation;
+        }
 
-body {
-    font-family: 'Cairo', sans-serif;
-    height: 100vh;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0f3460 100%);
-    color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 15px;
-    direction: rtl;
-    overflow-x: hidden;
-    position: relative;
-    touch-action: manipulation;
-}
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.2) 0%, transparent 50%);
+            animation: float 25s ease-in-out infinite;
+            z-index: 1;
+        }
 
-body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.2) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.2) 0%, transparent 50%);
-    animation: float 25s ease-in-out infinite;
-    z-index: 1;
-}
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
 
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
-}
+        .container {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 30px 25px;
+            border-radius: 25px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            animation: slideInUp 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+        }
 
-.container {
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    padding: 30px 25px;
-    border-radius: 25px;
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    position: relative;
-    z-index: 2;
-    animation: slideInUp 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-    box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
+        @keyframes slideInUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
 
-@keyframes slideInUp {
-    0% {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+        .prophet {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+        }
 
-.prophet {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #ffd700;
-    margin-bottom: 20px;
-    text-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
-    line-height: 1.3;
-}
+        #hadith {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            font-weight: 600;
+            margin: 20px 0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.prophet::after {
-    content: 'ﷺ';
-    font-family: 'Segoe UI', sans-serif;
-    margin-left: 6px;
-}
+        #narrator {
+            font-size: 1rem;
+            color: #e8f4fd;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 15px;
+            display: inline-block;
+        }
 
-#hadith {
-    font-size: 1.4rem;
-    line-height: 1.6;
-    font-weight: 600;
-    margin: 25px 0 18px;
-    color: #ffffff;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .notice {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: #ffd700;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 10px;
+            border-radius: 20px;
+        }
 
-#narrator {
-    font-size: 1.1rem;
-    color: #e8f4fd;
-    font-weight: 600;
-    margin-top: 12px;
-    padding: 10px 20px;
-    background: rgba(232, 244, 253, 0.2);
-    border-radius: 20px;
-    display: inline-block;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
+        #count { font-weight: bold; font-size: 1.1rem; color: #fff; }
 
-.notice {
-    margin-top: 25px;
-    font-size: 1rem;
-    color: #ffd700;
-    font-weight: 600;
-    background: rgba(255, 215, 0, 0.12);
-    padding: 12px 20px;
-    border-radius: 25px;
-    border: 1.5px solid rgba(255, 215, 0, 0.3);
-    animation: pulse-notice 2s infinite;
-}
-
-@keyframes pulse-notice {
-    0%, 100% { 
-        box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4);
-    }
-    50% { 
-        box-shadow: 0 0 0 8px rgba(255, 215, 0, 0);
-    }
-}
-
-#count {
-    background: linear-gradient(45deg, #ff6b6b, #ffd93d);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin: 0 4px;
-}
-
-/* Mobile First - تحسينات الهاتف */
-@media (max-width: 480px) {
-    body {
-        padding: 10px;
-        justify-content: center;
-    }
-    
-    .container {
-        padding: 25px 20px;
-        margin: 0 5px;
-        border-radius: 20px;
-    }
-    
-    .prophet {
-        font-size: 1.25rem;
-    }
-    
-    #hadith {
-        font-size: 1.25rem;
-        min-height: 70px;
-        padding: 0 10px;
-    }
-    
-    #narrator {
-        font-size: 1rem;
-        padding: 8px 16px;
-    }
-    
-    .notice {
-        font-size: 0.95rem;
-        padding: 10px 16px;
-    }
-}
-
-/* للشاشات الكبيرة */
-@media (min-width: 768px) {
-    .container {
-        max-width: 500px;
-        padding: 35px 30px;
-    }
-    
-    #hadith {
-        font-size: 1.6rem;
-    }
-    
-    .prophet {
-        font-size: 1.5rem;
-    }
-}
-
-audio { display: none; }
-
-/* Safe area للـ iPhone X+ */
-@supports(padding: max(0px)) {
-    body {
-        padding-bottom: env(safe-area-inset-bottom);
-        padding-top: env(safe-area-inset-top);
-    }
-}
-</style>
+        @media (max-width: 480px) {
+            .container { padding: 20px; }
+            #hadith { font-size: 1.15rem; }
+        }
+        audio { display: none; }
+    </style>
 </head>
 <body>
+
 <div class="container">
-  <div class="prophet">قال رسول الله :</div>
-  <div id="hadith">جارٍ تحميل الحديث الشريف...</div>
-  <div id="narrator"></div>
-  
-  <div class="notice">سيتم توجيهك إلى الصفحة الرئيسية بعد <span id="count">5</span> ثوانٍ</div>
+    <div class="prophet">قال رسول الله ﷺ</div>
+    <div id="hadith">جارٍ تحميل الحديث الشريف...</div>
+    <div id="narrator"></div>
+    <div class="notice">سيتم التوجيه تلقائياً خلال <span id="count">6</span> ثوانٍ</div>
 </div>
 
-<audio autoplay loop>
-  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_b0e1fa1a16.mp3" type="audio/mpeg">
+<audio id="bgAudio" autoplay loop>
+    <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_b0e1fa1a16.mp3" type="audio/mpeg">
 </audio>
 
 <script>
@@ -277,54 +183,32 @@ const ahadith = [
   {text:"إن الله مع الصابرين.", source:"البخاري"},
   {text:"اتقوا النار ولو بشق تمرة.", source:"البخاري"}
 ];
-
-// عداد تنازلي
-let countdown = 5;
-const countElement = document.getElementById('count');
-const timer = setInterval(() => {
-    countdown--;
-    countElement.textContent = countdown;
-    if (countdown < 0) {
-        clearInterval(timer);
-    }
-}, 1000);
-
-// اختيار حديث عشوائي
-const randomIndex = Math.floor(Math.random() * ahadith.length);
-const randomHadith = ahadith[randomIndex];
-
-setTimeout(() => {
+    // اختيار حديث عشوائي فوراً
+    const randomHadith = ahadith[Math.floor(Math.random() * ahadith.length)];
     document.getElementById("hadith").textContent = randomHadith.text;
     document.getElementById("narrator").textContent = `رواه ${randomHadith.source}`;
-}, 1200);
 
-// التوجيه للصفحة الرئيسية
-setTimeout(() => {
-    window.location.href = "page1.html";
-}, 6500);
+    // العداد التنازلي والتوجيه
+    let count = 6;
+    const countDisplay = document.getElementById('count');
+    const timer = setInterval(() => {
+        count--;
+        countDisplay.textContent = count;
+        if (count <= 0) {
+            clearInterval(timer);
+            window.location.href = "page1.html";
+        }
+    }, 1000);
+
+    // تسجيل الـ Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').then(reg => {
+                console.log('SW Registered ✅');
+            }).catch(err => console.log('SW Registration Failed ❌', err));
+        });
+    }
 </script>
 
-
-
-
-
-
-
-
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('Service Worker Registered!', reg))
-        .catch(err => console.error('Service Worker Failed!', err));
-    });
-  }
-</script>
-    
-
-
-
-
-    
 </body>
 </html>
