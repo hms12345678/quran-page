@@ -1,216 +1,177 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>الصفحة الإسلامية</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>الرئيسية | خالص لوجه الله</title>
 
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#1e3c72">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon-192.png">
 
-   <link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#0f172a">
-<link rel="apple-touch-icon" href="icon-192.png">
-    
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+    <link rel="prefetch" href="index1.html">
+    <link rel="prefetch" href="azkar.html">
+    <link rel="prefetch" href="radio.html">
+    <link rel="prefetch" href="ebtehalat.html">
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 
-body {
-    font-family: 'Cairo', sans-serif;
-    min-height: 100vh; /* تم تعديله ليتناسب مع زيادة المحتوى */
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0f3460 100%);
-    color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    direction: rtl;
-    overflow-x: hidden;
-    position: relative;
-    touch-action: manipulation;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.2) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.2) 0%, transparent 50%);
-    animation: float 25s ease-in-out infinite;
-    z-index: 1;
-}
+        body {
+            font-family: 'Cairo', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0f3460 100%);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            direction: rtl;
+            overflow-x: hidden;
+            position: relative;
+            touch-action: manipulation;
+        }
 
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
-}
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.2) 0%, transparent 50%);
+            animation: float 25s ease-in-out infinite;
+            z-index: 1;
+        }
 
-/* العنوان الرئيسي */
-.title {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #ffd700;
-    margin-bottom: 35px;
-    text-align: center;
-    text-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
-    z-index: 3;
-    position: relative;
-}
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
 
-/* الأزرار */
-.tab {
-    position: relative;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #ffffff;
-    padding: 22px 30px;
-    margin: 15px 0;
-    border-radius: 25px;
-    font-size: 1.2rem;
-    font-weight: 600;
-    text-align: center;
-    width: 100%;
-    max-width: 380px;
-    cursor: pointer;
-    box-shadow: 
-        0 15px 35px rgba(0, 0, 0, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 3;
-    overflow: hidden;
-    text-decoration: none;
-    display: block;
-}
+        .title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
+            z-index: 3;
+            position: relative;
+            line-height: 1.6;
+        }
 
-.tab::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-}
+        .tab {
+            position: relative;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+            padding: 20px;
+            margin: 12px 0;
+            border-radius: 22px;
+            text-align: center;
+            width: 100%;
+            max-width: 380px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 3;
+            text-decoration: none;
+            display: block;
+        }
 
-.tab:hover::before {
-    left: 100%;
-}
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
 
-.tab:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
+        .tab-icon {
+            display: block;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
 
-.tab:active {
-    transform: translateY(-2px) scale(0.98);
-}
+        .tab-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: block;
+        }
 
-.tab-icon {
-    display: block;
-    font-size: 1.8rem;
-    margin-bottom: 8px;
-}
+        .tab span:last-child {
+            display: block;
+            font-size: 0.85rem;
+            color: #ffd700;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
 
-.tab span {
-    display: block;
-    font-size: 0.95rem;
-    color: #e8f4fd;
-    font-weight: 500;
-    margin-top: 4px;
-    opacity: 0.9;
-}
-
-/* Mobile First */
-@media (max-width: 480px) {
-    body {
-        padding: 15px;
-    }
-    
-    .title {
-        font-size: 1.4rem;
-        margin-bottom: 25px;
-    }
-    
-    .tab {
-        padding: 20px 25px;
-        margin: 12px 0;
-        font-size: 1.1rem;
-        max-width: 340px;
-    }
-    
-    .tab-icon {
-        font-size: 1.6rem;
-    }
-    
-    .tab span {
-        font-size: 0.9rem;
-    }
-}
-
-/* شاشات أكبر */
-@media (min-width: 768px) {
-    .tab {
-        max-width: 420px;
-        padding: 25px 35px;
-        font-size: 1.25rem;
-    }
-    
-    .title {
-        font-size: 1.8rem;
-    }
-}
-
-/* Safe area للـ iPhone */
-@supports(padding: max(0px)) {
-    body {
-        padding-bottom: env(safe-area-inset-bottom);
-        padding-top: env(safe-area-inset-top);
-    }
-}
-</style>
+        /* Safe area للـ iPhone */
+        @supports(padding: max(0px)) {
+            body {
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+                padding-top: max(20px, env(safe-area-inset-top));
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="title">✨ تم اعداده بواسطة م/ حسن صبيح✨</div>
+<div class="title">✨ تم إعداده بواسطة م/ حسن صبيح ✨</div>
 
 <a href="index1.html" class="tab">
     <span class="tab-icon">🕋</span>
-    لسماع القرآن الكريم
-    <span>اضغط للانتقال للصفحة</span>
+    <span class="tab-text">القرآن الكريم</span>
+    <span>استمع لأجمل الأصوات</span>
 </a>
 
 <a href="azkar.html" class="tab">
     <span class="tab-icon">📿</span>
-    الأذكار
-    <span>اضغط للانتقال للصفحة</span>
+    <span class="tab-text">الأذكار</span>
+    <span>حصن المسلم اليومي</span>
 </a>
 
 <a href="ebtehalat.html" class="tab">
     <span class="tab-icon">🕌</span>
-    الابتهالات والمدائح
-    <span>اضغط للانتقال للصفحة</span>
+    <span class="tab-text">الابتهالات والمدائح</span>
+    <span>مجموعة مختارة من الأناشيد</span>
 </a>
 
 <a href="radio.html" class="tab">
     <span class="tab-icon">📻</span>
-    الإذاعات المباشرة
-    <span>اضغط للانتقال للصفحة</span>
+    <span class="tab-text">الإذعات المباشرة</span>
+    <span>بث مباشر على مدار الساعة</span>
 </a>
+
+<script>
+    // تسجيل الـ Service Worker لضمان عمل التطبيق أوفلاين
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').then(reg => {
+                console.log('PWA Active ✅');
+            }).catch(err => console.log('PWA Offline Error ❌', err));
+        });
+    }
+
+    // إضافة تأثير اهتزاز بسيط عند الضغط (Vibration API)
+    document.querySelectorAll('.tab').forEach(button => {
+        button.addEventListener('click', () => {
+            if (navigator.vibrate) navigator.vibrate(40);
+        });
+    });
+</script>
 
 </body>
 </html>
