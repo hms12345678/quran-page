@@ -1,48 +1,65 @@
-const CACHE_NAME = 'quran-app-v2';
-const DATA_CACHE_NAME = 'quran-audio-cache';
-
-const urlsToCache = [
-  './',                 // دي بتفتح صفحة الحديث تلقائياً (index.html)
-  './index.html',       // صفحة الحديث (البداية)
-  './page1.html',       // صفحة الخيارات
-  './index1.html',      // صفحة القرآن
-  './azkar.html',       // صفحة الأذكار
-  './radio.html',       // صفحة الراديو
-  './ebtehalat.html',   // صفحة الابتهالات
-  './manifest.json',    // ملف التعريف
-  './icon-192.png',     // أيقونات التطبيق
+const CACHE_NAME = 'khalis-lillah-v4'; // تحديث الإصدار مهم جداً
+const STATIC_ASSETS = [
+  './',
+  './index.html',
+  './page1.html',
+  './index1.html',
+  './azkar.html',
+  './radio.html',
+  './ebtehalat.html',
+  './manifest.json',
+  './icon-192.png',
   './icon-512.png'
-];;
+];
 
-// التثبيت الأولي
-self.addEventListener('install', event => {
+// 1. تثبيت الصفحات الأساسية (الهيكل)
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(STATIC_ASSETS);
+    })
+  );
+  self.skipWaiting();
+});
+
+// 2. تفعيل وتنظيف الكاش القديم
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      );
+    })
   );
 });
 
-// استراتيجية جلب البيانات (Network First, then Cache)
-self.addEventListener('fetch', event => {
-  // لو الطلب ملف صوتي MP3
-  if (event.request.url.includes('.mp3')) {
-    event.respondWith(
-      caches.open(DATA_CACHE_NAME).then(cache => {
-        return cache.match(event.request).then(response => {
-          // لو السورة موجودة في الكاش، شغلها فوراً
-          if (response) return response;
+// 3. الاستراتيجية الذكية: حفظ السور والصور تلقائياً
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      // لو الملف (سورة أو صورة) موجود في الكاش، هاته فوراً
+      if (cachedResponse) return cachedResponse;
 
-          // لو مش موجودة، هاتها من النت واحفظ نسخة منها للمرة الجاية
-          return fetch(event.request).then(networkResponse => {
+      // لو مش موجود، روحه هاته من السيرفر
+      return fetch(event.request).then((networkResponse) => {
+        // بنشيك: هل ده ملف صوتي (mp3) أو صورة (jpg/webp/png)؟
+        const isAudio = event.request.url.endsWith('.mp3') || event.request.destination === 'audio';
+        const isImage = event.request.url.endsWith('.jpg') || 
+                        event.request.url.endsWith('.webp') || 
+                        event.request.destination === 'image';
+
+        if (isAudio || isImage) {
+          return caches.open(CACHE_NAME).then((cache) => {
+            // خد نسخة من الملف وحطها في الكاش "للأبد"
             cache.put(event.request, networkResponse.clone());
             return networkResponse;
           });
-        });
-      })
-    );
-  } else {
-    // للملفات العادية (الواجهة)
-    event.respondWith(
-      caches.match(event.request).then(response => response || fetch(event.request))
-    );
-  }
+        }
+
+        return networkResponse;
+      }).catch(() => {
+        // لو مفيش نت والملف مش في الكاش، اظهر صفحة خطأ أو سيبها فاضية
+      });
+    })
+  );
 });
