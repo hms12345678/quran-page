@@ -2,12 +2,17 @@ const CACHE_NAME = 'quran-app-v2';
 const DATA_CACHE_NAME = 'quran-audio-cache';
 
 const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon-192.png',
+  './',                 // دي بتفتح صفحة الحديث تلقائياً (index.html)
+  './index.html',       // صفحة الحديث (البداية)
+  './page1.html',       // صفحة الخيارات
+  './index1.html',      // صفحة القرآن
+  './azkar.html',       // صفحة الأذكار
+  './radio.html',       // صفحة الراديو
+  './ebtehalat.html',   // صفحة الابتهالات
+  './manifest.json',    // ملف التعريف
+  './icon-192.png',     // أيقونات التطبيق
   './icon-512.png'
-];
+];;
 
 // التثبيت الأولي
 self.addEventListener('install', event => {
