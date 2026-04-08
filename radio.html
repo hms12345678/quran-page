@@ -51,7 +51,10 @@
         .visualizer {
             display: flex; justify-content: center; align-items: flex-end;
             gap: 6px; height: 45px; margin-bottom: 40px;
+            visibility: hidden; /* مخفي لحين التشغيل */
         }
+
+        .playing .visualizer { visibility: visible; }
 
         .bar { width: 5px; background: var(--glow); border-radius: 10px; height: 8px; transition: 0.3s; }
         .playing .bar { animation: bounce 1.1s infinite ease-in-out; }
@@ -80,7 +83,7 @@
 </head>
 <body>
 
-    <div class="radio-card">
+    <div class="radio-card" id="mainCard">
         <div class="icon-circle">📜</div>
         <h1>إذاعة القرآن الكريم</h1>
         <p id="status-text">بث مباشر من القاهرة</p>
@@ -93,9 +96,7 @@
             <div class="bar" style="animation-delay: 0.3s"></div>
         </div>
 
-        <audio id="radio" preload="none">
-            <source src="https://n04.radiojar.com/8s5u5tpdtwzuv?rj-ttl=5&rj-tok=AAABnW4gpaUAQzGnHd89WlzWYQ" type="audio/mpeg">
-        </audio>
+        <audio id="radio" preload="none"></audio>
 
         <button class="play-btn" id="playBtn">
             <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -115,31 +116,44 @@
         const visualizer = document.getElementById('visualizer');
         const volRange = document.getElementById('volRange');
         const statusText = document.getElementById('status-text');
+        const mainCard = document.getElementById('mainCard');
 
         let isPlaying = false;
+        // الرابط المباشر
+        const streamUrl = "https://n04.radiojar.com/8s5u5tpdtwzuv";
+
+        // 1. حركة تنظيف: لو فيه أي خدمة مسجلة للصفحة دي بنمسحها فوراً
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
 
         playBtn.addEventListener('click', () => {
             if (!isPlaying) {
-                // الحيلة هنا: بنعيد تعيين المصدر عشان يمسح الـ Buffer ويجيب اللحظة الحالية
-                audio.load(); 
-                audio.play();
+                statusText.innerText = "جاري الاتصال...";
+                // إضافة متغير للوقت لمنع التخزين المؤقت تماماً
+                audio.src = streamUrl + "?t=" + Date.now();
                 
-                playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-                visualizer.classList.add('playing');
-                statusText.innerText = "متصل الآن بالبث المباشر";
+                audio.play().then(() => {
+                    playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                    mainCard.classList.add('playing');
+                    statusText.innerText = "متصل الآن بالبث المباشر";
+                    isPlaying = true;
+                }).catch(err => {
+                    statusText.innerText = "خطأ في الاتصال";
+                    console.log(err);
+                });
             } else {
                 audio.pause();
-                // مسح المصدر تماماً عند الإيقاف عشان ميخزنش داتا
-                audio.src = ""; 
-                audio.load();
-                // نرجع الرابط الأصلي تاني عشان يكون جاهز للتشغيل الجاي
-                audio.src = "https://n04.radiojar.com/8s5u5tpdtwzuv?rj-ttl=5&rj-tok=AAABnW4gpaUAQzGnHd89WlzWYQ";
-                
+                audio.src = ""; // تصفير المصدر لقتل الـ Stream
                 playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
-                visualizer.classList.remove('playing');
+                mainCard.classList.remove('playing');
                 statusText.innerText = "تم إيقاف البث";
+                isPlaying = false;
             }
-            isPlaying = !isPlaying;
         });
 
         volRange.addEventListener('input', (e) => {
