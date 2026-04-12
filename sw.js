@@ -1,6 +1,4 @@
-// تم تحديث الإصدار لـ v8 لضمان مسح الكاش القديم عند كل المستخدمين
-const CACHE_NAME = 'khalis-lillah-v8'; 
-
+const CACHE_NAME = 'khalis-lillah-v9'; // تحديث لـ v9
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -11,45 +9,41 @@ const STATIC_ASSETS = [
   './ebtehalat.html',
   './manifest.json',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './widget.html' // ضفنا ملف الودجت هنا
 ];
 
-// 1. تثبيت الصفحات والملفات الأساسية
+// تثبيت الملفات الأساسية
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('Installing new cache: ' + CACHE_NAME);
       return cache.addAll(STATIC_ASSETS);
     })
   );
-  // يجبر الـ Service Worker الجديد على التنشيط فوراً
   self.skipWaiting();
 });
 
-// 2. تفعيل وتنظيف الكاش القديم فوراً
+// تفعيل وتنظيف الكاش القديم مع حماية ملفات الصوت المستقبلية
 self.addEventListener('activate', (event) => {
+  const KEEPLIST = [CACHE_NAME]; 
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            console.log('Deleting old cache: ' + key);
+          if (!KEEPLIST.includes(key)) {
             return caches.delete(key);
           }
         })
       );
-    }).then(() => {
-      // يخلي الـ Service Worker يسيطر على الصفحة الحالية فوراً بدون ريفريش
-      return self.clients.claim();
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
-// 3. الاستراتيجية الذكية: حفظ الصور والصفحات ومنع الصوت
+// التعامل مع الطلبات (Fetch)
 self.addEventListener('fetch', (event) => {
   const url = event.request.url;
 
-  // استثناء الراديو والملفات الصوتية من الكاش نهائياً
+  // استثناء الراديو والصوتيات من الكاش
   if (
     url.includes('radiojar.com') || 
     url.includes('stream') || 
@@ -63,24 +57,18 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) return cachedResponse;
-
       return fetch(event.request).then((networkResponse) => {
-        // تخزين الصور فقط في الكاش التلقائي
         const isImage = event.request.destination === 'image' || 
                         url.match(/\.(jpg|jpeg|png|gif|webp|svg)$|^https:\/\/static\.surah\.com/);
-
         if (isImage && networkResponse.status === 200) {
           return caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, networkResponse.clone());
             return networkResponse;
           });
         }
-
         return networkResponse;
       }).catch(() => {
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html');
-        }
+        if (event.request.mode === 'navigate') return caches.match('./index.html');
       });
     })
   );
