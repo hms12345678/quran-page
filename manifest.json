@@ -1,6 +1,7 @@
 {
   "name": "خالص لله",
   "short_name": "خالص لله",
+  "description": "تطبيق أذكار وراديو إسلامي",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -21,23 +22,26 @@
     {
       "name": "راديو القرآن",
       "short_name": "الراديو",
-      "description": "استماع مباشر لإذاعة القرآن الكريم",
       "url": "./radio.html",
       "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "الأذكار",
       "short_name": "الأذكار",
-      "description": "قراءة أذكار الصباح والمساء",
       "url": "./azkar.html",
       "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
-    },
+    }
+  ],
+  "widgets": [
     {
-      "name": "الابتهالات",
-      "short_name": "ابتهالات",
-      "description": "استماع للابتهالات الدينية",
-      "url": "./ebtehalat.html",
-      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+      "name": "أذكار المسلم",
+      "short_name": "أذكار",
+      "description": "عرض أذكار على الشاشة الرئيسية",
+      "tag": "azkar-widget",
+      "template": "azkar-widget-template",
+      "type": "text/html",
+      "src": "./widget.html",
+      "sizes": "150x150"
     }
   ]
 }
