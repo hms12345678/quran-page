@@ -141,29 +141,88 @@
     });
 
     const allReaders = [
-        { id: 1, name: "محمد صديق المنشاوي", img:"minshawi.jpg", base_murattal: "https://server10.mp3quran.net/minsh/", base_mojawwad: "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-        { id: 2, name: "عبدالباسط عبدالصمد", img: "baset.jpg", base_murattal: "https://server7.mp3quran.net/basit/", base_mojawwad: "https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-        { id: 3, name: "محمود خليل الحصري", img: "hosary.jpg", base_murattal: "https://server13.mp3quran.net/husr/", base_mojawwad: "https://server13.mp3quran.net/husr/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-        { id: 4, name: "مصطفى إسماعيل", img: "mostafa.jpg", base_murattal: "https://server8.mp3quran.net/mustafa/", base_mojawwad: "https://server8.mp3quran.net/mustafa/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-        { id: 5, name: "محمود علي البنا", img: "bana.jpg", base_murattal: "https://server8.mp3quran.net/bna/", base_mojawwad: "https://server8.mp3quran.net/bna/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-        { id: 21, name: "محمد محمود الطبلاوي", img: "الطبلاوي.webp", base_murattal: "https://server12.mp3quran.net/tblawi/", base_mojawwad: "https://server12.mp3quran.net/tblawi/Al-Mojawwad/", mode: "murattal" },
-        { id: 6, name: "ياسر الدوسري", img: "dosri.jpg", base: "https://server11.mp3quran.net/yasser/" },
-        { id: 7, name: "ماهر المعيقلي", img: "Maher_Al_Mueaqly.png", base: "https://server12.mp3quran.net/maher/Almusshaf-Al-Mojawwad/" },
-        { id: 8, name: "مشاري العفاسي", img: "afasy.jpg", base: "https://server8.mp3quran.net/afs/" },
-        { id: 9, name: "إسلام صبحي", img: "islam sobhi.jpg", base: "https://server14.mp3quran.net/islam/Rewayat-Hafs-A-n-Assem/" },
-        { id: 10, name: "أحمد العجمي", img: "أحمد بن علي العجمي.jpg", base: "https://server10.mp3quran.net/ajm/128/" },
-        { id: 11, name: "سعد الغامدي", img: "الغامدي.jpg", base: "https://server7.mp3quran.net/s_gmd/128/" },
-        { id: 12, name: "سعود الشريم", img: "الشريم.jpg", base: "https://server7.mp3quran.net/shur/128/" },
-        { id: 13, name: "عبدالرحمن السديس", img: "السديس.jpg", base: "https://server11.mp3quran.net/sds/" },
-        { id: 14, name: "خالد الجليل", img: "الجليل.jpg", base: "https://server10.mp3quran.net/jleel/" },
-        { id: 15, name: "فارس عباد", img: "فارس عباد.webp", base: "https://server8.mp3quran.net/frs_a/" },
-        { id: 16, name: "إدريس أبكر", img: "idrees-abkar.jpg", base: "https://server6.mp3quran.net/abkr/" },
-        { id: 17, name: "ناصر القطامي", img: "القطامي.jpg", base: "https://server6.mp3quran.net/qtm/" },
-        { id: 18, name: "محمد اللحيدان", img: "اللحيدان.jpg", base: "https://server8.mp3quran.net/lhdan/" },
-        { id: 19, name: "بدر التركي", img: "بدر التركي.jpg", base: "https://server10.mp3quran.net/bader/Rewayat-Hafs-A-n-Assem/" },
-        { id: 20, name: "صلاح بو خاطر", img: "صلاح بو خاطر.jpg", base: "https://server8.mp3quran.net/bu_khtr/" }
-    ];
 
+        { id: 1, name: "محمد صديق المنشاوي", img:"minshawi.jpg", base_murattal: "https://server10.mp3quran.net/minsh/", base_mojawwad: "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+
+        { id: 2, name: "عبدالباسط عبدالصمد", img: "baset.jpg", base_murattal: "https://server7.mp3quran.net/basit/", base_mojawwad: "https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+
+        { id: 3, name: "محمود خليل الحصري", img: "hosary.jpg", base_murattal: "https://server13.mp3quran.net/husr/", base_mojawwad: "https://server13.mp3quran.net/husr/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+
+        { id: 4, name: "مصطفى إسماعيل", img: "mostafa.jpg", base_murattal: "https://server8.mp3quran.net/mustafa/", base_mojawwad: "https://server8.mp3quran.net/mustafa/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+
+        { id: 5, name: "محمود علي البنا", img: "bana.jpg", base_murattal: "https://server8.mp3quran.net/bna/", base_mojawwad: "https://server8.mp3quran.net/bna/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+
+        { id: 21, name: "محمد محمود الطبلاوي", img: "الطبلاوي.webp", base_murattal: "https://server12.mp3quran.net/tblawi/", base_mojawwad: "https://server12.mp3quran.net/tblawi/Al-Mojawwad/", mode: "murattal" },
+
+        { id: 6, name: "ياسر الدوسري", img: "dosri.jpg", base: "https://server11.mp3quran.net/yasser/" },
+
+        { id: 7, name: "ماهر المعيقلي", img: "Maher_Al_Mueaqly.png", base: "https://server12.mp3quran.net/maher/Almusshaf-Al-Mojawwad/" },
+
+        { id: 8, name: "مشاري العفاسي", img: "afasy.jpg", base: "https://server8.mp3quran.net/afs/" },
+
+        { id: 9, name: "إسلام صبحي", img: "islam sobhi.jpg", base: "https://server14.mp3quran.net/islam/Rewayat-Hafs-A-n-Assem/" },
+
+        { id: 10, name: "أحمد العجمي", img: "أحمد بن علي العجمي.jpg", base: "https://server10.mp3quran.net/ajm/128/" },
+
+        { id: 11, name: "سعد الغامدي", img: "الغامدي.jpg", base: "https://server7.mp3quran.net/s_gmd/128/" },
+
+        { id: 12, name: "سعود الشريم", img: "الشريم.jpg", base: "https://server7.mp3quran.net/shur/128/" },
+
+        { id: 13, name: "عبدالرحمن السديس", img: "السديس.jpg", base: "https://server11.mp3quran.net/sds/" },
+
+        { id: 14, name: "خالد الجليل", img: "الجليل.jpg", base: "https://server10.mp3quran.net/jleel/" },
+
+        { id: 15, name: "فارس عباد", img: "فارس عباد.webp", base: "https://server8.mp3quran.net/frs_a/" },
+
+        { id: 16, name: "إدريس أبكر", img: "idrees-abkar.jpg", base: "https://server6.mp3quran.net/abkr/" },
+
+        { id: 17, name: "ناصر القطامي", img: "القطامي.jpg", base: "https://server6.mp3quran.net/qtm/" },
+
+        { id: 18, name: "محمد اللحيدان", img: "اللحيدان.jpg", base: "https://server8.mp3quran.net/lhdan/" },
+
+        { id: 19, name: "بدر التركي", img: "بدر التركي.jpg", base: "https://server10.mp3quran.net/bader/Rewayat-Hafs-A-n-Assem/" },
+
+        { id: 20, name: "صلاح بو خاطر", img: "صلاح بو خاطر.jpg", base: "https://server8.mp3quran.net/bu_khtr/" },
+
+        { id: 22, name: "هاني الرفاعي", img: "هاني الرفاعي.jpg", base: "https://server8.mp3quran.net/hani/" },
+
+        { id: 23, name: "أبو بكر الشاطري", img: "abu-bakr-al-shatri.jpg", base: "https://server11.mp3quran.net/shatri/" },
+
+        { id: 24, name: "علي جابر", img: "علي جابر.jpg", base: "https://server11.mp3quran.net/a_jbr/" },
+
+        { id: 25, name: "محمد أيوب", img: "محمد ايوب.jpg", base: "https://server8.mp3quran.net/ayyub/" },
+
+        { id: 26, name: "خليفة الطنيجي", img: "khalifa-al-tunaiji.png", base: "https://server12.mp3quran.net/tnjy/" },
+
+        { id: 27, name: "الدوكالي العالم", img: "doukali-muhammad-al-alam2.webp", base: "https://server7.mp3quran.net/dokali/" },
+
+        { id: 28, name: "علي الحذيفي", img: "الحذيفي.jpg", base: "https://server9.mp3quran.net/hthfi/128-hfs/" },
+
+        { id: 29, name: "بندر بليله", img: "بندر بليله.jpg", base: "https://server6.mp3quran.net/balilah/" },
+
+        { id: 30, name: "أحمد نعينع", img: "احمد نعينع.jpg", base: "https://server11.mp3quran.net/ahmad_nu/" },
+
+        { id: 31, name: "عبدالبديع غيلان", img: "عبدالبديع غيلان.jpg", base: "https://server16.mp3quran.net/A-Ghailan/Rewayat-Hafs-A-n-Assem/" },
+
+        { id: 32, name: "عبدالله الخياط", img: "خياط.jpg", base: "https://server12.mp3quran.net/kyat/" },
+
+        { id: 33, name: "وديع اليمني", img: "وديع.jpg", base: "https://server6.mp3quran.net/wdee3/" },
+
+        { id: 34, name: "أحمد النفيس", img: "النفيس.jpg", base: "https://server16.mp3quran.net/nufais/Rewayat-Hafs-A-n-Assem/" },
+
+        { id: 35, name: "أحمد الطرابلسي", img: "الطرابلسي.jpg", base: "https://server10.mp3quran.net/trabulsi/" },
+
+        { id: 36, name: "حسن صالح", img: "حسن صالح.jpg", base: "https://server16.mp3quran.net/h_saleh/Rewayat-Hafs-A-n-Assem/" },
+
+        { id: 37, name: "رعد الكردي", img: "رعد الكردي.jpg", base: "https://server6.mp3quran.net/kurdi/" },
+
+        { id: 38, name: "زكي داغستاني", img: "زكي.jpg", base: "https://server9.mp3quran.net/zaki/" },
+
+        { id: 39, name: "سهل ياسين", img: "سهل.jpg", base: "https://server6.mp3quran.net/shl/" },
+
+        { id: 40, name: "منصور السالمي", img: "السالمي.jpg", base: "https://server14.mp3quran.net/mansor/" }
+
+    ];
     const surasArr = ["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الانسان","المرسلات","النبأ","النازعات","عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
 
     function renderReaders(query = "") {
