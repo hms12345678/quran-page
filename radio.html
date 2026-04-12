@@ -20,6 +20,7 @@
             background: radial-gradient(circle at center, var(--royal-blue), var(--deep-blue));
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: white;
+            overflow: hidden;
         }
 
         .radio-card {
@@ -35,7 +36,6 @@
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
         }
 
-        /* تنسيق أزرار اختيار الإذاعة */
         .selector-container {
             display: flex;
             gap: 10px;
@@ -47,7 +47,7 @@
 
         .station-btn {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border: none;
             border-radius: 15px;
             background: transparent;
@@ -55,6 +55,7 @@
             cursor: pointer;
             font-weight: bold;
             transition: 0.3s;
+            font-family: inherit;
         }
 
         .station-btn.active {
@@ -72,7 +73,7 @@
             box-shadow: 0 0 25px rgba(79, 172, 254, 0.3);
         }
 
-        h1 { font-size: 1.5rem; margin: 10px 0; }
+        h1 { font-size: 1.4rem; margin: 10px 0; }
         p { font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 20px; }
 
         .visualizer {
@@ -90,15 +91,14 @@
 
         .play-btn {
             background: white; border: none;
-            width: 80px; height: 80px; border-radius: 50%;
+            width: 85px; height: 85px; border-radius: 50%;
             cursor: pointer; margin: 0 auto 25px;
             display: flex; justify-content: center; align-items: center;
             transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
-        .play-btn:active { transform: scale(0.9); }
-        .play-btn svg { width: 30px; fill: var(--royal-blue); }
+        .play-btn svg { width: 35px; fill: var(--royal-blue); }
 
         .volume-container {
             display: flex; align-items: center; gap: 15px;
@@ -112,12 +112,12 @@
 
     <div class="radio-card" id="mainCard">
         <div class="selector-container">
-            <button class="station-btn active" onclick="switchStation('egypt')">مصر 🇪🇬</button>
-            <button class="station-btn" onclick="switchStation('saudi')">السعودية 🇸🇦</button>
+            <button id="btn-egypt" class="station-btn active" onclick="switchStation('egypt')">مصر 🇪🇬</button>
+            <button id="btn-saudi" class="station-btn" onclick="switchStation('saudi')">السعودية 🇸🇦</button>
         </div>
 
         <div class="icon-circle">📜</div>
-        <h1 id="station-name">إذعة القرآن الكريم من القاهرة</h1>
+        <h1 id="station-name">إذاعة القرآن الكريم من القاهرة</h1>
         <p id="status-text">بث مباشر الآن</p>
 
         <div class="visualizer" id="visualizer">
@@ -153,39 +153,57 @@
         let isPlaying = false;
         let currentStation = 'egypt';
 
-        // --- ⚙️ الروابط هنا يا هندسة ⚙️ ---
+        // الروابط
         const streams = {
             egypt: "https://n04.radiojar.com/8s5u5tpdtwzuv",
-            saudi: "http://n09.radiojar.com/4wqre23fytzuv?rj-ttl=5&rj-tok=AAABnYMd0OUAlVVU0PehLD8RLg" // <--- ضع رابط السعودية هنا
+            saudi: "http://n09.radiojar.com/4wqre23fytzuv?rj-ttl=5&rj-tok=AAABnYMd0OUAlVVU0PehLD8RLg" 
         };
 
         function switchStation(station) {
             if (currentStation === station) return;
-
-            // تغيير الحالة المرئية للأزرار
-            document.querySelectorAll('.station-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-
             currentStation = station;
-            stationName.innerText = station === 'egypt' ? "إذعة القرآن الكريم من القاهرة" : "إذعة القرآن الكريم من المملكة";
 
-            // لو الراديو شغال، نوقفه ونشغل القناة الجديدة فوراً
+            // تحديث الأزرار
+            document.getElementById('btn-egypt').classList.toggle('active', station === 'egypt');
+            document.getElementById('btn-saudi').classList.toggle('active', station === 'saudi');
+
+            stationName.innerText = station === 'egypt' ? "إذاعة القرآن الكريم من القاهرة" : "إذاعة القرآن الكريم من المملكة";
+
             if (isPlaying) {
                 stopAudio();
                 startAudio();
             }
         }
 
+        function updateMediaSession() {
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: stationName.innerText,
+                    artist: 'بث مباشر',
+                    album: 'إذاعة القرآن الكريم',
+                    artwork: [
+                        { src: './icon-512.png', sizes: '512x512', type: 'image/png' }
+                    ]
+                });
+
+                navigator.mediaSession.setActionHandler('play', startAudio);
+                navigator.mediaSession.setActionHandler('pause', stopAudio);
+            }
+        }
+
         function startAudio() {
             statusText.innerText = "جاري الاتصال...";
             audio.src = streams[currentStation] + "?t=" + Date.now();
+            
             audio.play().then(() => {
                 playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
                 mainCard.classList.add('playing');
                 statusText.innerText = "متصل الآن بالبث المباشر";
                 isPlaying = true;
+                updateMediaSession(); // تفعيل التحكم الخارجي ومنع التقطيع
             }).catch(err => {
                 statusText.innerText = "خطأ في الاتصال";
+                console.error(err);
             });
         }
 
@@ -204,9 +222,11 @@
 
         volRange.addEventListener('input', (e) => audio.volume = e.target.value);
 
-        // تنظيف الـ Service Worker
+        // تنظيف الـ Service Worker لضمان عمل الراديو بدون كاش معطل
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+            navigator.serviceWorker.getRegistrations().then(regs => {
+                for(let reg of regs) reg.unregister();
+            });
         }
     </script>
 </body>
