@@ -69,7 +69,8 @@
             background: var(--card-bg); padding: 15px; border-radius: 15px;
             margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;
         }
-        .track-info { flex: 1; cursor: pointer; }
+        .track-info { flex: 1; cursor: pointer; position: relative; }
+        .download-status { color: var(--success); margin-right: 5px; font-size: 0.9rem; }
         .fav-heart { font-size: 1.3rem; color: rgba(255,255,255,0.1); padding-right: 15px; cursor: pointer; }
         .fav-heart.active { color: var(--accent); }
 
@@ -84,7 +85,7 @@
         .mini-text { flex: 1; overflow: hidden; }
         .mini-text h4 { font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .mini-time { font-size: 0.7rem; color: var(--primary); }
-        .mini-controls { font-size: 1.8rem; color: var(--primary); }
+        .mini-controls { font-size: 1.8rem; color: var(--primary); cursor: pointer; }
         .mini-progress-bar { width: 100%; height: 3px; background: rgba(255,255,255,0.1); margin-top: 8px; border-radius: 2px; }
         #miniProgressFill { height: 100%; width: 0%; background: var(--primary); transition: 0.1s linear; }
 
@@ -102,9 +103,8 @@
         .time-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 8px; color: var(--primary); }
 
         .full-controls { display: flex; align-items: center; gap: 25px; }
-        .play-btn-big { width: 70px; height: 70px; background: var(--primary); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+        .play-btn-big { width: 70px; height: 70px; background: var(--primary); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer; }
         
-        /* زر التحميل داخل المشغل */
         .dl-btn-full {
             width: 45px; height: 45px; border-radius: 50%; border: 1px solid var(--primary);
             display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer;
@@ -145,13 +145,13 @@
     </div>
 
     <div class="full-player" id="fullPlayer">
-        <span onclick="closeFullPlayer()" style="position:absolute; top:40px; left:30px; font-size:1.5rem;">▼</span>
+        <span onclick="closeFullPlayer()" style="position:absolute; top:40px; left:30px; font-size:1.5rem; cursor:pointer;">▼</span>
         <img src="" id="fullPlayingImg" class="full-img">
         <h2 id="fullTitle" style="color:var(--primary); text-align:center;">اسم الابتهال</h2>
         <p id="fullArtist" style="opacity:0.6; margin-bottom:20px;"></p>
 
         <div class="full-progress-container">
-            <div class="full-progress-bar" id="fullProgressBg"><div class="full-fill" id="fullProgressFill"></div></div>
+            <div class="full-progress-bar" id="fullProgressBg" onclick="seekManual(event)"><div class="full-fill" id="fullProgressFill"></div></div>
             <div class="time-labels"><span id="currentTime">00:00</span><span id="durationTime">00:00</span></div>
         </div>
 
@@ -160,7 +160,8 @@
             <div onclick="seek(-10)" style="font-size:1.5rem; cursor:pointer;">⏪</div>
             <div class="play-btn-big" onclick="togglePlay()" id="fullPlayBtn">⏸</div>
             <div onclick="seek(10)" style="font-size:1.5rem; cursor:pointer;">⏩</div>
-            <div style="width: 45px;"></div> </div>
+            <div style="width: 45px;"></div> 
+        </div>
     </div>
 
     <audio id="mainAudio"></audio>
@@ -299,16 +300,14 @@
 
 
         ];
-
-
         let db;
         let currentArtist = null;
         let currentTrackData = { title: '', url: '' };
         let favorites = JSON.parse(localStorage.getItem('hassan_favs')) || [];
+        let downloadedTracks = []; // قائمة للابتهالات المحملة
         let showingFavs = false;
         const audio = document.getElementById('mainAudio');
 
-        // IndexedDB
         const dbRequest = indexedDB.open("HassanAppDB", 2);
         dbRequest.onupgradeneeded = (e) => {
             db = e.target.result;
@@ -316,7 +315,11 @@
                 db.createObjectStore("ibtehalat", { keyPath: "title" });
             }
         };
-        dbRequest.onsuccess = (e) => { db = e.target.result; init(); };
+        dbRequest.onsuccess = (e) => { 
+            db = e.target.result; 
+            refreshDownloadedList();
+            init(); 
+        };
 
         function init() {
             const grid = document.getElementById('artistsGrid');
@@ -330,15 +333,26 @@
             });
         }
 
+        async function refreshDownloadedList() {
+            const transaction = db.transaction("ibtehalat", "readonly");
+            const store = transaction.objectStore("ibtehalat");
+            const request = store.getAllKeys();
+            request.onsuccess = () => {
+                downloadedTracks = request.result;
+                if(currentArtist) filterTracks();
+            };
+        }
+
         function renderTracks(list) {
             const container = document.getElementById('tracksList');
             container.innerHTML = '';
             list.forEach(t => {
                 const isFav = favorites.includes(t.title);
+                const isDownloaded = downloadedTracks.includes(t.title);
                 container.innerHTML += `
                     <div class="track-card">
                         <div class="track-info" onclick="handleTrackSelection('${t.title}', '${t.url}')">
-                            <strong>${t.title}</strong>
+                            <strong>${t.title} ${isDownloaded ? '<span class="download-status">✅</span>' : ''}</strong>
                             <p style="font-size:0.7rem; opacity:0.5;">${currentArtist.name}</p>
                         </div>
                         <span class="fav-heart ${isFav?'active':''}" onclick="toggleFav('${t.title}')">❤️</span>
@@ -348,8 +362,6 @@
 
         async function handleTrackSelection(title, url) {
             currentTrackData = { title, url };
-            
-            // تحقق لو موجود أوفلاين
             const transaction = db.transaction("ibtehalat", "readonly");
             const request = transaction.objectStore("ibtehalat").get(title);
             
@@ -375,6 +387,25 @@
             document.getElementById('playingImg').src = currentArtist.img;
             document.getElementById('fullPlayingImg').src = currentArtist.img;
             updateUI(true);
+            setupMediaSession(title, currentArtist.name, currentArtist.img);
+        }
+
+        // إعداد مشغل الإشعارات
+        function setupMediaSession(title, artist, image) {
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: title,
+                    artist: artist,
+                    artwork: [
+                        { src: image, sizes: '512x512', type: 'image/jpg' }
+                    ]
+                });
+
+                navigator.mediaSession.setActionHandler('play', () => togglePlay());
+                navigator.mediaSession.setActionHandler('pause', () => togglePlay());
+                navigator.mediaSession.setActionHandler('seekbackward', () => seek(-10));
+                navigator.mediaSession.setActionHandler('seekforward', () => seek(10));
+            }
         }
 
         async function downloadCurrent() {
@@ -387,7 +418,11 @@
                 const blob = await response.blob();
                 const transaction = db.transaction("ibtehalat", "readwrite");
                 transaction.objectStore("ibtehalat").add({ title: currentTrackData.title, data: blob });
-                updateDownloadBtnUI(true);
+                
+                transaction.oncomplete = () => {
+                    updateDownloadBtnUI(true);
+                    refreshDownloadedList(); // تحديث القائمة لإظهار علامة الصح
+                };
             } catch (err) {
                 alert("خطأ في التحميل");
                 btn.innerText = "📥";
@@ -405,7 +440,49 @@
             }
         }
 
-        // باقي الوظائف المساعدة
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                updateUI(true);
+            } else {
+                audio.pause();
+                updateUI(false);
+            }
+        }
+
+        function updateUI(isPlaying) {
+            const icon = isPlaying ? '⏸' : '▶';
+            document.getElementById('miniPlayBtn').innerText = icon;
+            document.getElementById('fullPlayBtn').innerText = icon;
+        }
+
+        function seek(amount) { audio.currentTime += amount; }
+
+        function seekManual(e) {
+            const rect = document.getElementById('fullProgressBg').getBoundingClientRect();
+            const pct = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = pct * audio.duration;
+        }
+
+        audio.ontimeupdate = () => {
+            const pct = (audio.currentTime / audio.duration) * 100 || 0;
+            document.getElementById('miniProgressFill').style.width = pct + "%";
+            document.getElementById('fullProgressFill').style.width = pct + "%";
+            document.getElementById('miniTimeDisplay').innerText = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+            document.getElementById('currentTime').innerText = formatTime(audio.currentTime);
+            document.getElementById('durationTime').innerText = formatTime(audio.duration);
+        };
+
+        function formatTime(sec) {
+            if (isNaN(sec)) return "00:00";
+            let m = Math.floor(sec / 60);
+            let s = Math.floor(sec % 60);
+            return `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
+        }
+
+        function openFullPlayer() { document.getElementById('fullPlayer').classList.add('open'); }
+        function closeFullPlayer() { document.getElementById('fullPlayer').classList.remove('open'); }
+
         function showArtistTracks(index) {
             currentArtist = data[index];
             document.getElementById('mainPage').style.display = 'none';
@@ -427,6 +504,7 @@
         }
 
         function toggleFav(title) {
+            event.stopPropagation();
             if(favorites.includes(title)) favorites = favorites.filter(f => f !== title);
             else favorites.push(title);
             localStorage.setItem('hassan_favs', JSON.stringify(favorites));
@@ -439,38 +517,7 @@
             filterTracks();
         }
 
-        audio.ontimeupdate = () => {
-            const pct = (audio.currentTime / audio.duration) * 100 || 0;
-            document.getElementById('miniProgressFill').style.width = pct + "%";
-            document.getElementById('fullProgressFill').style.width = pct + "%";
-            document.getElementById('miniTimeDisplay').innerText = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
-            document.getElementById('currentTime').innerText = formatTime(audio.currentTime);
-            document.getElementById('durationTime').innerText = formatTime(audio.duration || 0);
-        };
-
-        function formatTime(s) {
-            let m = Math.floor(s/60), sec = Math.floor(s%60);
-            return `${m}:${sec < 10 ? '0'+sec : sec}`;
-        }
-
-        function togglePlay() {
-            if(audio.paused) { audio.play(); updateUI(true); }
-            else { audio.pause(); updateUI(false); }
-        }
-
-        function updateUI(playing) {
-            const icon = playing ? '⏸' : '▶️';
-            document.getElementById('miniPlayBtn').innerText = icon;
-            document.getElementById('fullPlayBtn').innerText = icon;
-        }
-
-        function seek(s) { audio.currentTime += s; }
-        function openFullPlayer() { document.getElementById('fullPlayer').classList.add('open'); }
-        function closeFullPlayer() { document.getElementById('fullPlayer').classList.remove('open'); }
-        
-        document.getElementById('fullProgressBg').onclick = (e) => {
-            audio.currentTime = (e.offsetX / e.target.clientWidth) * audio.duration;
-        };
+        audio.onended = () => updateUI(false);
     </script>
 </body>
 </html>
