@@ -1,25 +1,43 @@
 {
-  "short_name": "القرآن الكريم",
-    "name": "خالص لوجه الله | Eng. Hassan Sobeh", 
-     "description": "تطبيق القرآن الكريم والأذكار - م/ حسن صبيح",
+  "name": "خالص لله",
+  "short_name": "خالص لله",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
   "icons": [
     {
-      "src": "icon-192.png",
-      "type": "image/png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
-      "src": "icon-512.png",
-      "type": "image/png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
-      "purpose": "any"
+      "type": "image/png"
     }
   ],
-  "start_url": "./index.html",
-  "background_color": "#1e3c72",
-  "display": "standalone",
-  "scope": "./",
-  "theme_color": "#1e3c72",
-  "orientation": "portrait"
+  "shortcuts": [
+    {
+      "name": "راديو القرآن",
+      "short_name": "الراديو",
+      "description": "استماع مباشر لإذاعة القرآن الكريم",
+      "url": "./radio.html",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "الأذكار",
+      "short_name": "الأذكار",
+      "description": "قراءة أذكار الصباح والمساء",
+      "url": "./azkar.html",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "الابتهالات",
+      "short_name": "ابتهالات",
+      "description": "استماع للابتهالات الدينية",
+      "url": "./ebtehalat.html",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    }
+  ]
 }
