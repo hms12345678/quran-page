@@ -19,6 +19,27 @@
     }
   ],
   "shortcuts": [
+
+
+
+
+
+
+    {
+      "name": " سماع القران الكريم",
+      "short_name": "القران",
+      "url": "./index.html",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    },
+
+
+
+
+
+
+
+
+
     {
       "name": "راديو القرآن",
       "short_name": "الراديو",
