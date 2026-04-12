@@ -15,8 +15,12 @@
         .search-input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(250, 204, 21, 0.2); background: rgba(255,255,255,0.07); color: #fff; font-family: 'Cairo'; outline: none; box-sizing: border-box; }
 
         .container { padding: 15px; max-width: 500px; margin: 0 auto; }
-        .section-title { font-size: 14px; color: var(--accent); margin: 20px 0 10px; font-weight: bold; }
+        .section-title { font-size: 14px; color: var(--accent); margin: 20px 0 10px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
         
+        /* المفضلة */
+        .fav-btn { font-size: 20px; cursor: pointer; transition: 0.3s; color: rgba(255,255,255,0.2); padding: 5px; }
+        .fav-btn.active { color: var(--heart-red); text-shadow: 0 0 10px rgba(255, 71, 87, 0.4); }
+
         .reader-card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; margin-bottom: 12px; overflow: hidden; transition: 0.3s; }
         .reader-card.open { border-color: var(--accent); }
         .reader-header { display: flex; align-items: center; padding: 12px; cursor: pointer; gap: 12px; }
@@ -32,17 +36,14 @@
         .open .suras-box { max-height: 380px; overflow-y: auto; padding: 15px; }
         .sura-item { background: rgba(255,255,255,0.05); padding: 10px 4px; border-radius: 8px; font-size: 12px; text-align: center; cursor: pointer; }
 
-        /* الأيقونة العائمة للمكتبة */
         .library-fab { position: fixed; right: 20px; bottom: 140px; background: var(--accent); color: #000; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; z-index: 2500; box-shadow: 0 5px 15px rgba(0,0,0,0.4); border: none; }
 
-        /* نافذة المكتبة المحدثة */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 4000; align-items: center; justify-content: center; }
         .modal-content { background: #1e293b; width: 90%; max-width: 420px; border-radius: 25px; border: 1px solid var(--accent); padding: 20px; max-height: 80vh; overflow-y: auto; position: relative; }
         .offline-reader-item { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px; display: flex; align-items: center; gap: 15px; cursor: pointer; margin-bottom: 10px; border: 1px solid transparent; transition: 0.3s; }
         .offline-reader-item:hover { border-color: var(--accent); background: rgba(255,255,255,0.1); }
         .offline-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent); }
 
-        /* المشغل */
         .modern-player { position: fixed; bottom: 15px; left: 10px; right: 10px; background: #1e293b; border-radius: 12px; z-index: 3000; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .modern-player.expanded { bottom: 0; left: 0; right: 0; height: 100%; border-radius: 0; padding-top: 40px; }
         .mini-view { display: flex; align-items: center; padding: 10px; cursor: pointer; }
@@ -70,23 +71,23 @@
 </div>
 
 <div class="search-container">
-    <div class="search-wrapper">
-        <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن قارئ..." oninput="handleSearch()">
-    </div>
+    <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن قارئ..." oninput="handleSearch()">
 </div>
 
 <div class="container">
-    <div id="fav-section" style="display: none;"><div class="section-title">⭐ المفضلون</div><div id="favList"></div></div>
-    <div class="section-title">📖 كل القراء</div><div id="rList"></div>
+    <div id="fav-section" style="display: none;">
+        <div class="section-title">⭐ المفضلون</div>
+        <div id="favList"></div>
+    </div>
+    <div class="section-title">📖 كل القراء</div>
+    <div id="rList"></div>
 </div>
 
 <button class="library-fab" onclick="toggleLibraryModal()">💾</button>
 
 <div class="modal-overlay" id="libraryModal" onclick="toggleLibraryModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <div id="modal-dynamic-header" style="display:flex; align-items:center; margin-bottom:15px; gap:10px;">
-            <h3 style="color:var(--accent); margin:0;">💾 المكتبة المحملة</h3>
-        </div>
+        <div id="modal-dynamic-header" style="display:flex; align-items:center; margin-bottom:15px; gap:10px;"></div>
         <div id="offlineList"></div>
         <button onclick="toggleLibraryModal()" style="width:100%; margin-top:20px; background:rgba(255,255,255,0.1); border:none; color:#fff; padding:10px; border-radius:10px; font-family:'Cairo';">إغلاق</button>
     </div>
@@ -115,7 +116,7 @@
                 <input type="range" id="seekSlider" style="flex-grow:1; accent-color:var(--accent);" value="0">
                 <span id="totalTime" style="font-size:10px">00:00</span>
             </div>
-            <div class="main-controls">
+            <div class="main-controls" style="display:flex; justify-content:center; align-items:center; gap:25px;">
                 <button id="playerDownloadBtn" class="player-dl-btn">📥</button>
                 <button style="background:none; border:none; color:white; font-size:25px" onclick="skip(-10)">⏪</button>
                 <button class="play-pause-btn" id="e-playBtn" onclick="togglePlay()">▶</button>
@@ -129,8 +130,9 @@
 </div>
 
 <script>
-    // --- IndexedDB & Readers Array ---
     const dbName = "QuranOfflineDB";
+    let favorites = JSON.parse(localStorage.getItem('favReaders')) || [];
+
     const initDB = () => new Promise(res => {
         const req = indexedDB.open(dbName, 1);
         req.onupgradeneeded = e => e.target.result.createObjectStore("surahs", { keyPath: "id" });
@@ -138,113 +140,136 @@
     });
 
     const allReaders = [
-    { id: 1, name: "محمد صديق المنشاوي", img:"minshawi.jpg", base_murattal: "https://server10.mp3quran.net/minsh/", base_mojawwad: "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-    { id: 2, name: "عبدالباسط عبدالصمد", img: "baset.jpg", base_murattal: "https://server7.mp3quran.net/basit/", base_mojawwad: "https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-    { id: 3, name: "محمود خليل الحصري", img: "hosary.jpg", base_murattal: "https://server13.mp3quran.net/husr/", base_mojawwad: "https://server13.mp3quran.net/husr/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-    { id: 4, name: "مصطفى إسماعيل", img: "mostafa.jpg", base_murattal: "https://server8.mp3quran.net/mustafa/", base_mojawwad: "https://server8.mp3quran.net/mustafa/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-    { id: 5, name: "محمود علي البنا", img: "bana.jpg", base_murattal: "https://server8.mp3quran.net/bna/", base_mojawwad: "https://server8.mp3quran.net/bna/Almusshaf-Al-Mojawwad/", mode: "murattal" },
-    { id: 21, name: "محمد محمود الطبلاوي", img: "الطبلاوي.webp", base_murattal: "https://server12.mp3quran.net/tblawi/", base_mojawwad: "https://server12.mp3quran.net/tblawi/Al-Mojawwad/", mode: "murattal" },
-    { id: 6, name: "ياسر الدوسري", img: "dosri.jpg", base: "https://server11.mp3quran.net/yasser/" },
-    { id: 7, name: "ماهر المعيقلي", img: "Maher_Al_Mueaqly.png", base: "https://server12.mp3quran.net/maher/Almusshaf-Al-Mojawwad/" },
-    { id: 8, name: "مشاري العفاسي", img: "afasy.jpg", base: "https://server8.mp3quran.net/afs/" },
-    { id: 9, name: "إسلام صبحي", img: "islam sobhi.jpg", base: "https://server14.mp3quran.net/islam/Rewayat-Hafs-A-n-Assem/" },
-    { id: 10, name: "أحمد العجمي", img: "أحمد بن علي العجمي.jpg", base: "https://server10.mp3quran.net/ajm/128/" },
-    { id: 11, name: "سعد الغامدي", img: "الغامدي.jpg", base: "https://server7.mp3quran.net/s_gmd/128/" },
-    { id: 12, name: "سعود الشريم", img: "الشريم.jpg", base: "https://server7.mp3quran.net/shur/128/" },
-    { id: 13, name: "عبدالرحمن السديس", img: "السديس.jpg", base: "https://server11.mp3quran.net/sds/" },
-    { id: 14, name: "خالد الجليل", img: "الجليل.jpg", base: "https://server10.mp3quran.net/jleel/" },
-    { id: 15, name: "فارس عباد", img: "فارس عباد.webp", base: "https://server8.mp3quran.net/frs_a/" },
-    { id: 16, name: "إدريس أبكر", img: "idrees-abkar.jpg", base: "https://server6.mp3quran.net/abkr/" },
-    { id: 17, name: "ناصر القطامي", img: "القطامي.jpg", base: "https://server6.mp3quran.net/qtm/" },
-    { id: 18, name: "محمد اللحيدان", img: "اللحيدان.jpg", base: "https://server8.mp3quran.net/lhdan/" },
-    { id: 19, name: "بدر التركي", img: "بدر التركي.jpg", base: "https://server10.mp3quran.net/bader/Rewayat-Hafs-A-n-Assem/" },
-    { id: 20, name: "صلاح بو خاطر", img: "صلاح بو خاطر.jpg", base: "https://server8.mp3quran.net/bu_khtr/" },
-    { id: 22, name: "هاني الرفاعي", img: "هاني الرفاعي.jpg", base: "https://server8.mp3quran.net/hani/" },
-    { id: 23, name: "أبو بكر الشاطري", img: "abu-bakr-al-shatri.jpg", base: "https://server11.mp3quran.net/shatri/" },
-    { id: 24, name: "علي جابر", img: "علي جابر.jpg", base: "https://server11.mp3quran.net/a_jbr/" },
-    { id: 25, name: "محمد أيوب", img: "محمد ايوب.jpg", base: "https://server8.mp3quran.net/ayyub/" },
-    { id: 26, name: "خليفة الطنيجي", img: "khalifa-al-tunaiji.png", base: "https://server12.mp3quran.net/tnjy/" },
-    { id: 27, name: "الدوكالي العالم", img: "doukali-muhammad-al-alam2.webp", base: "https://server7.mp3quran.net/dokali/" },
-    { id: 28, name: "علي الحذيفي", img: "الحذيفي.jpg", base: "https://server9.mp3quran.net/hthfi/128-hfs/" },
-    { id: 29, name: "بندر بليله", img: "بندر بليله.jpg", base: "https://server6.mp3quran.net/balilah/" },
-    { id: 30, name: "أحمد نعينع", img: "احمد نعينع.jpg", base: "https://server11.mp3quran.net/ahmad_nu/" },
-    { id: 31, name: "عبدالبديع غيلان", img: "عبدالبديع غيلان.jpg", base: "https://server16.mp3quran.net/A-Ghailan/Rewayat-Hafs-A-n-Assem/" },
-    { id: 32, name: "عبدالله الخياط", img: "خياط.jpg", base: "https://server12.mp3quran.net/kyat/" },
-    { id: 33, name: "وديع اليمني", img: "وديع.jpg", base: "https://server6.mp3quran.net/wdee3/" },
-    { id: 34, name: "أحمد النفيس", img: "النفيس.jpg", base: "https://server16.mp3quran.net/nufais/Rewayat-Hafs-A-n-Assem/" },
-    { id: 35, name: "أحمد الطرابلسي", img: "الطرابلسي.jpg", base: "https://server10.mp3quran.net/trabulsi/" },
-    { id: 36, name: "حسن صالح", img: "حسن صالح.jpg", base: "https://server16.mp3quran.net/h_saleh/Rewayat-Hafs-A-n-Assem/" },
-    { id: 37, name: "رعد الكردي", img: "رعد الكردي.jpg", base: "https://server6.mp3quran.net/kurdi/" },
-    { id: 38, name: "زكي داغستاني", img: "زكي.jpg", base: "https://server9.mp3quran.net/zaki/" },
-    { id: 39, name: "سهل ياسين", img: "سهل.jpg", base: "https://server6.mp3quran.net/shl/" },
-    { id: 40, name: "منصور السالمي", img: "السالمي.jpg", base: "https://server14.mp3quran.net/mansor/" }
-];
-    let currentOfflineData = [];
+        { id: 1, name: "محمد صديق المنشاوي", img:"minshawi.jpg", base_murattal: "https://server10.mp3quran.net/minsh/", base_mojawwad: "https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+        { id: 2, name: "عبدالباسط عبدالصمد", img: "baset.jpg", base_murattal: "https://server7.mp3quran.net/basit/", base_mojawwad: "https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+        { id: 3, name: "محمود خليل الحصري", img: "hosary.jpg", base_murattal: "https://server13.mp3quran.net/husr/", base_mojawwad: "https://server13.mp3quran.net/husr/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+        { id: 4, name: "مصطفى إسماعيل", img: "mostafa.jpg", base_murattal: "https://server8.mp3quran.net/mustafa/", base_mojawwad: "https://server8.mp3quran.net/mustafa/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+        { id: 5, name: "محمود علي البنا", img: "bana.jpg", base_murattal: "https://server8.mp3quran.net/bna/", base_mojawwad: "https://server8.mp3quran.net/bna/Almusshaf-Al-Mojawwad/", mode: "murattal" },
+        { id: 21, name: "محمد محمود الطبلاوي", img: "الطبلاوي.webp", base_murattal: "https://server12.mp3quran.net/tblawi/", base_mojawwad: "https://server12.mp3quran.net/tblawi/Al-Mojawwad/", mode: "murattal" },
+        { id: 6, name: "ياسر الدوسري", img: "dosri.jpg", base: "https://server11.mp3quran.net/yasser/" },
+        { id: 7, name: "ماهر المعيقلي", img: "Maher_Al_Mueaqly.png", base: "https://server12.mp3quran.net/maher/Almusshaf-Al-Mojawwad/" },
+        { id: 8, name: "مشاري العفاسي", img: "afasy.jpg", base: "https://server8.mp3quran.net/afs/" },
+        { id: 9, name: "إسلام صبحي", img: "islam sobhi.jpg", base: "https://server14.mp3quran.net/islam/Rewayat-Hafs-A-n-Assem/" },
+        { id: 10, name: "أحمد العجمي", img: "أحمد بن علي العجمي.jpg", base: "https://server10.mp3quran.net/ajm/128/" },
+        { id: 11, name: "سعد الغامدي", img: "الغامدي.jpg", base: "https://server7.mp3quran.net/s_gmd/128/" },
+        { id: 12, name: "سعود الشريم", img: "الشريم.jpg", base: "https://server7.mp3quran.net/shur/128/" },
+        { id: 13, name: "عبدالرحمن السديس", img: "السديس.jpg", base: "https://server11.mp3quran.net/sds/" },
+        { id: 14, name: "خالد الجليل", img: "الجليل.jpg", base: "https://server10.mp3quran.net/jleel/" },
+        { id: 15, name: "فارس عباد", img: "فارس عباد.webp", base: "https://server8.mp3quran.net/frs_a/" },
+        { id: 16, name: "إدريس أبكر", img: "idrees-abkar.jpg", base: "https://server6.mp3quran.net/abkr/" },
+        { id: 17, name: "ناصر القطامي", img: "القطامي.jpg", base: "https://server6.mp3quran.net/qtm/" },
+        { id: 18, name: "محمد اللحيدان", img: "اللحيدان.jpg", base: "https://server8.mp3quran.net/lhdan/" },
+        { id: 19, name: "بدر التركي", img: "بدر التركي.jpg", base: "https://server10.mp3quran.net/bader/Rewayat-Hafs-A-n-Assem/" },
+        { id: 20, name: "صلاح بو خاطر", img: "صلاح بو خاطر.jpg", base: "https://server8.mp3quran.net/bu_khtr/" },
+        { id: 22, name: "هاني الرفاعي", img: "هاني الرفاعي.jpg", base: "https://server8.mp3quran.net/hani/" },
+        { id: 23, name: "أبو بكر الشاطري", img: "abu-bakr-al-shatri.jpg", base: "https://server11.mp3quran.net/shatri/" },
+        { id: 24, name: "علي جابر", img: "علي جابر.jpg", base: "https://server11.mp3quran.net/a_jbr/" },
+        { id: 25, name: "محمد أيوب", img: "محمد ايوب.jpg", base: "https://server8.mp3quran.net/ayyub/" },
+        { id: 26, name: "خليفة الطنيجي", img: "khalifa-al-tunaiji.png", base: "https://server12.mp3quran.net/tnjy/" },
+        { id: 27, name: "الدوكالي العالم", img: "doukali-muhammad-al-alam2.webp", base: "https://server7.mp3quran.net/dokali/" },
+        { id: 28, name: "علي الحذيفي", img: "الحذيفي.jpg", base: "https://server9.mp3quran.net/hthfi/128-hfs/" },
+        { id: 29, name: "بندر بليله", img: "بندر بليله.jpg", base: "https://server6.mp3quran.net/balilah/" },
+        { id: 30, name: "أحمد نعينع", img: "احمد نعينع.jpg", base: "https://server11.mp3quran.net/ahmad_nu/" },
+        { id: 31, name: "عبدالبديع غيلان", img: "عبدالبديع غيلان.jpg", base: "https://server16.mp3quran.net/A-Ghailan/Rewayat-Hafs-A-n-Assem/" },
+        { id: 32, name: "عبدالله الخياط", img: "خياط.jpg", base: "https://server12.mp3quran.net/kyat/" },
+        { id: 33, name: "وديع اليمني", img: "وديع.jpg", base: "https://server6.mp3quran.net/wdee3/" },
+        { id: 34, name: "أحمد النفيس", img: "النفيس.jpg", base: "https://server16.mp3quran.net/nufais/Rewayat-Hafs-A-n-Assem/" },
+        { id: 35, name: "أحمد الطرابلسي", img: "الطرابلسي.jpg", base: "https://server10.mp3quran.net/trabulsi/" },
+        { id: 36, name: "حسن صالح", img: "حسن صالح.jpg", base: "https://server16.mp3quran.net/h_saleh/Rewayat-Hafs-A-n-Assem/" },
+        { id: 37, name: "رعد الكردي", img: "رعد الكردي.jpg", base: "https://server6.mp3quran.net/kurdi/" },
+        { id: 38, name: "زكي داغستاني", img: "زكي.jpg", base: "https://server9.mp3quran.net/zaki/" },
+        { id: 39, name: "سهل ياسين", img: "سهل.jpg", base: "https://server6.mp3quran.net/shl/" },
+        { id: 40, name: "منصور السالمي", img: "السالمي.jpg", base: "https://server14.mp3quran.net/mansor/" }
+    ];
 
-    // --- ميزة المكتبة المحدثة ---
-    async function refreshOfflineList() {
-        const db = await initDB();
-        const req = db.transaction("surahs", "readonly").objectStore("surahs").getAll();
-        req.onsuccess = () => {
-            currentOfflineData = req.result;
-            showOfflineReaders(); // ابدأ بعرض القراء
-        };
+    function toggleFavorite(event, id) {
+        event.stopPropagation();
+        const index = favorites.indexOf(id);
+        if (index > -1) favorites.splice(index, 1);
+        else favorites.push(id);
+        localStorage.setItem('favReaders', JSON.stringify(favorites));
+        renderReaders(document.getElementById("searchInput").value);
     }
 
-    // عرض القراء الذين لديهم سور محملة
-    function showOfflineReaders() {
-        const list = document.getElementById('offlineList');
-        const header = document.getElementById('modal-dynamic-header');
-        header.innerHTML = `<h3 style="color:var(--accent); margin:0;">💾 القراء المحملون</h3>`;
-        list.innerHTML = "";
+    function renderReaders(query = "") {
+        const rList = document.getElementById("rList");
+        const favList = document.getElementById("favList");
+        const favSec = document.getElementById("fav-section");
+        rList.innerHTML = ""; favList.innerHTML = "";
 
-        // تجميع السور حسب القارئ
-        const grouped = currentOfflineData.reduce((acc, obj) => {
-            if (!acc[obj.reader]) acc[obj.reader] = { img: obj.img, surahs: [] };
-            acc[obj.reader].surahs.push(obj);
-            return acc;
-        }, {});
+        const filtered = allReaders.filter(r => r.name.includes(query));
+        const favs = filtered.filter(r => favorites.includes(r.id));
+        const others = filtered.filter(r => !favorites.includes(r.id));
 
-        Object.keys(grouped).forEach(readerName => {
-            const data = grouped[readerName];
-            const div = document.createElement("div");
-            div.className = "offline-reader-item";
-            div.innerHTML = `
-                <img src="${data.img}" class="offline-avatar" onerror="this.src='https://via.placeholder.com/50';">
-                <div style="flex-grow:1">
-                    <div style="font-weight:700; font-size:15px;">${readerName}</div>
-                    <div style="font-size:11px; opacity:0.6;">${data.surahs.length} سورة محملة</div>
-                </div>
-                <span>◀️</span>
-            `;
-            div.onclick = () => showOfflineSurahsForReader(readerName, data);
-            list.appendChild(div);
-        });
-
-        if (currentOfflineData.length === 0) {
-            list.innerHTML = `<p style="text-align:center; opacity:0.5; margin:30px 0;">لا توجد سور محملة بعد يا هندسة.</p>`;
+        if (favs.length > 0 && query === "") {
+            favSec.style.display = "block";
+            favs.forEach(r => favList.appendChild(createCard(r)));
+        } else {
+            favSec.style.display = "none";
         }
+        others.forEach(r => rList.appendChild(createCard(r)));
     }
 
-    // عرض سور قارئ محدد داخل المودال
-    function showOfflineSurahsForReader(readerName, data) {
-        const list = document.getElementById('offlineList');
-        const header = document.getElementById('modal-dynamic-header');
-        header.innerHTML = `
-            <button onclick="showOfflineReaders()" style="background:none; border:none; color:var(--accent); font-size:18px; cursor:pointer;">🔙</button>
-            <h3 style="color:var(--accent); margin:0;">${readerName}</h3>
-        `;
-        list.innerHTML = "";
-
-        data.surahs.forEach(item => {
-            const div = document.createElement("div");
-            div.className = "sura-item";
-            div.style.textAlign = "right"; div.style.padding = "15px"; div.style.marginBottom = "8px";
-            div.style.display = "flex"; div.style.justifyContent = "space-between";
-            div.innerHTML = `<span>${item.surah}</span> <span>▶️</span>`;
-            div.onclick = () => { playOfflineSurah(item.id); toggleLibraryModal(); };
-            list.appendChild(div);
+    function createCard(r) {
+        const card = document.createElement("div"); card.className = "reader-card";
+        const uid = `r-${r.id}`; const isFav = favorites.includes(r.id);
+        const hasModes = r.base_murattal && r.base_mojawwad;
+        card.innerHTML = `
+            <div class="reader-header" onclick="toggleCard('${uid}')">
+                <img src="${r.img}" class="reader-avatar" onerror="this.src='https://via.placeholder.com/50';">
+                <div class="reader-name">${r.name}</div>
+                <div class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(event, ${r.id})">${isFav ? '❤️' : '🤍'}</div>
+            </div>
+            ${hasModes ? `<div class="mode-selector">
+                <div class="mode-btn active" id="mur-${uid}" onclick="setMode(event, '${r.id}', 'murattal', '${uid}')">مرتل</div>
+                <div class="mode-btn" id="moj-${uid}" onclick="setMode(event, '${r.id}', 'mojawwad', '${uid}')">مجود</div>
+            </div>` : ''}
+            <div class="suras-box" id="box-${uid}"></div>`;
+        
+        const box = card.querySelector(`#box-${uid}`);
+        const surasArr = ["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الانسان","المرسلات","النبأ","النازعات","عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
+        surasArr.forEach((s, i) => {
+            const item = document.createElement("div"); item.className = "sura-item"; item.textContent = s;
+            item.onclick = (e) => { e.stopPropagation(); checkAndPlay(r.id, s, i+1); };
+            box.appendChild(item);
         });
+        return card;
+    }
+
+    function setMode(e, id, mode, uid) { 
+        e.stopPropagation(); 
+        const r = allReaders.find(i => i.id == id); r.mode = mode; 
+        document.getElementById(`mur-${uid}`).classList.toggle('active', mode==='murattal'); 
+        document.getElementById(`moj-${uid}`).classList.toggle('active', mode==='mojawwad'); 
+    }
+
+    async function checkAndPlay(rId, sName, sNum) { 
+        const r = allReaders.find(i => i.id == rId); 
+        const db = await initDB(); 
+        const req = db.transaction("surahs", "readonly").objectStore("surahs").get(`${r.name}-${sName}`); 
+        req.onsuccess = () => req.result ? playOfflineSurah(`${r.name}-${sName}`) : playOnline(rId, sName, sNum); 
+    }
+
+    function playOnline(rId, sName, sNum) { 
+        const r = allReaders.find(i => i.id == rId); 
+        let base = (r.base_murattal && r.base_mojawwad) ? (r.mode === 'mojawwad' ? r.base_mojawwad : r.base_murattal) : (r.base || r.base_murattal); 
+        const url = `${base}${sNum.toString().padStart(3,'0')}.mp3`; 
+        const audio = document.getElementById("mainAudio"); 
+        audio.src = url; 
+        updatePlayerUI(sName, r.name, r.img, true, () => downloadAndSaveSurah(rId, sName, sNum, url)); 
+        audio.play(); updatePlayIcons(true); 
+    }
+
+    async function downloadAndSaveSurah(rId, sName, sNum, url) { 
+        const r = allReaders.find(i => i.id == rId); 
+        try { 
+            const blob = await fetch(url).then(res => res.blob()); 
+            const db = await initDB(); 
+            db.transaction("surahs", "readwrite").objectStore("surahs").put({id: `${r.name}-${sName}`, reader: r.name, surah: sName, img: r.img, data: blob}); 
+            alert(`تم حفظ ${sName} بنجاح ✅`); 
+            document.getElementById("playerDownloadBtn").style.display = "none"; 
+            refreshOfflineList(); 
+        } catch (e) { alert("خطأ في التحميل"); } 
     }
 
     async function playOfflineSurah(id) {
@@ -262,115 +287,116 @@
         };
     }
 
-    function toggleLibraryModal() {
-        const m = document.getElementById('libraryModal');
-        m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-        if(m.style.display === 'flex') refreshOfflineList();
-    }
-
-    // --- باقي منطق البرنامج (render, controls, clock) كما في الكود السابق بالضبط ---
-    function renderReaders(query = "") {
-        const rList = document.getElementById("rList");
-        rList.innerHTML = "";
-        allReaders.filter(r => r.name.includes(query)).forEach(r => rList.appendChild(createCard(r)));
-    }
-
-    function createCard(r) {
-        const card = document.createElement("div"); card.className = "reader-card";
-        const uid = `r-${r.id}`; const hasModes = r.base_murattal && r.base_mojawwad;
-        card.innerHTML = `
-            <div class="reader-header" onclick="toggleCard('${uid}')">
-                <img src="${r.img}" class="reader-avatar" onerror="this.src='https://via.placeholder.com/50';">
-                <div class="reader-name">${r.name}</div>
-            </div>
-            ${hasModes ? `<div class="mode-selector">
-                <div class="mode-btn active" id="mur-${uid}" onclick="setMode('${r.id}', 'murattal', '${uid}')">مرتل</div>
-                <div class="mode-btn" id="moj-${uid}" onclick="setMode('${r.id}', 'mojawwad', '${uid}')">مجود</div>
-            </div>` : ''}
-            <div class="suras-box" id="box-${uid}"></div>`;
-        const box = card.querySelector(`#box-${uid}`);
-        const surasArr = ["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الانسان","المرسلات","النبأ","النازعات","عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
-        surasArr.forEach((s, i) => {
-            const item = document.createElement("div"); item.className = "sura-item"; item.textContent = s;
-            item.onclick = (e) => { e.stopPropagation(); checkAndPlay(r.id, s, i+1); };
-            box.appendChild(item);
-        });
-        return card;
-    }
     function updatePlayerUI(track, reader, img, showDl, dlAction) {
-        // 1. تحديث الصور والنصوص في المشغل اللي قدامك في الصفحة
         document.getElementById("m-track").textContent = track;
         document.getElementById("e-track").textContent = track;
         document.getElementById("m-reader").textContent = reader;
         document.getElementById("e-reader").textContent = reader;
         document.getElementById("m-img").src = img;
         document.getElementById("e-img").src = img;
-
         const dlBtn = document.getElementById("playerDownloadBtn");
         dlBtn.style.display = showDl ? "block" : "none";
         if (dlAction) dlBtn.onclick = dlAction;
         document.getElementById("playerWrap").style.display = "flex";
 
-        // 2. إرسال البيانات والاشعارات للنظام (الاندرويد/آيفون) عشان تظهر بره
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
-                title: track,
-                artist: reader,
-                album: 'خالص لوجه الله',
+                title: track, artist: reader, album: 'خالص لوجه الله',
                 artwork: [
                     { src: img, sizes: '96x96', type: 'image/png' },
-                    { src: img, sizes: '128x128', type: 'image/png' },
                     { src: img, sizes: '192x192', type: 'image/png' },
-                    { src: img, sizes: '256x256', type: 'image/png' },
-                    { src: img, sizes: '384x384', type: 'image/png' },
                     { src: img, sizes: '512x512', type: 'image/png' }
                 ]
             });
-
-            // دي عشان تخلي أزرار الإشعارات (تشغيل/إيقاف) تشتغل فعلياً
-            navigator.mediaSession.setActionHandler('play', () => {
-                document.getElementById("mainAudio").play();
-                updatePlayIcons(true);
-            });
-            navigator.mediaSession.setActionHandler('pause', () => {
-                document.getElementById("mainAudio").pause();
-                updatePlayIcons(false);
-            });
+            navigator.mediaSession.setActionHandler('play', () => togglePlay());
+            navigator.mediaSession.setActionHandler('pause', () => togglePlay());
             navigator.mediaSession.setActionHandler('seekbackward', () => skip(-10));
             navigator.mediaSession.setActionHandler('seekforward', () => skip(10));
         }
     }
 
-    // (بقية الدوال: setMode, checkAndPlay, playOnline, downloadAndSaveSurah, togglePlay, updatePlayIcons, closePlayer, expandPlayer, minimizePlayer, skip, toggleCard, handleSearch, updateClock, getPrayers)
-    // سيتم استكمالها برمجياً لضمان العمل الكامل
-    function setMode(id, mode, uid) { event.stopPropagation(); const r = allReaders.find(i => i.id == id); r.mode = mode; document.getElementById(`mur-${uid}`).classList.toggle('active', mode==='murattal'); document.getElementById(`moj-${uid}`).classList.toggle('active', mode==='mojawwad'); }
-    async function checkAndPlay(rId, sName, sNum) { const r = allReaders.find(i => i.id == rId); const db = await initDB(); const req = db.transaction("surahs", "readonly").objectStore("surahs").get(`${r.name}-${sName}`); req.onsuccess = () => req.result ? playOfflineSurah(`${r.name}-${sName}`) : playOnline(rId, sName, sNum); }
-    function playOnline(rId, sName, sNum) { const r = allReaders.find(i => i.id == rId); let base = (r.base_murattal && r.base_mojawwad) ? (r.mode === 'mojawwad' ? r.base_mojawwad : r.base_murattal) : (r.base || r.base_murattal); const url = `${base}${sNum.toString().padStart(3,'0')}.mp3`; const audio = document.getElementById("mainAudio"); audio.src = url; updatePlayerUI(sName, r.name, r.img, true, () => downloadAndSaveSurah(rId, sName, sNum, url)); audio.play(); updatePlayIcons(true); }
-    async function downloadAndSaveSurah(rId, sName, sNum, url) { const r = allReaders.find(i => i.id == rId); try { const blob = await fetch(url).then(res => res.blob()); const db = await initDB(); db.transaction("surahs", "readwrite").objectStore("surahs").put({id: `${r.name}-${sName}`, reader: r.name, surah: sName, img: r.img, data: blob}); alert(`تم حفظ ${sName} بنجاح ✅`); document.getElementById("playerDownloadBtn").style.display = "none"; refreshOfflineList(); } catch (e) { alert("خطأ في التحميل"); } }
     function togglePlay() { const a = document.getElementById("mainAudio"); a.paused ? a.play() : a.pause(); updatePlayIcons(!a.paused); }
     function updatePlayIcons(p) { const i = p ? "⏸" : "▶"; document.getElementById("miniPlayBtn").textContent = i; document.getElementById("e-playBtn").textContent = i; }
     function closePlayer() { document.getElementById("mainAudio").pause(); document.getElementById("playerWrap").style.display = "none"; }
     function expandPlayer() { document.getElementById("playerWrap").classList.add("expanded"); }
     function minimizePlayer() { document.getElementById("playerWrap").classList.remove("expanded"); }
     function skip(v) { document.getElementById("mainAudio").currentTime += v; }
-    function toggleCard(id) { document.querySelectorAll('.reader-card').forEach(c => { if(c.querySelector(`#box-${id}`)) c.classList.toggle('open'); else c.classList.remove('open'); }); }
+    function toggleCard(id) { 
+        document.querySelectorAll('.reader-card').forEach(c => {
+            const box = c.querySelector(`#box-${id}`);
+            if(box) c.classList.toggle('open');
+            else c.classList.remove('open');
+        });
+    }
     function handleSearch() { renderReaders(document.getElementById("searchInput").value); }
-    
-    // الساعة ومواقيت الصلاة
+
+    // المكتبة المحملة
+    async function refreshOfflineList() {
+        const db = await initDB();
+        const req = db.transaction("surahs", "readonly").objectStore("surahs").getAll();
+        req.onsuccess = () => {
+            const list = document.getElementById('offlineList');
+            const header = document.getElementById('modal-dynamic-header');
+            header.innerHTML = `<h3 style="color:var(--accent); margin:0;">💾 القراء المحملون</h3>`;
+            list.innerHTML = "";
+            const grouped = req.result.reduce((acc, obj) => {
+                if (!acc[obj.reader]) acc[obj.reader] = { img: obj.img, surahs: [] };
+                acc[obj.reader].surahs.push(obj); return acc;
+            }, {});
+            Object.keys(grouped).forEach(name => {
+                const d = grouped[name];
+                const div = document.createElement("div"); div.className = "offline-reader-item";
+                div.innerHTML = `<img src="${d.img}" class="offline-avatar" onerror="this.src='https://via.placeholder.com/50';"><div style="flex-grow:1"><div style="font-weight:700;">${name}</div><div style="font-size:11px; opacity:0.6;">${d.surahs.length} سورة</div></div><span>◀️</span>`;
+                div.onclick = () => showOfflineSurahs(name, d);
+                list.appendChild(div);
+            });
+            if(req.result.length===0) list.innerHTML = `<p style="text-align:center; opacity:0.5;">لا توجد سور محملة</p>`;
+        };
+    }
+
+    function showOfflineSurahs(name, data) {
+        const list = document.getElementById('offlineList');
+        const header = document.getElementById('modal-dynamic-header');
+        header.innerHTML = `<button onclick="refreshOfflineList()" style="background:none; border:none; color:var(--accent); font-size:18px;">🔙</button><h3 style="color:var(--accent); margin:0;">${name}</h3>`;
+        list.innerHTML = "";
+        data.surahs.forEach(item => {
+            const div = document.createElement("div"); div.className = "sura-item";
+            div.style.textAlign = "right"; div.style.display = "flex"; div.style.justifyContent = "space-between"; div.style.padding = "15px"; div.style.marginBottom = "8px";
+            div.innerHTML = `<span>${item.surah}</span> <span>▶️</span>`;
+            div.onclick = () => { playOfflineSurah(item.id); toggleLibraryModal(); };
+            list.appendChild(div);
+        });
+    }
+
+    function toggleLibraryModal() {
+        const m = document.getElementById('libraryModal');
+        m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+        if(m.style.display === 'flex') refreshOfflineList();
+    }
+
+    // مواقيت الصلاة والساعة
     let prayerTimes = null;
     async function getPrayers() { try { const res = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5'); const d = await res.json(); prayerTimes = d.data.timings; } catch(e){} }
     function updateClock() {
-        const now = new Date(); document.getElementById("m-date").textContent = now.toLocaleDateString('ar-EG', {day:'numeric', month:'short'}); document.getElementById("h-date").textContent = now.toLocaleDateString('ar-SA', {calendar:'islamic', day:'numeric', month:'long'});
+        const now = new Date(); 
+        document.getElementById("m-date").textContent = now.toLocaleDateString('ar-EG', {day:'numeric', month:'short'});
+        document.getElementById("h-date").textContent = now.toLocaleDateString('ar-SA', {calendar:'islamic', day:'numeric', month:'long'});
         if(prayerTimes) {
-            const pKeys = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"]; const pNames = {Fajr:"الفجر", Dhuhr:"الظهر", Asr:"العصر", Maghrib:"المغرب", Isha:"العشاء"}; let next = null;
-            for(let k of pKeys) { const [h, m] = prayerTimes[k].split(':'); const pDate = new Date(); pDate.setHours(h, m, 0); if(pDate > now) { next = {n:pNames[k], d:pDate}; break; } }
+            const pKeys = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"]; 
+            const pNames = {Fajr:"الفجر", Dhuhr:"الظهر", Asr:"العصر", Maghrib:"المغرب", Isha:"العشاء"}; 
+            let next = null;
+            for(let k of pKeys) {
+                const [h, m] = prayerTimes[k].split(':'); const pDate = new Date(); pDate.setHours(h, m, 0);
+                if(pDate > now) { next = {n:pNames[k], d:pDate}; break; }
+            }
             if(!next) { const [h, m] = prayerTimes.Fajr.split(':'); const d = new Date(now.getTime()+86400000); d.setHours(h,m,0); next = {n:"الفجر", d}; }
-            document.getElementById("p-name").textContent = next.n; const diff = next.d - now;
+            document.getElementById("p-name").textContent = next.n;
+            const diff = next.d - now;
             const hh=Math.floor(diff/3600000), mm=Math.floor((diff%3600000)/60000), ss=Math.floor((diff%60000)/1000);
             document.getElementById("p-countdown").textContent = `${hh.toString().padStart(2,'0')}:${mm.toString().padStart(2,'0')}:${ss.toString().padStart(2,'0')}`;
         }
     }
-    
+
     const audioEl = document.getElementById("mainAudio");
     audioEl.ontimeupdate = () => {
         if(!isNaN(audioEl.duration)) {
@@ -381,7 +407,7 @@
     };
     document.getElementById("seekSlider").oninput = e => audioEl.currentTime = (e.target.value / 100) * audioEl.duration;
 
-    window.onload = () => { renderReaders(); getPrayers(); setInterval(updateClock, 1000); refreshOfflineList(); };
+    window.onload = () => { renderReaders(); getPrayers(); setInterval(updateClock, 1000); };
 </script>
 </body>
 </html>
