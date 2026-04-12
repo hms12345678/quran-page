@@ -1,5 +1,5 @@
-// تم تحديث الإصدار لـ v7 لضمان مسح الكاش القديم عند كل المستخدمين
-const CACHE_NAME = 'khalis-lillah-v7'; 
+// تم تحديث الإصدار لـ v8 لضمان مسح الكاش القديم عند كل المستخدمين
+const CACHE_NAME = 'khalis-lillah-v8'; 
 
 const STATIC_ASSETS = [
   './',
