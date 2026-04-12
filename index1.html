@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        :root { --bg: #0f172a; --card-bg: rgba(30, 41, 59, 0.9); --accent: #facc15; --text: #f8fafc; --heart-red: #ff4757; }
+        :root { --bg: #0f172a; --card-bg: rgba(30, 41, 59, 0.9); --accent: #facc15; --text: #f8fafc; --heart-red: #ff4757; --success: #22c55e; }
         body { margin: 0; padding: 0; font-family: "Cairo", sans-serif; background: radial-gradient(circle at top, #1e293b, #0f172a); background-attachment: fixed; color: var(--text); padding-top: 155px; padding-bottom: 120px; }
         
         #top-info-bar { position: fixed; top: 0; left: 0; width: 100%; background: rgba(15, 23, 42, 0.95); border-bottom: 2px solid var(--accent); display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; z-index: 2000; box-sizing: border-box; }
@@ -17,7 +17,6 @@
         .container { padding: 15px; max-width: 500px; margin: 0 auto; }
         .section-title { font-size: 14px; color: var(--accent); margin: 20px 0 10px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
         
-        /* المفضلة */
         .fav-btn { font-size: 20px; cursor: pointer; transition: 0.3s; color: rgba(255,255,255,0.2); padding: 5px; }
         .fav-btn.active { color: var(--heart-red); text-shadow: 0 0 10px rgba(255, 71, 87, 0.4); }
 
@@ -52,7 +51,8 @@
         .expanded-view { display: none; flex-direction: column; align-items: center; padding: 20px; text-align: center; }
         .expanded .expanded-view { display: flex; }
         .big-img { width: 220px; height: 220px; border-radius: 20px; border: 2px solid var(--accent); margin-bottom: 20px; }
-        .player-dl-btn { background: none; border: none; color: var(--accent); font-size: 24px; cursor: pointer; }
+        .player-dl-btn { background: none; border: none; color: var(--accent); font-size: 24px; cursor: pointer; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .player-dl-btn.downloaded { color: var(--success); cursor: default; }
         .play-pause-btn { width: 60px; height: 60px; background: var(--accent); color: black; border-radius: 50%; font-size: 24px; border: none; }
         .eng-footer { margin-top: auto; padding-bottom: 20px; font-weight: bold; color: var(--accent); font-size: 11px; letter-spacing: 2px; }
     </style>
@@ -132,6 +132,7 @@
 <script>
     const dbName = "QuranOfflineDB";
     let favorites = JSON.parse(localStorage.getItem('favReaders')) || [];
+    let currentMode = "murattal";
 
     const initDB = () => new Promise(res => {
         const req = indexedDB.open(dbName, 1);
@@ -160,36 +161,10 @@
         { id: 17, name: "ناصر القطامي", img: "القطامي.jpg", base: "https://server6.mp3quran.net/qtm/" },
         { id: 18, name: "محمد اللحيدان", img: "اللحيدان.jpg", base: "https://server8.mp3quran.net/lhdan/" },
         { id: 19, name: "بدر التركي", img: "بدر التركي.jpg", base: "https://server10.mp3quran.net/bader/Rewayat-Hafs-A-n-Assem/" },
-        { id: 20, name: "صلاح بو خاطر", img: "صلاح بو خاطر.jpg", base: "https://server8.mp3quran.net/bu_khtr/" },
-        { id: 22, name: "هاني الرفاعي", img: "هاني الرفاعي.jpg", base: "https://server8.mp3quran.net/hani/" },
-        { id: 23, name: "أبو بكر الشاطري", img: "abu-bakr-al-shatri.jpg", base: "https://server11.mp3quran.net/shatri/" },
-        { id: 24, name: "علي جابر", img: "علي جابر.jpg", base: "https://server11.mp3quran.net/a_jbr/" },
-        { id: 25, name: "محمد أيوب", img: "محمد ايوب.jpg", base: "https://server8.mp3quran.net/ayyub/" },
-        { id: 26, name: "خليفة الطنيجي", img: "khalifa-al-tunaiji.png", base: "https://server12.mp3quran.net/tnjy/" },
-        { id: 27, name: "الدوكالي العالم", img: "doukali-muhammad-al-alam2.webp", base: "https://server7.mp3quran.net/dokali/" },
-        { id: 28, name: "علي الحذيفي", img: "الحذيفي.jpg", base: "https://server9.mp3quran.net/hthfi/128-hfs/" },
-        { id: 29, name: "بندر بليله", img: "بندر بليله.jpg", base: "https://server6.mp3quran.net/balilah/" },
-        { id: 30, name: "أحمد نعينع", img: "احمد نعينع.jpg", base: "https://server11.mp3quran.net/ahmad_nu/" },
-        { id: 31, name: "عبدالبديع غيلان", img: "عبدالبديع غيلان.jpg", base: "https://server16.mp3quran.net/A-Ghailan/Rewayat-Hafs-A-n-Assem/" },
-        { id: 32, name: "عبدالله الخياط", img: "خياط.jpg", base: "https://server12.mp3quran.net/kyat/" },
-        { id: 33, name: "وديع اليمني", img: "وديع.jpg", base: "https://server6.mp3quran.net/wdee3/" },
-        { id: 34, name: "أحمد النفيس", img: "النفيس.jpg", base: "https://server16.mp3quran.net/nufais/Rewayat-Hafs-A-n-Assem/" },
-        { id: 35, name: "أحمد الطرابلسي", img: "الطرابلسي.jpg", base: "https://server10.mp3quran.net/trabulsi/" },
-        { id: 36, name: "حسن صالح", img: "حسن صالح.jpg", base: "https://server16.mp3quran.net/h_saleh/Rewayat-Hafs-A-n-Assem/" },
-        { id: 37, name: "رعد الكردي", img: "رعد الكردي.jpg", base: "https://server6.mp3quran.net/kurdi/" },
-        { id: 38, name: "زكي داغستاني", img: "زكي.jpg", base: "https://server9.mp3quran.net/zaki/" },
-        { id: 39, name: "سهل ياسين", img: "سهل.jpg", base: "https://server6.mp3quran.net/shl/" },
-        { id: 40, name: "منصور السالمي", img: "السالمي.jpg", base: "https://server14.mp3quran.net/mansor/" }
+        { id: 20, name: "صلاح بو خاطر", img: "صلاح بو خاطر.jpg", base: "https://server8.mp3quran.net/bu_khtr/" }
     ];
 
-    function toggleFavorite(event, id) {
-        event.stopPropagation();
-        const index = favorites.indexOf(id);
-        if (index > -1) favorites.splice(index, 1);
-        else favorites.push(id);
-        localStorage.setItem('favReaders', JSON.stringify(favorites));
-        renderReaders(document.getElementById("searchInput").value);
-    }
+    const surasArr = ["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الانسان","المرسلات","النبأ","النازعات","عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
 
     function renderReaders(query = "") {
         const rList = document.getElementById("rList");
@@ -227,7 +202,6 @@
             <div class="suras-box" id="box-${uid}"></div>`;
         
         const box = card.querySelector(`#box-${uid}`);
-        const surasArr = ["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الانسان","المرسلات","النبأ","النازعات","عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
         surasArr.forEach((s, i) => {
             const item = document.createElement("div"); item.className = "sura-item"; item.textContent = s;
             item.onclick = (e) => { e.stopPropagation(); checkAndPlay(r.id, s, i+1); };
@@ -244,32 +218,38 @@
     }
 
     async function checkAndPlay(rId, sName, sNum) { 
-        const r = allReaders.find(i => i.id == rId); 
+        const r = allReaders.find(i => i.id == rId);
+        const modeLabel = (r.base_murattal && r.base_mojawwad) ? (r.mode === 'mojawwad' ? "مجود" : "مرتل") : "مرتل";
+        const uniqueId = `${r.name}-${modeLabel}-${sName}`; 
         const db = await initDB(); 
-        const req = db.transaction("surahs", "readonly").objectStore("surahs").get(`${r.name}-${sName}`); 
-        req.onsuccess = () => req.result ? playOfflineSurah(`${r.name}-${sName}`) : playOnline(rId, sName, sNum); 
+        const req = db.transaction("surahs", "readonly").objectStore("surahs").get(uniqueId); 
+        req.onsuccess = () => req.result ? playOfflineSurah(uniqueId) : playOnline(rId, sName, sNum); 
     }
 
     function playOnline(rId, sName, sNum) { 
         const r = allReaders.find(i => i.id == rId); 
-        let base = (r.base_murattal && r.base_mojawwad) ? (r.mode === 'mojawwad' ? r.base_mojawwad : r.base_murattal) : (r.base || r.base_murattal); 
+        const modeLabel = (r.base_murattal && r.base_mojawwad) ? (r.mode === 'mojawwad' ? "مجود" : "مرتل") : "مرتل";
+        let base = (modeLabel === 'مجود') ? r.base_mojawwad : (r.base_murattal || r.base); 
         const url = `${base}${sNum.toString().padStart(3,'0')}.mp3`; 
         const audio = document.getElementById("mainAudio"); 
         audio.src = url; 
-        updatePlayerUI(sName, r.name, r.img, true, () => downloadAndSaveSurah(rId, sName, sNum, url)); 
+        updatePlayerUI(sName, `${r.name} (${modeLabel})`, r.img, true, () => downloadAndSaveSurah(rId, sName, sNum, url, modeLabel)); 
         audio.play(); updatePlayIcons(true); 
     }
 
-    async function downloadAndSaveSurah(rId, sName, sNum, url) { 
+    async function downloadAndSaveSurah(rId, sName, sNum, url, modeLabel) { 
         const r = allReaders.find(i => i.id == rId); 
+        const uniqueId = `${r.name}-${modeLabel}-${sName}`;
+        const dlBtn = document.getElementById("playerDownloadBtn");
+        dlBtn.textContent = "⏳"; dlBtn.onclick = null;
+
         try { 
             const blob = await fetch(url).then(res => res.blob()); 
             const db = await initDB(); 
-            db.transaction("surahs", "readwrite").objectStore("surahs").put({id: `${r.name}-${sName}`, reader: r.name, surah: sName, img: r.img, data: blob}); 
-            alert(`تم حفظ ${sName} بنجاح ✅`); 
-            document.getElementById("playerDownloadBtn").style.display = "none"; 
+            db.transaction("surahs", "readwrite").objectStore("surahs").put({id: uniqueId, reader: r.name, mode: modeLabel, surah: sName, img: r.img, data: blob}); 
+            dlBtn.textContent = "✅"; dlBtn.classList.add('downloaded');
             refreshOfflineList(); 
-        } catch (e) { alert("خطأ في التحميل"); } 
+        } catch (e) { alert("خطأ في التحميل"); dlBtn.textContent = "📥"; dlBtn.onclick = () => downloadAndSaveSurah(rId, sName, sNum, url, modeLabel); } 
     }
 
     async function playOfflineSurah(id) {
@@ -281,31 +261,37 @@
                 const audio = document.getElementById("mainAudio");
                 if(audio.src) URL.revokeObjectURL(audio.src);
                 audio.src = URL.createObjectURL(item.data);
-                updatePlayerUI(item.surah, item.reader + " (محملة 💾)", item.img, false);
+                updatePlayerUI(item.surah, `${item.reader} (${item.mode}) [محملة 💾]`, item.img, false);
                 audio.play(); updatePlayIcons(true);
             }
         };
     }
 
-    function updatePlayerUI(track, reader, img, showDl, dlAction) {
+    function updatePlayerUI(track, reader, img, canDl, dlAction) {
         document.getElementById("m-track").textContent = track;
         document.getElementById("e-track").textContent = track;
         document.getElementById("m-reader").textContent = reader;
         document.getElementById("e-reader").textContent = reader;
         document.getElementById("m-img").src = img;
         document.getElementById("e-img").src = img;
+        
         const dlBtn = document.getElementById("playerDownloadBtn");
-        dlBtn.style.display = showDl ? "block" : "none";
-        if (dlAction) dlBtn.onclick = dlAction;
+        dlBtn.classList.remove('downloaded');
+        if (canDl) { dlBtn.style.display = "flex"; dlBtn.textContent = "📥"; dlBtn.onclick = dlAction; } 
+        else { dlBtn.style.display = "flex"; dlBtn.textContent = "✅"; dlBtn.classList.add('downloaded'); dlBtn.onclick = null; }
+        
         document.getElementById("playerWrap").style.display = "flex";
 
+        // تحديث صورة الشيخ في الاشعارات
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
-                title: track, artist: reader, album: 'خالص لوجه الله',
+                title: track,
+                artist: reader,
+                album: 'خالص لوجه الله',
                 artwork: [
                     { src: img, sizes: '96x96', type: 'image/png' },
                     { src: img, sizes: '192x192', type: 'image/png' },
-                    { src: img, sizes: '512x512', type: 'image/png' }
+                    { src: img, sizes: '512x512', type: 'image/png' },
                 ]
             });
             navigator.mediaSession.setActionHandler('play', () => togglePlay());
@@ -321,16 +307,16 @@
     function expandPlayer() { document.getElementById("playerWrap").classList.add("expanded"); }
     function minimizePlayer() { document.getElementById("playerWrap").classList.remove("expanded"); }
     function skip(v) { document.getElementById("mainAudio").currentTime += v; }
+    
     function toggleCard(id) { 
         document.querySelectorAll('.reader-card').forEach(c => {
-            const box = c.querySelector(`#box-${id}`);
-            if(box) c.classList.toggle('open');
+            if(c.querySelector(`#box-${id}`)) c.classList.toggle('open');
             else c.classList.remove('open');
         });
     }
+
     function handleSearch() { renderReaders(document.getElementById("searchInput").value); }
 
-    // المكتبة المحملة
     async function refreshOfflineList() {
         const db = await initDB();
         const req = db.transaction("surahs", "readonly").objectStore("surahs").getAll();
@@ -346,7 +332,7 @@
             Object.keys(grouped).forEach(name => {
                 const d = grouped[name];
                 const div = document.createElement("div"); div.className = "offline-reader-item";
-                div.innerHTML = `<img src="${d.img}" class="offline-avatar" onerror="this.src='https://via.placeholder.com/50';"><div style="flex-grow:1"><div style="font-weight:700;">${name}</div><div style="font-size:11px; opacity:0.6;">${d.surahs.length} سورة</div></div><span>◀️</span>`;
+                div.innerHTML = `<img src="${d.img}" class="offline-avatar"><div style="flex-grow:1"><div style="font-weight:700;">${name}</div><div style="font-size:11px; opacity:0.6;">${d.surahs.length} سورة</div></div><span>◀️</span>`;
                 div.onclick = () => showOfflineSurahs(name, d);
                 list.appendChild(div);
             });
@@ -354,15 +340,29 @@
         };
     }
 
-    function showOfflineSurahs(name, data) {
+    function showOfflineSurahs(name, data, activeMode = null) {
         const list = document.getElementById('offlineList');
         const header = document.getElementById('modal-dynamic-header');
+        const modesAvailable = [...new Set(data.surahs.map(s => s.mode))];
+        if (!activeMode) activeMode = modesAvailable[0];
+
         header.innerHTML = `<button onclick="refreshOfflineList()" style="background:none; border:none; color:var(--accent); font-size:18px;">🔙</button><h3 style="color:var(--accent); margin:0;">${name}</h3>`;
         list.innerHTML = "";
-        data.surahs.forEach(item => {
+
+        if (modesAvailable.length > 1 || modesAvailable.includes("مجود")) {
+            const tabBox = document.createElement("div"); tabBox.style = "display:flex; justify-content:center; gap:10px; margin-bottom:15px; width:100%;";
+            modesAvailable.forEach(m => {
+                const b = document.createElement("div"); b.className = `mode-btn ${activeMode === m ? 'active' : ''}`;
+                b.style.display = "block"; b.textContent = m; b.onclick = () => showOfflineSurahs(name, data, m);
+                tabBox.appendChild(b);
+            });
+            list.appendChild(tabBox);
+        }
+
+        data.surahs.filter(s => s.mode === activeMode).forEach(item => {
             const div = document.createElement("div"); div.className = "sura-item";
-            div.style.textAlign = "right"; div.style.display = "flex"; div.style.justifyContent = "space-between"; div.style.padding = "15px"; div.style.marginBottom = "8px";
-            div.innerHTML = `<span>${item.surah}</span> <span>▶️</span>`;
+            div.style = "text-align:right; display:flex; justify-content:center; padding:12px; margin-bottom:6px; background:rgba(255,255,255,0.05); border-radius:8px;";
+            div.innerHTML = `<span>${item.surah}</span>`;
             div.onclick = () => { playOfflineSurah(item.id); toggleLibraryModal(); };
             list.appendChild(div);
         });
@@ -406,6 +406,15 @@
         }
     };
     document.getElementById("seekSlider").oninput = e => audioEl.currentTime = (e.target.value / 100) * audioEl.duration;
+
+    function toggleFavorite(event, id) {
+        event.stopPropagation();
+        const index = favorites.indexOf(id);
+        if (index > -1) favorites.splice(index, 1);
+        else favorites.push(id);
+        localStorage.setItem('favReaders', JSON.stringify(favorites));
+        renderReaders(document.getElementById("searchInput").value);
+    }
 
     window.onload = () => { renderReaders(); getPrayers(); setInterval(updateClock, 1000); };
 </script>
