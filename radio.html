@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>إذاعة القرآن الكريم | مباشر</title>
+    <title>إذاعة القرآن والسنة | مباشر</title>
     <style>
         :root {
             --royal-blue: #002366;
@@ -28,26 +28,28 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 40px 20px;
+            padding: 30px 20px;
             border-radius: 40px;
             text-align: center;
             width: 90%;
-            max-width: 380px;
+            max-width: 400px;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
         }
 
         .selector-container {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 25px;
             background: rgba(0, 0, 0, 0.2);
             padding: 5px;
             border-radius: 20px;
+            flex-wrap: wrap; /* للسماح للأزرار بالنزول لو الشاشة صغيرة */
         }
 
         .station-btn {
             flex: 1;
-            padding: 12px;
+            min-width: 80px;
+            padding: 10px 5px;
             border: none;
             border-radius: 15px;
             background: transparent;
@@ -55,6 +57,7 @@
             cursor: pointer;
             font-weight: bold;
             transition: 0.3s;
+            font-size: 0.85rem;
             font-family: inherit;
         }
 
@@ -64,45 +67,45 @@
         }
 
         .icon-circle {
-            width: 80px; height: 80px;
+            width: 70px; height: 70px;
             background: linear-gradient(135deg, var(--glow), var(--royal-blue));
             margin: 0 auto 15px;
             border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            font-size: 35px;
+            font-size: 30px;
             box-shadow: 0 0 25px rgba(79, 172, 254, 0.3);
         }
 
-        h1 { font-size: 1.4rem; margin: 10px 0; }
-        p { font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 20px; }
+        h1 { font-size: 1.2rem; margin: 10px 0; min-height: 3rem; display: flex; align-items: center; justify-content: center; }
+        p { font-size: 0.85rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 20px; }
 
         .visualizer {
             display: flex; justify-content: center; align-items: flex-end;
-            gap: 6px; height: 40px; margin-bottom: 30px;
+            gap: 6px; height: 35px; margin-bottom: 25px;
             visibility: hidden;
         }
 
         .playing .visualizer { visibility: visible; }
 
-        .bar { width: 5px; background: var(--glow); border-radius: 10px; height: 8px; transition: 0.3s; }
+        .bar { width: 5px; background: var(--glow); border-radius: 10px; height: 8px; }
         .playing .bar { animation: bounce 1.1s infinite ease-in-out; }
 
-        @keyframes bounce { 0%, 100% { height: 8px; } 50% { height: 40px; } }
+        @keyframes bounce { 0%, 100% { height: 8px; } 50% { height: 35px; } }
 
         .play-btn {
             background: white; border: none;
-            width: 85px; height: 85px; border-radius: 50%;
-            cursor: pointer; margin: 0 auto 25px;
+            width: 80px; height: 80px; border-radius: 50%;
+            cursor: pointer; margin: 0 auto 20px;
             display: flex; justify-content: center; align-items: center;
             transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
-        .play-btn svg { width: 35px; fill: var(--royal-blue); }
+        .play-btn svg { width: 30px; fill: var(--royal-blue); }
 
         .volume-container {
             display: flex; align-items: center; gap: 15px;
-            background: rgba(0, 0, 0, 0.2); padding: 10px 20px; border-radius: 25px;
+            background: rgba(0, 0, 0, 0.2); padding: 8px 15px; border-radius: 25px;
         }
 
         input[type="range"] { flex: 1; accent-color: var(--glow); cursor: pointer; }
@@ -114,9 +117,10 @@
         <div class="selector-container">
             <button id="btn-egypt" class="station-btn active" onclick="switchStation('egypt')">مصر 🇪🇬</button>
             <button id="btn-saudi" class="station-btn" onclick="switchStation('saudi')">السعودية 🇸🇦</button>
+            <button id="btn-sunna" class="station-btn" onclick="switchStation('sunna')">السنة 🕌</button>
         </div>
 
-        <div class="icon-circle">📜</div>
+        <div class="icon-circle" id="station-icon">📜</div>
         <h1 id="station-name">إذاعة القرآن الكريم من القاهرة</h1>
         <p id="status-text">بث مباشر الآن</p>
 
@@ -147,27 +151,37 @@
         const playIcon = document.getElementById('playIcon');
         const statusText = document.getElementById('status-text');
         const stationName = document.getElementById('station-name');
+        const stationIcon = document.getElementById('station-icon');
         const mainCard = document.getElementById('mainCard');
         const volRange = document.getElementById('volRange');
 
         let isPlaying = false;
         let currentStation = 'egypt';
 
-        // الروابط
+        // الروابط المحدثة
         const streams = {
             egypt: "https://n04.radiojar.com/8s5u5tpdtwzuv",
-            saudi: "http://n09.radiojar.com/4wqre23fytzuv?rj-ttl=5&rj-tok=AAABnYMd0OUAlVVU0PehLD8RLg" 
+            saudi: "https://n09.radiojar.com/4wqre23fytzuv",
+            sunna: "http://andromeda.shoutca.st:8189/stream" // رابط إذاعة السنة النبوية
+        };
+
+        const stationData = {
+            egypt: { name: "إذاعة القرآن الكريم من القاهرة", icon: "📜" },
+            saudi: { name: "إذاعة القرآن الكريم من المملكة", icon: "🕋" },
+            sunna: { name: "إذاعة السنة النبوية مباشر", icon: "🕌" }
         };
 
         function switchStation(station) {
             if (currentStation === station) return;
             currentStation = station;
 
-            // تحديث الأزرار
-            document.getElementById('btn-egypt').classList.toggle('active', station === 'egypt');
-            document.getElementById('btn-saudi').classList.toggle('active', station === 'saudi');
+            // تحديث تصميم الأزرار
+            document.querySelectorAll('.station-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${station}`).classList.add('active');
 
-            stationName.innerText = station === 'egypt' ? "إذاعة القرآن الكريم من القاهرة" : "إذاعة القرآن الكريم من المملكة";
+            // تحديث المحتوى
+            stationName.innerText = stationData[station].name;
+            stationIcon.innerText = stationData[station].icon;
 
             if (isPlaying) {
                 stopAudio();
@@ -180,29 +194,24 @@
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: stationName.innerText,
                     artist: 'بث مباشر',
-                    album: 'إذاعة القرآن الكريم',
-                    artwork: [
-                        { src: './icon-512.png', sizes: '512x512', type: 'image/png' }
-                    ]
+                    album: 'خالص لله',
+                    artwork: [{ src: './icon-512.png', sizes: '512x512', type: 'image/png' }]
                 });
-
-                navigator.mediaSession.setActionHandler('play', startAudio);
-                navigator.mediaSession.setActionHandler('pause', stopAudio);
             }
         }
 
         function startAudio() {
-            statusText.innerText = "جاري الاتصال...";
+            statusText.innerText = "جاري الاتصال بالبث...";
             audio.src = streams[currentStation] + "?t=" + Date.now();
             
             audio.play().then(() => {
                 playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
                 mainCard.classList.add('playing');
-                statusText.innerText = "متصل الآن بالبث المباشر";
+                statusText.innerText = "متصل الآن - استماع ممتع";
                 isPlaying = true;
-                updateMediaSession(); // تفعيل التحكم الخارجي ومنع التقطيع
+                updateMediaSession();
             }).catch(err => {
-                statusText.innerText = "خطأ في الاتصال";
+                statusText.innerText = "البث غير متاح حالياً";
                 console.error(err);
             });
         }
@@ -221,13 +230,6 @@
         });
 
         volRange.addEventListener('input', (e) => audio.volume = e.target.value);
-
-        // تنظيف الـ Service Worker لضمان عمل الراديو بدون كاش معطل
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(regs => {
-                for(let reg of regs) reg.unregister();
-            });
-        }
     </script>
 </body>
 </html>
