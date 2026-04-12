@@ -28,7 +28,7 @@
     {
       "name": " سماع القران الكريم",
       "short_name": "القران",
-      "url": "./index.html",
+      "url": "./index1.html",
       "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
     },
 
