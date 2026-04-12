@@ -297,18 +297,48 @@
         });
         return card;
     }
-
     function updatePlayerUI(track, reader, img, showDl, dlAction) {
+        // 1. تحديث الصور والنصوص في المشغل اللي قدامك في الصفحة
         document.getElementById("m-track").textContent = track;
         document.getElementById("e-track").textContent = track;
         document.getElementById("m-reader").textContent = reader;
         document.getElementById("e-reader").textContent = reader;
         document.getElementById("m-img").src = img;
         document.getElementById("e-img").src = img;
+
         const dlBtn = document.getElementById("playerDownloadBtn");
         dlBtn.style.display = showDl ? "block" : "none";
-        if(dlAction) dlBtn.onclick = dlAction;
+        if (dlAction) dlBtn.onclick = dlAction;
         document.getElementById("playerWrap").style.display = "flex";
+
+        // 2. إرسال البيانات والاشعارات للنظام (الاندرويد/آيفون) عشان تظهر بره
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: track,
+                artist: reader,
+                album: 'خالص لوجه الله',
+                artwork: [
+                    { src: img, sizes: '96x96', type: 'image/png' },
+                    { src: img, sizes: '128x128', type: 'image/png' },
+                    { src: img, sizes: '192x192', type: 'image/png' },
+                    { src: img, sizes: '256x256', type: 'image/png' },
+                    { src: img, sizes: '384x384', type: 'image/png' },
+                    { src: img, sizes: '512x512', type: 'image/png' }
+                ]
+            });
+
+            // دي عشان تخلي أزرار الإشعارات (تشغيل/إيقاف) تشتغل فعلياً
+            navigator.mediaSession.setActionHandler('play', () => {
+                document.getElementById("mainAudio").play();
+                updatePlayIcons(true);
+            });
+            navigator.mediaSession.setActionHandler('pause', () => {
+                document.getElementById("mainAudio").pause();
+                updatePlayIcons(false);
+            });
+            navigator.mediaSession.setActionHandler('seekbackward', () => skip(-10));
+            navigator.mediaSession.setActionHandler('seekforward', () => skip(10));
+        }
     }
 
     // (بقية الدوال: setMode, checkAndPlay, playOnline, downloadAndSaveSurah, togglePlay, updatePlayIcons, closePlayer, expandPlayer, minimizePlayer, skip, toggleCard, handleSearch, updateClock, getPrayers)
