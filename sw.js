@@ -1,4 +1,6 @@
-const CACHE_NAME = 'khalis-lillah-v6'; // تحديث الإصدار لضمان تطبيق التعديلات
+// تم تحديث الإصدار لـ v7 لضمان مسح الكاش القديم عند كل المستخدمين
+const CACHE_NAME = 'khalis-lillah-v7'; 
+
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -12,23 +14,33 @@ const STATIC_ASSETS = [
   './icon-512.png'
 ];
 
-// 1. تثبيت الصفحات والملفات الأساسية (الواجهة)
+// 1. تثبيت الصفحات والملفات الأساسية
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
+      console.log('Installing new cache: ' + CACHE_NAME);
       return cache.addAll(STATIC_ASSETS);
     })
   );
+  // يجبر الـ Service Worker الجديد على التنشيط فوراً
   self.skipWaiting();
 });
 
-// 2. تفعيل وتنظيف الكاش القديم
+// 2. تفعيل وتنظيف الكاش القديم فوراً
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            console.log('Deleting old cache: ' + key);
+            return caches.delete(key);
+          }
+        })
       );
+    }).then(() => {
+      // يخلي الـ Service Worker يسيطر على الصفحة الحالية فوراً بدون ريفريش
+      return self.clients.claim();
     })
   );
 });
@@ -37,8 +49,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = event.request.url;
 
-  // استثناء الراديو والبث المباشر وأي ملفات صوتية MP3
-  // التعديل هنا: منع تخزين الـ MP3 نهائياً في الكاش التلقائي
+  // استثناء الراديو والملفات الصوتية من الكاش نهائياً
   if (
     url.includes('radiojar.com') || 
     url.includes('stream') || 
@@ -46,16 +57,15 @@ self.addEventListener('fetch', (event) => {
     url.endsWith('.mp3') || 
     url.includes('mp3quran.net')
   ) {
-    return; // المتصفح يتعامل معاها Streaming فقط
+    return; 
   }
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      // لو الملف موجود في الكاش (زي الصور أو الصفحات) رجعه فوراً
       if (cachedResponse) return cachedResponse;
 
       return fetch(event.request).then((networkResponse) => {
-        // التحقق من أن الملف صورة فقط ليتم تخزينها
+        // تخزين الصور فقط في الكاش التلقائي
         const isImage = event.request.destination === 'image' || 
                         url.match(/\.(jpg|jpeg|png|gif|webp|svg)$|^https:\/\/static\.surah\.com/);
 
@@ -68,7 +78,6 @@ self.addEventListener('fetch', (event) => {
 
         return networkResponse;
       }).catch(() => {
-        // لو مفيش نت والملف مش في الكاش
         if (event.request.mode === 'navigate') {
           return caches.match('./index.html');
         }
