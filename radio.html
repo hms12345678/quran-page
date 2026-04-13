@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>إذاعة القرآن الكريم | خالص لله</title>
     <style>
         :root {
@@ -18,7 +18,7 @@
 
         body {
             margin: 0; 
-            padding: 20px 0; /* مسافة أمان للموبايل */
+            padding: 0;
             display: flex; 
             justify-content: center; 
             align-items: center;
@@ -26,110 +26,116 @@
             background: radial-gradient(circle at center, var(--royal-blue), var(--deep-blue));
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: white;
-            /* لغينا overflow hidden عشان لو الشاشة صغيرة المستخدم يقدر يسحب */
+            overflow: hidden; /* لمنع السكرول في الموبايل */
         }
 
         .radio-card {
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 30px 20px;
-            border-radius: 35px;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem 1.5rem;
+            border-radius: 40px;
             text-align: center;
-            width: 90%; /* استهلاك 90% من عرض الشاشة */
-            max-width: 380px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+            width: 85vw; /* عرض مرن حسب حجم الشاشة */
+            max-width: 400px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
 
         .selector-container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 25px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 12px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 8px;
             border-radius: 20px;
         }
 
         .station-btn {
-            padding: 15px 5px; /* تكبير المساحة للضغط بالصابع */
+            padding: 12px 4px;
             border: none;
             border-radius: 12px;
-            background: rgba(255,255,255,0.05);
-            color: white;
+            background: transparent;
+            color: rgba(255,255,255,0.7);
             cursor: pointer;
             font-weight: bold;
-            transition: 0.3s;
-            font-size: 0.85rem;
-            font-family: inherit;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
         }
 
         .station-btn.active {
             background: var(--glow);
-            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
         }
 
         .icon-circle {
-            width: 80px; height: 80px;
+            width: 90px; height: 90px;
             background: linear-gradient(135deg, var(--glow), var(--royal-blue));
-            margin: 0 auto 15px;
+            margin: 0 auto 1rem;
             border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            font-size: 35px;
-            box-shadow: 0 0 25px rgba(79, 172, 254, 0.3);
+            font-size: 40px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
         h1 { 
             font-size: 1.2rem; 
-            margin: 10px 0; 
+            margin: 0.5rem 0; 
             min-height: 3.5rem; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            line-height: 1.4; 
+            line-height: 1.3; 
         }
 
-        p { font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 20px; }
+        p { 
+            font-size: 0.9rem; 
+            color: var(--glow); 
+            margin-bottom: 1.5rem; 
+            font-weight: 500;
+        }
 
         .visualizer {
             display: flex; justify-content: center; align-items: flex-end;
-            gap: 6px; height: 40px; margin-bottom: 25px;
+            gap: 6px; height: 40px; margin-bottom: 2rem;
             visibility: hidden;
         }
 
         .playing .visualizer { visibility: visible; }
+        .bar { width: 6px; background: var(--glow); border-radius: 10px; height: 10px; }
+        .playing .bar { animation: bounce 1s infinite ease-in-out; }
 
-        .bar { width: 6px; background: var(--glow); border-radius: 10px; height: 8px; }
-        .playing .bar { animation: bounce 1.1s infinite ease-in-out; }
-
-        @keyframes bounce { 0%, 100% { height: 8px; } 50% { height: 40px; } }
+        @keyframes bounce { 
+            0%, 100% { height: 10px; } 
+            50% { height: 40px; } 
+        }
 
         .play-btn {
             background: white; border: none;
-            width: 85px; height: 85px; border-radius: 50%;
-            cursor: pointer; margin: 0 auto 25px;
-            display: flex; justify-content: center; align-items: center;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 80px; height: 80px; border-radius: 50%;
+            cursor: pointer; margin-bottom: 2rem;
+            display: inline-flex; justify-content: center; align-items: center;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
 
         .play-btn:active { transform: scale(0.9); }
-
         .play-btn svg { width: 35px; fill: var(--royal-blue); }
 
         .volume-container {
-            display: flex; align-items: center; gap: 15px;
-            background: rgba(0, 0, 0, 0.2); 
-            padding: 12px 20px; 
-            border-radius: 30px;
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(255, 255, 255, 0.05); 
+            padding: 10px 15px; 
+            border-radius: 20px;
         }
 
         input[type="range"] { 
             flex: 1; 
             accent-color: var(--glow); 
-            cursor: pointer; 
-            height: 6px;
+            cursor: pointer;
+            height: 4px;
         }
     </style>
 </head>
@@ -137,34 +143,33 @@
 
     <div class="radio-card" id="mainCard">
         <div class="selector-container">
-            <button id="btn-egypt" class="station-btn active" onclick="switchStation('egypt')">مصر 🇪🇬</button>
-            <button id="btn-saudi" class="station-btn" onclick="switchStation('saudi')">السعودية 🇸🇦</button>
-            <button id="btn-sunna" class="station-btn" onclick="switchStation('sunna')">السنة 🕌</button>
-            <button id="btn-tafseer" class="station-btn" onclick="switchStation('tafseer')">التفسير 🎙️</button>
+            <button id="btn-egypt" class="station-btn active" onclick="switchStation('egypt')">مصر</button>
+            <button id="btn-saudi" class="station-btn" onclick="switchStation('saudi')">السعودية</button>
+            <button id="btn-tafseer" class="station-btn" onclick="switchStation('tafseer')">التفسير</button>
         </div>
 
         <div class="icon-circle" id="station-icon">🇪🇬</div>
         <h1 id="station-name">إذاعة القرآن الكريم من القاهرة</h1>
-        <p id="status-text">بث مباشر الآن</p>
+        <p id="status-text">جاهز للتشغيل</p>
 
         <div class="visualizer" id="visualizer">
-            <div class="bar" style="animation-delay: 0.0s"></div>
-            <div class="bar" style="animation-delay: 0.2s"></div>
-            <div class="bar" style="animation-delay: 0.4s"></div>
+            <div class="bar" style="animation-delay: 0s"></div>
             <div class="bar" style="animation-delay: 0.1s"></div>
+            <div class="bar" style="animation-delay: 0.2s"></div>
             <div class="bar" style="animation-delay: 0.3s"></div>
+            <div class="bar" style="animation-delay: 0.4s"></div>
         </div>
 
-        <audio id="radio" preload="none"></audio>
+        <audio id="radio" preload="none" crossorigin="anonymous"></audio>
 
         <button class="play-btn" id="playBtn">
             <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         </button>
 
         <div class="volume-container">
-            <span>🔈</span>
-            <input type="range" id="volRange" min="0" max="1" step="0.1" value="0.8">
-            <span>🔊</span>
+            <span style="font-size: 14px;">🔈</span>
+            <input type="range" id="volRange" min="0" max="1" step="0.05" value="0.8">
+            <span style="font-size: 14px;">🔊</span>
         </div>
     </div>
 
@@ -184,14 +189,12 @@
         const streams = {
             egypt: "https://n04.radiojar.com/8s5u5tpdtwzuv",
             saudi: "https://n09.radiojar.com/4wqre23fytzuv",
-            sunna: "http://andromeda.shoutca.st:8189/stream?t=1776074485857",
             tafseer: "https://serverkw.quran-uni.com:8202/;*.mp3"
         };
 
         const stationData = {
             egypt: { name: "إذاعة القرآن الكريم من القاهرة", icon: "🇪🇬" },
             saudi: { name: "إذاعة القرآن الكريم من المملكة", icon: "🇸🇦" },
-            sunna: { name: "إذاعة السنة النبوية مباشر", icon: "🕌" },
             tafseer: { name: "تفسير القرآن - الشيخ الشعراوي", icon: "🎙️" }
         };
 
@@ -206,22 +209,25 @@
             stationIcon.innerText = stationData[station].icon;
 
             if (isPlaying) {
-                stopAudio();
                 startAudio();
             }
         }
 
         function startAudio() {
             statusText.innerText = "جاري الاتصال...";
-            audio.src = streams[currentStation] + "?t=" + Date.now();
+            audio.pause();
+            audio.src = streams[currentStation] + "?ts=" + Date.now();
+            audio.load();
+            
             audio.play().then(() => {
                 playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
                 mainCard.classList.add('playing');
-                statusText.innerText = "متصل الآن بالبث المباشر";
+                statusText.innerText = "متصل الآن";
                 isPlaying = true;
             }).catch(err => {
-                statusText.innerText = "البث غير متاح حالياً";
-                console.error(err);
+                statusText.innerText = "فشل! اضغط مرة أخرى";
+                isPlaying = false;
+                mainCard.classList.remove('playing');
             });
         }
 
