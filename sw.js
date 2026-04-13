@@ -1,4 +1,4 @@
-const CACHE_NAME = 'khalis-lillah-v9'; // تحديث لـ v9
+const CACHE_NAME = 'khalis-lillah-v10'; // تحديث لـ v10
 const STATIC_ASSETS = [
   './',
   './index.html',
